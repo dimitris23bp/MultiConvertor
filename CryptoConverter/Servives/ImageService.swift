@@ -100,7 +100,6 @@ public actor ImageService {
     ///   - mode: Either `.single` or `.multiple`.
     ///   - parser: Controls server-side parsing (e.g., removing numbers).
     /// - Returns: An array of `LogoItem`.
-    @discardableResult
     public func fetchLogos(
         for symbols: [String],
         resolution: Resolution = .px64,

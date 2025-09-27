@@ -11,11 +11,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B73AE11C2E8805EA002321E6 /* Views */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Views;
-			sourceTree = "<group>";
-		};
 		B7EFC45A2E8758F9003B9373 /* CryptoConverter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CryptoConverter;
@@ -38,7 +33,6 @@
 			isa = PBXGroup;
 			children = (
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
-				B73AE11C2E8805EA002321E6 /* Views */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,7 +52,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B73AE11C2E8805EA002321E6 /* Views */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
 			);
 			name = CryptoConverter;
