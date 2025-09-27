@@ -14,19 +14,45 @@ struct ContentView: View {
 
 	private let imageService = ImageService()
 
+	private let cryptoPlaceholders = [placeholder(), placeholder2()]
+	@State private var inputTexts: [String: String] = [:]
+	let imageSize: CGFloat = 48
+
     var body: some View {
         NavigationSplitView {
             List {
-                ForEach(cryptocurrencies) { cryptocurrency in
-                    NavigationLink {
-						Text("A new currency: \(cryptocurrency.name)")
-                    } label: {
-						HStack {
-							Text("\(cryptocurrency.name)")
+                ForEach(cryptoPlaceholders) { cryptocurrency in
+					HStack {
+						AsyncImage(url: cryptocurrency.imageUrl) { image in
+							image.image?
+								.resizable()
+								.scaledToFit()
+								.frame(width: imageSize, height: imageSize)
 
-							Text("\(cryptocurrency.value)")
 						}
-                    }
+
+						VStack(alignment: .leading) {
+							Text("\(cryptocurrency.id)")
+							Text("\(cryptocurrency.name)")
+								.minimumScaleFactor(0.75)
+						}
+						.padding()
+
+						Spacer()
+
+						TextField("0", text: Binding(
+							get: {
+								inputTexts[cryptocurrency.id, default: ""]
+							},
+							set: {
+								inputTexts[cryptocurrency.id] = $0
+							}
+						))
+						.multilineTextAlignment(.trailing) // aligns text inside TextField to right
+						.keyboardType(.decimalPad)
+						.autocorrectionDisabled()
+
+					}
                 }
             }
             .toolbar {
@@ -42,6 +68,11 @@ struct ContentView: View {
             Text("Select an item")
         }
     }
+
+	private func fetchCryptos() {
+		
+
+	}
 
 	private func fetchLogoURL(for currencyCode: String) {
 		Task {

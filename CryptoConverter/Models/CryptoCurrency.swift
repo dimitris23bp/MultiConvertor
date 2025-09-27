@@ -22,6 +22,7 @@ class CryptoCurrency {
 		self.imageUrl = imageUrl
 	}
 
+
 //	var image: Image {
 //		
 //	}
