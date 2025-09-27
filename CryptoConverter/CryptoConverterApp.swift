@@ -12,7 +12,7 @@ import SwiftData
 struct CryptoConverterApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            CryptoCurrency.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -22,6 +22,7 @@ struct CryptoConverterApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+
 
     var body: some Scene {
         WindowGroup {

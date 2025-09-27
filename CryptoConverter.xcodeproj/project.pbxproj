@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		B7EFC4582E8758F9003B9373 /* CryptoConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7EFC4582E8758F9003B9373 /* CryptoConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = CryptoConverter.app; path = "/Users/dimitris/Documents/projects/CryptoConverter/build/Debug-iphoneos/CryptoConverter.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		B73AE11C2E8805EA002321E6 /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Views;
+			sourceTree = "<group>";
+		};
 		B7EFC45A2E8758F9003B9373 /* CryptoConverter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CryptoConverter;
@@ -33,16 +38,8 @@
 			isa = PBXGroup;
 			children = (
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
-				B7EFC4592E8758F9003B9373 /* Products */,
+				B73AE11C2E8805EA002321E6 /* Views */,
 			);
-			sourceTree = "<group>";
-		};
-		B7EFC4592E8758F9003B9373 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B7EFC4582E8758F9003B9373 /* CryptoConverter.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -61,6 +58,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				B73AE11C2E8805EA002321E6 /* Views */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
 			);
 			name = CryptoConverter;
@@ -95,7 +93,7 @@
 			mainGroup = B7EFC44F2E8758F9003B9373;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = B7EFC4592E8758F9003B9373 /* Products */;
+			productRefGroup = B7EFC44F2E8758F9003B9373;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
