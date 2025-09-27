@@ -84,7 +84,7 @@ final class CryptoService {
             throw URLError(.badURL)
         }
 
-        var request = URLRequest(url: url)
+        let request = URLRequest(url: url)
 
         let (data, response) = try await session.data(for: request)
 

@@ -8,13 +8,14 @@
 import SwiftUI
 import SwiftData
 
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
 	@Query(sort: \CryptoCurrency.id, animation: .default) private var cryptocurrencies: [CryptoCurrency]
 
 	private let imageService = ImageService()
 
-	private let cryptoPlaceholders = [placeholder(), placeholder2()]
+	@State private var cryptoPlaceholders = [placeholder(), placeholder2()]
 	@State private var inputTexts: [String: String] = [:]
 	let imageSize: CGFloat = 48
 
@@ -23,11 +24,15 @@ struct ContentView: View {
             List {
                 ForEach(cryptoPlaceholders) { cryptocurrency in
 					HStack {
-						AsyncImage(url: cryptocurrency.imageUrl) { image in
-							image.image?
-								.resizable()
-								.scaledToFit()
-								.frame(width: imageSize, height: imageSize)
+						if cryptocurrency.imageData != nil {
+							cryptocurrency.image
+						} else {
+							AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
+								image.image?
+									.resizable()
+									.scaledToFit()
+									.frame(width: imageSize, height: imageSize)
+							}
 
 						}
 
@@ -69,10 +74,10 @@ struct ContentView: View {
         }
     }
 
-	private func fetchCryptos() {
-		
-
-	}
+//	private func fetchCryptos() {
+//		
+//
+//	}
 
 	private func fetchLogoURL(for currencyCode: String) {
 		Task {
@@ -80,9 +85,11 @@ struct ContentView: View {
 			print(url)
 		}
 	}
+
 }
 
 #Preview {
     ContentView()
 		.modelContainer(Previews.preview)
 }
+

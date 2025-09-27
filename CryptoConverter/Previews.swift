@@ -7,6 +7,7 @@
 
 import SwiftData
 import Foundation
+import SwiftUI
 
 struct Previews {
 	static var previewCryptocurrency: CryptoCurrency {
@@ -14,7 +15,7 @@ struct Previews {
 			id: "1",
 			name: "Bitcoin",
 			value: 60000,
-			imageUrl: URL(string:"https://example.com/bitcoin.png")!
+			imageData: UIImage(named: "bitcoin")!.pngData()!
 		)
 	}
 
