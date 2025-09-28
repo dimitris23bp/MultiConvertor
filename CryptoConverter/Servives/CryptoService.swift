@@ -23,9 +23,9 @@ struct CryptoTicker: Decodable {
 
     // Many numeric fields are returned as strings by the API; keep them as String for lossless decoding.
     let priceUsd: String
-    let percentChange24h: String
-    let percentChange1h: String
-    let percentChange7d: String
+//    let percentChange24h: String
+//    let percentChange1h: String
+//    let percentChange7d: String
     let priceBtc: String
     let marketCapUsd: String
 
@@ -33,9 +33,9 @@ struct CryptoTicker: Decodable {
     let volume24: Double
     let volume24a: Double
 
-    let csupply: String
-    let tsupply: String
-    let msupply: String
+//    let csupply: String
+//    let tsupply: String
+//    let msupply: String
 }
 
 struct Info: Decodable {
@@ -63,7 +63,7 @@ final class CryptoService {
     /// - Returns: An array of `CryptoTicker` items.
     /// - Throws: An error if the request fails or decoding fails.
     @discardableResult
-    func fetchTickers(start: Int, limit: Int) async throws -> [CryptoTicker] {
+    func fetchTickers(start: Int? = nil, limit: Int? = nil) async throws -> [CryptoTicker] {
         let response = try await fetchTickersResponse(start: start, limit: limit)
         return response.data
     }
@@ -73,12 +73,14 @@ final class CryptoService {
     ///   - start: The starting index for pagination.
     ///   - limit: The number of items to return.
     /// - Returns: A `TickersResponse` containing tickers and metadata.
-    func fetchTickersResponse(start: Int, limit: Int) async throws -> TickersResponse {
+    func fetchTickersResponse(start: Int?, limit: Int?) async throws -> TickersResponse {
         var components = URLComponents(string: "https://api.coinlore.net/api/tickers/")!
-        components.queryItems = [
-            URLQueryItem(name: "start", value: String(start)),
-            URLQueryItem(name: "limit", value: String(limit))
-        ]
+		if start != nil && limit != nil {
+			components.queryItems = [
+				URLQueryItem(name: "start", value: String(start!)),
+				URLQueryItem(name: "limit", value: String(limit!))
+			]
+		}
 
         guard let url = components.url else {
             throw URLError(.badURL)

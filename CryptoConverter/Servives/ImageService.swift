@@ -114,6 +114,7 @@ public actor ImageService {
             mode: mode,
             parser: parser
         )
+		print("Payload is: \(payload)")
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -123,6 +124,7 @@ public actor ImageService {
             let encoder = JSONEncoder()
             request.httpBody = try encoder.encode(payload)
         } catch {
+			print("Network error")
             throw Error.network(error)
         }
 
@@ -131,16 +133,21 @@ public actor ImageService {
         do {
             (data, response) = try await URLSession.shared.data(for: request)
         } catch {
+			print("Network error")
             throw Error.network(error)
         }
 
         guard let http = response as? HTTPURLResponse else {
+			print("Failed Request")
             throw Error.requestFailed(statusCode: -1)
         }
         guard (200...299).contains(http.statusCode) else {
+			print("Failed Request with status code: \(http.statusCode)")
+
             throw Error.requestFailed(statusCode: http.statusCode)
         }
         guard !data.isEmpty else {
+			print("Empty Response")
             throw Error.emptyResponse
         }
 
@@ -160,22 +167,30 @@ public actor ImageService {
         for symbol: String,
         resolution: Resolution = .px64,
         parser: Parser = .default
-    ) async throws -> URL {
+	) async throws -> URL? {
+
+		print("FetchLogoURL for \(symbol)")
         let items = try await fetchLogos(for: [symbol], resolution: resolution, mode: .single, parser: parser)
-        if let url = items.first?.url {
+		print("FetchLogoURL - items are: \(items)")
+
+		if let url = items.first?.url {
             return url
-        }
-        throw Error.emptyResponse
+		}
+
+		print("There is no image for \(symbol)")
+		return nil
     }
 
     /// Fetch a dictionary mapping response symbols to logo URLs.
     public func fetchLogoURLs(
         for symbols: [String],
         resolution: Resolution = .px64,
-        mode: Mode = .multiple,
+        mode: Mode = .single,
         parser: Parser = .default
     ) async throws -> [String: URL] {
+//		print("FetchLogoURLs started with symbols: \(symbols)")
         let items = try await fetchLogos(for: symbols, resolution: resolution, mode: mode, parser: parser)
+//		print("FetchLogoURLs - items are: \(items)")
         var dict: [String: URL] = [:]
         for item in items {
             dict[item.symbol] = item.url

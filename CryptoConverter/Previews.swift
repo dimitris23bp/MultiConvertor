@@ -23,7 +23,7 @@ struct Previews {
 	static let preview: ModelContainer = {
 		let container = try! ModelContainer(for: CryptoCurrency.self,
 											 configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-		container.mainContext.insert(previewCryptocurrency)
+//		container.mainContext.insert(previewCryptocurrency)
 
 		return container
 	}()

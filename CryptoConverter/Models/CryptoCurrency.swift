@@ -14,7 +14,7 @@ class CryptoCurrency {
 	var name: String
 	var value: Double
 	var imageData: Data?
-//	var imageUrl: URL
+	var favourite: Bool = false
 
 	init(id: String, name: String, value: Double, imageData: Data) {
 		self.id = id
