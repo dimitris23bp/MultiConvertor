@@ -9,15 +9,17 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+	@Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
+
 	@Query(sort: \CryptoCurrency.id, animation: .default) private var cryptocurrencies: [CryptoCurrency]
 
 	private let imageService = ImageService()
 	private let cryptoService = CryptoService()
 
 	@State private var inputTexts: [String: Double] = [:]
-	@State private var hasFetched: Bool = false
 	@State private var isShowingSheet = false
+	@FocusState private var focusedCryptoId: String?
 
 	let imageSize: CGFloat = 48
 	private var dynamicPredicate: Predicate<CryptoCurrency> {
@@ -70,17 +72,37 @@ struct ContentView: View {
 						.keyboardType(.decimalPad)
 						.autocorrectionDisabled()
 						.font(.title)
+						.focused($focusedCryptoId, equals: cryptocurrency.id)
 
+					}
+					.swipeActions(edge: .trailing) {
+						Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
+							withAnimation {
+								cryptocurrency.favourite.toggle()
+							}
+							do {
+								try modelContext.save()
+							} catch {
+								print(error)
+							}
+						}
+						.tint(.red)
 					}
                 }
             }
+			.scrollDismissesKeyboard(.interactively)
 			.task(priority: .userInitiated) {
 				print("Task is called")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
-				guard !hasFetched else { return }
-				hasFetched = true
-				await fetchCryptos()
+				if cryptocurrencies.count < 3 {
+					await fetchCryptos()
+				}
 			}
+			.onChange(of: scenePhase, { _, newValue in
+				if newValue != .active {
+					focusedCryptoId = nil
+				}
+			})
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
 					Button(action: {
@@ -89,7 +111,7 @@ struct ContentView: View {
 						Image(systemName: "plus")
 					}
 					.sheet(isPresented: $isShowingSheet) {
-						AddListItems()
+						AddListItems(imageSize: imageSize)
 					}
                 }
             }
@@ -118,7 +140,7 @@ struct ContentView: View {
 						crypto.favourite = true
 					}
 					modelContext.insert(crypto)
-					try await Task.sleep(nanoseconds: 1_000_000)
+//					try await Task.sleep(nanoseconds: 1_000_000)
 				}
 			}
 		} catch {

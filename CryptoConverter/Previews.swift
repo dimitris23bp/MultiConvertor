@@ -12,7 +12,7 @@ import SwiftUI
 struct Previews {
 	static var previewCryptocurrency: CryptoCurrency {
 		CryptoCurrency(
-			id: "1",
+			id: "BTC",
 			name: "Bitcoin",
 			value: 60000,
 			imageData: UIImage(named: "bitcoin")!.pngData()!
@@ -23,7 +23,7 @@ struct Previews {
 	static let preview: ModelContainer = {
 		let container = try! ModelContainer(for: CryptoCurrency.self,
 											 configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-//		container.mainContext.insert(previewCryptocurrency)
+		container.mainContext.insert(previewCryptocurrency)
 
 		return container
 	}()
