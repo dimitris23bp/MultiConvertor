@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftData
 
-
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
 	@Query(sort: \CryptoCurrency.id, animation: .default) private var cryptocurrencies: [CryptoCurrency]
@@ -16,9 +15,9 @@ struct ContentView: View {
 	private let imageService = ImageService()
 	private let cryptoService = CryptoService()
 
-//	@State private var cryptoPlaceholders = [placeholder(), placeholder2()]
 	@State private var inputTexts: [String: String] = [:]
 	@State private var hasFetched: Bool = false
+	@State private var isShowingSheet = false
 
 	let imageSize: CGFloat = 48
 	private var dynamicPredicate: Predicate<CryptoCurrency> {
@@ -33,7 +32,10 @@ struct ContentView: View {
                 ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { cryptocurrency in
 					HStack {
 						if cryptocurrency.imageData != nil {
-							cryptocurrency.image
+							cryptocurrency.image!
+								.resizable()
+								.scaledToFit()
+								.frame(width: imageSize, height: imageSize)
 						} else {
 							AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
 								image.image?
@@ -77,7 +79,13 @@ struct ContentView: View {
 			}
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-					Button("Add") {
+					Button(action: {
+						isShowingSheet.toggle()
+					}) {
+						Image(systemName: "plus")
+					}
+					.sheet(isPresented: $isShowingSheet) {
+						AddListItems()
 					}
                 }
             }
