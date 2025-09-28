@@ -15,7 +15,7 @@ struct ContentView: View {
 	private let imageService = ImageService()
 	private let cryptoService = CryptoService()
 
-	@State private var inputTexts: [String: String] = [:]
+	@State private var inputTexts: [String: Double] = [:]
 	@State private var hasFetched: Bool = false
 	@State private var isShowingSheet = false
 
@@ -50,6 +50,7 @@ struct ContentView: View {
 							Text("\(cryptocurrency.id)")
 							Text("\(cryptocurrency.name)")
 								.minimumScaleFactor(0.75)
+								.lineLimit(1)
 						}
 						.padding()
 
@@ -57,15 +58,18 @@ struct ContentView: View {
 
 						TextField("0", text: Binding(
 							get: {
-								inputTexts[cryptocurrency.id, default: ""]
+								let value = inputTexts[cryptocurrency.id] ?? 0
+								return value == 0 ? "" : String(format: "%.10f", value)
 							},
-							set: {
-								inputTexts[cryptocurrency.id] = $0
+							set: { input in
+								inputTexts[cryptocurrency.id] = Double(input) ?? 0
+								updateInputs(basedOn: cryptocurrency.id, with: inputTexts[cryptocurrency.id] ?? 0)
 							}
 						))
 						.multilineTextAlignment(.trailing) // aligns text inside TextField to right
 						.keyboardType(.decimalPad)
 						.autocorrectionDisabled()
+						.font(.title)
 
 					}
                 }
@@ -94,6 +98,16 @@ struct ContentView: View {
         }
     }
 
+	private func updateInputs(basedOn cryptoId: String, with value: Double) {
+		let crypto = cryptocurrencies.first(where: { $0.id == cryptoId })!
+
+		for cryptocurrency in cryptocurrencies {
+			if cryptocurrency.favourite {
+				inputTexts[cryptocurrency.id] = (crypto.value * value) / cryptocurrency.value
+			}
+
+		}
+	}
 	private func fetchCryptos() async {
 		do {
 			let tickers = try await cryptoService.fetchTickers()
@@ -127,7 +141,7 @@ struct ContentView: View {
 			if let url = idsAndUrls[crypto.id] {
 				do {
 					crypto.imageData = try await URLSession.shared.data(from: url).0
-					print("Got image for \(crypto.id) with URL: \(url)")
+					print("Got image for \(crypto.id) with URL:  \(url)")
 					try modelContext.save()
 				} catch {
 					print(error)
