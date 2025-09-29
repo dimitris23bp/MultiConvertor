@@ -102,7 +102,7 @@ public actor ImageService {
     /// - Returns: An array of `LogoItem`.
     public func fetchLogos(
         for symbols: [String],
-        resolution: Resolution = .px64,
+        resolution: Resolution = .px128,
         mode: Mode = .single,
         parser: Parser = .default
     ) async throws -> [LogoItem] {
@@ -184,7 +184,7 @@ public actor ImageService {
     /// Fetch a dictionary mapping response symbols to logo URLs.
     public func fetchLogoURLs(
         for symbols: [String],
-        resolution: Resolution = .px64,
+        resolution: Resolution = .px128,
         mode: Mode = .single,
         parser: Parser = .default
     ) async throws -> [String: URL] {

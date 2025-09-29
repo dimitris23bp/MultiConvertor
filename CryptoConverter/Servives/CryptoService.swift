@@ -23,19 +23,12 @@ struct CryptoTicker: Decodable {
 
     // Many numeric fields are returned as strings by the API; keep them as String for lossless decoding.
     let priceUsd: String
-//    let percentChange24h: String
-//    let percentChange1h: String
-//    let percentChange7d: String
     let priceBtc: String
     let marketCapUsd: String
 
     // These are numeric in the sample payload
     let volume24: Double
     let volume24a: Double
-
-//    let csupply: String
-//    let tsupply: String
-//    let msupply: String
 }
 
 struct Info: Decodable {

@@ -15,18 +15,22 @@ class CryptoCurrency {
 	var value: Double
 	var imageData: Data?
 	var favourite: Bool = false
+	var marketCap: Double
 
-	init(id: String, name: String, value: Double, imageData: Data) {
+
+	init(id: String, name: String, value: Double, imageData: Data, marketCap: Double) {
 		self.id = id
 		self.name = name
 		self.value = value
 		self.imageData = imageData
+		self.marketCap = marketCap
 	}
 
-	init(id: String, name: String, value: Double) {
+	init(id: String, name: String, value: Double, marketCap: Double) {
 		self.id = id
 		self.name = name
 		self.value = value
+		self.marketCap = marketCap
 	}
 
 	var image: Image? {
@@ -37,19 +41,15 @@ class CryptoCurrency {
 	}
 
 	convenience init?(ticker: CryptoTicker) {
-		guard let price = Double(ticker.priceUsd) else {
+		guard let price = Double(ticker.priceUsd), let marketCap = Double(ticker.marketCapUsd) else {
 			// TODO: In this case, don't even save this item
 			return nil
 		}
 		self.init(id: ticker.symbol,
 				  name: ticker.name,
-				  value: price
+				  value: price,
+				  marketCap: marketCap
 		)
 	}
-
-	// TODO: Probably no need for a setter in swift. I don't really know yet
-//	func updateImageData(_ data: Data) {
-//		self.imageData = data
-//	}
 
 }

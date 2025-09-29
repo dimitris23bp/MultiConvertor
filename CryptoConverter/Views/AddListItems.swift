@@ -3,7 +3,7 @@ import SwiftData
 
 struct AddListItems: View {
     @Environment(\.dismiss) private var dismiss
-    @Query(sort: \CryptoCurrency.id, animation: .default) private var cryptocurrencies: [CryptoCurrency]
+	@Query(sort: \CryptoCurrency.marketCap, order: .reverse, animation: .default) private var cryptocurrencies: [CryptoCurrency]
 
 	@State private var searchText: String = ""
 	let imageSize: CGFloat
@@ -25,12 +25,14 @@ struct AddListItems: View {
 						HStack {
 							if crypto.imageData != nil {
 								crypto.image!
+									.interpolation(.none)
 									.resizable()
 									.scaledToFit()
 									.frame(width: imageSize, height: imageSize)
 							} else {
 								AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
 									image.image?
+										.interpolation(.none)
 										.resizable()
 										.scaledToFit()
 										.frame(width: imageSize, height: imageSize)

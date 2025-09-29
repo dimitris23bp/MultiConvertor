@@ -15,7 +15,8 @@ struct Previews {
 			id: "BTC",
 			name: "Bitcoin",
 			value: 60000,
-			imageData: UIImage(named: "bitcoin")!.pngData()!
+			imageData: UIImage(named: "bitcoin")!.pngData()!,
+			marketCap: 6_000_000
 		)
 	}
 

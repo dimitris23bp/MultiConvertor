@@ -21,7 +21,7 @@ struct ContentView: View {
 	@State private var isShowingSheet = false
 	@FocusState private var focusedCryptoId: String?
 
-	let imageSize: CGFloat = 48
+	let imageSize: CGFloat = 42
 	private var dynamicPredicate: Predicate<CryptoCurrency> {
 		#Predicate<CryptoCurrency> { crypto in
 			crypto.favourite
