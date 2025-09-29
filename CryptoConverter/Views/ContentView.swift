@@ -29,95 +29,109 @@ struct ContentView: View {
 	}
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { cryptocurrency in
-					HStack {
-						if cryptocurrency.imageData != nil {
-							cryptocurrency.image!
-								.resizable()
-								.scaledToFit()
-								.frame(width: imageSize, height: imageSize)
-						} else {
-							AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
-								image.image?
-									.resizable()
-									.scaledToFit()
-									.frame(width: imageSize, height: imageSize)
-							}
+		Group {
 
-						}
-
-						VStack(alignment: .leading) {
-							Text("\(cryptocurrency.id)")
-							Text("\(cryptocurrency.name)")
-								.minimumScaleFactor(0.75)
-								.lineLimit(1)
-						}
-						.padding()
-
-						Spacer()
-
-						TextField("0", text: Binding(
-							get: {
-								let value = inputTexts[cryptocurrency.id] ?? 0
-								return value == 0 ? "" : String(format: "%.10f", value)
-							},
-							set: { input in
-								inputTexts[cryptocurrency.id] = Double(input) ?? 0
-								updateInputs(basedOn: cryptocurrency.id, with: inputTexts[cryptocurrency.id] ?? 0)
-							}
-						))
-						.multilineTextAlignment(.trailing) // aligns text inside TextField to right
-						.keyboardType(.decimalPad)
-						.autocorrectionDisabled()
-						.font(.title)
-						.focused($focusedCryptoId, equals: cryptocurrency.id)
-
+			if cryptocurrencies.filter({ $0.imageData != nil }).count < 50 {
+				ContentUnavailableView {
+					VStack(spacing: 8) {
+						Label("Wait for data to be fetched", image: .bitcoin)
+							.padding()
+						ProgressView()
+							.progressViewStyle(CircularProgressViewStyle())
 					}
-					.swipeActions(edge: .trailing) {
-						Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
-							withAnimation {
-								cryptocurrency.favourite.toggle()
+				}
+			} else {
+				NavigationSplitView {
+					List {
+						ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { cryptocurrency in
+							HStack {
+								if cryptocurrency.imageData != nil {
+									cryptocurrency.image!
+										.resizable()
+										.scaledToFit()
+										.frame(width: imageSize, height: imageSize)
+								} else {
+									AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
+										image.image?
+											.resizable()
+											.scaledToFit()
+											.frame(width: imageSize, height: imageSize)
+									}
+
+								}
+
+								VStack(alignment: .leading) {
+									Text("\(cryptocurrency.id)")
+									Text("\(cryptocurrency.name)")
+										.minimumScaleFactor(0.75)
+										.lineLimit(1)
+								}
+								.padding()
+
+								Spacer()
+
+								TextField("0", text: Binding(
+									get: {
+										let value = inputTexts[cryptocurrency.id] ?? 0
+										return value == 0 ? "" : String(format: "%.10f", value)
+									},
+									set: { input in
+										inputTexts[cryptocurrency.id] = Double(input) ?? 0
+										updateInputs(basedOn: cryptocurrency.id, with: inputTexts[cryptocurrency.id] ?? 0)
+									}
+								))
+								.multilineTextAlignment(.trailing) // aligns text inside TextField to right
+								.keyboardType(.decimalPad)
+								.autocorrectionDisabled()
+								.font(.title)
+								.focused($focusedCryptoId, equals: cryptocurrency.id)
+
 							}
-							do {
-								try modelContext.save()
-							} catch {
-								print(error)
+							.swipeActions(edge: .trailing) {
+								Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
+									withAnimation {
+										cryptocurrency.favourite.toggle()
+									}
+									do {
+										try modelContext.save()
+									} catch {
+										print(error)
+									}
+								}
+								.tint(.red)
 							}
 						}
-						.tint(.red)
 					}
-                }
-            }
-			.scrollDismissesKeyboard(.interactively)
-			.task(priority: .userInitiated) {
-				print("Task is called")
-				print("Cryptos saved so far: \(cryptocurrencies.count)")
-				if cryptocurrencies.count < 3 {
-					await fetchCryptos()
+					.scrollDismissesKeyboard(.interactively)
+					.onChange(of: scenePhase, { _, newValue in
+						if newValue != .active {
+							focusedCryptoId = nil
+						}
+					})
+					.toolbar {
+						ToolbarItem(placement: .navigationBarTrailing) {
+							Button(action: {
+								isShowingSheet.toggle()
+							}) {
+								Image(systemName: "plus")
+							}
+							.sheet(isPresented: $isShowingSheet) {
+								AddListItems(imageSize: imageSize)
+							}
+						}
+					}
+				} detail: {
+					Text("Select an item")
 				}
 			}
-			.onChange(of: scenePhase, { _, newValue in
-				if newValue != .active {
-					focusedCryptoId = nil
-				}
-			})
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-					Button(action: {
-						isShowingSheet.toggle()
-					}) {
-						Image(systemName: "plus")
-					}
-					.sheet(isPresented: $isShowingSheet) {
-						AddListItems(imageSize: imageSize)
-					}
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
+		}
+		.task(priority: .userInitiated) {
+			print("Task is called.")
+			print("Cryptos saved so far: \(cryptocurrencies.count)")
+			if cryptocurrencies.count < 3 {
+				await fetchCryptos()
+			}
+		}
     }
 
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
@@ -155,6 +169,7 @@ struct ContentView: View {
 		Task {
 			let idsAndUrls = try! await imageService.fetchLogoURLs(for: cryptocurrencies.map(\.id))
 			await fillInDatabase(idsAndUrls)
+
 		}
 	}
 
@@ -179,4 +194,3 @@ struct ContentView: View {
     ContentView()
 		.modelContainer(Previews.preview)
 }
-
