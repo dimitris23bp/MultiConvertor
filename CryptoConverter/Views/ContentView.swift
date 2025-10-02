@@ -17,6 +17,9 @@ struct ContentView: View {
 	private let imageService = ImageService()
 	private let cryptoService = CryptoService()
 
+	@State private var lastExecution: Date = UserDefaults.standard.object(forKey: "lastExecution") as? Date ?? .distantPast
+	@State private var timer: Timer?
+
 	@State private var inputTexts: [String: Double] = [:]
 	@State private var isShowingSheet = false
 	@FocusState private var focusedCryptoId: String?
@@ -103,11 +106,6 @@ struct ContentView: View {
 						}
 					}
 					.scrollDismissesKeyboard(.interactively)
-					.onChange(of: scenePhase, { _, newValue in
-						if newValue != .active {
-							focusedCryptoId = nil
-						}
-					})
 					.toolbar {
 						ToolbarItem(placement: .navigationBarTrailing) {
 							Button(action: {
@@ -125,14 +123,57 @@ struct ContentView: View {
 				}
 			}
 		}
-		.task(priority: .userInitiated) {
-			print("Task is called.")
-			print("Cryptos saved so far: \(cryptocurrencies.count)")
-			if cryptocurrencies.count < 3 {
-				await fetchCryptos()
+		.onAppear {
+			Task {
+				print("Task is called.")
+				print("Cryptos saved so far: \(cryptocurrencies.count)")
+				// Check immediately on appear
+				if checkIfNeeded() {
+					await updateCryptos()
+				} else if cryptocurrencies.count < 3 {
+					await fetchCryptos()
+				}
+				await startTimer()
 			}
 		}
+		.onDisappear {
+			timer?.invalidate()
+		}
+		.onChange(of: scenePhase, { _, newValue in
+			switch newValue {
+			case .active:
+				if checkIfNeeded() {
+					Task {
+						await updateCryptos()
+					}
+				}
+			default:
+				focusedCryptoId = nil
+			}
+		})
     }
+
+	private func startTimer() async {
+		// Run check every minute while app is open
+		timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+			if checkIfNeeded() {
+				Task {
+					print("Execution inside the timer.")
+					await updateCryptos()
+				}
+			}
+		}
+	}
+
+	private func checkIfNeeded() -> Bool {
+		let now = Date()
+		let elapsed = now.timeIntervalSince(lastExecution)
+
+		if elapsed >= 3600 { // 1 hour
+			return true
+		}
+		return false
+	}
 
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
 		let crypto = cryptocurrencies.first(where: { $0.id == cryptoId })!
@@ -144,7 +185,38 @@ struct ContentView: View {
 
 		}
 	}
+
+	private func updateCryptos() async {
+//		print("Update cryptos")
+//		if let cryptoToPrint = cryptocurrencies.first(where: { $0.id == "BTC" }) {
+//			print("The value of BTC is: \(cryptoToPrint.value)")
+//		}
+		lastExecution = Date()
+		UserDefaults.standard.set(lastExecution, forKey: "lastExecution")
+
+		do {
+			let tickers = try await cryptoService.fetchTickers()
+			for ticker in tickers {
+				if let crypto = CryptoCurrency(ticker: ticker) {
+					if let cryptoToUpdate = cryptocurrencies.first(where: { $0.id == crypto.id }) {
+						if cryptoToUpdate.id == "BTC" {
+							print("The saved value of BTC is: \(cryptoToUpdate.value)")
+							print("The upcoming value of BTC is: \(crypto.value)")
+						}
+						cryptoToUpdate.value = crypto.value
+						cryptoToUpdate.marketCap = crypto.marketCap
+					}
+				}
+			}
+		} catch {
+			print(error)
+		}
+	}
+
 	private func fetchCryptos() async {
+		lastExecution = Date()
+		UserDefaults.standard.set(lastExecution, forKey: "lastExecution")
+
 		do {
 			let tickers = try await cryptoService.fetchTickers()
 			for ticker in tickers {
@@ -157,12 +229,15 @@ struct ContentView: View {
 //					try await Task.sleep(nanoseconds: 1_000_000)
 				}
 			}
+
+			try modelContext.save()
+
+			print("FetchLogoURLs is called")
+			fetchLogoURLs()
+
 		} catch {
 			print(error)
 		}
-		print("FetchLogoURLs is called")
-
-		fetchLogoURLs()
 	}
 
 	private func fetchLogoURLs() {
