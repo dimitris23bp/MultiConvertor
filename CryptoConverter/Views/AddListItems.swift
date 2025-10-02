@@ -30,13 +30,10 @@ struct AddListItems: View {
 									.scaledToFit()
 									.frame(width: imageSize, height: imageSize)
 							} else {
-								AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
-									image.image?
-										.interpolation(.none)
+								Image(systemName: "questionmark")
 										.resizable()
 										.scaledToFit()
 										.frame(width: imageSize, height: imageSize)
-								}
 
 							}
 

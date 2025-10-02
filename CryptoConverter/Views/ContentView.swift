@@ -54,12 +54,13 @@ struct ContentView: View {
 										.scaledToFit()
 										.frame(width: imageSize, height: imageSize)
 								} else {
-									AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
-										image.image?
+//									AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
+									//										image.image?
+									Image(systemName: "questionmark")
 											.resizable()
 											.scaledToFit()
 											.frame(width: imageSize, height: imageSize)
-									}
+//									}
 
 								}
 
@@ -187,10 +188,6 @@ struct ContentView: View {
 	}
 
 	private func updateCryptos() async {
-//		print("Update cryptos")
-//		if let cryptoToPrint = cryptocurrencies.first(where: { $0.id == "BTC" }) {
-//			print("The value of BTC is: \(cryptoToPrint.value)")
-//		}
 		lastExecution = Date()
 		UserDefaults.standard.set(lastExecution, forKey: "lastExecution")
 
@@ -199,10 +196,6 @@ struct ContentView: View {
 			for ticker in tickers {
 				if let crypto = CryptoCurrency(ticker: ticker) {
 					if let cryptoToUpdate = cryptocurrencies.first(where: { $0.id == crypto.id }) {
-						if cryptoToUpdate.id == "BTC" {
-							print("The saved value of BTC is: \(cryptoToUpdate.value)")
-							print("The upcoming value of BTC is: \(crypto.value)")
-						}
 						cryptoToUpdate.value = crypto.value
 						cryptoToUpdate.marketCap = crypto.marketCap
 					}
