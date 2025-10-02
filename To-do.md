@@ -5,7 +5,6 @@
 ### Frontend
 
 - Display the last time the data were updated
-- Add a fake image for every coin that doesn't have an image
 - Display the numbers better
 	- Correct size
 	- Correct number of floating points
@@ -18,7 +17,6 @@
 - Add unit tests
 	- For services
 	- For SwiftUI
-- Update the values every some time interval 
 
 ## Long-term
 
@@ -43,7 +41,5 @@
 
 # Next on the line
 
-- Update the prices every now and then
 - Add a footer with the time that it was updated last time
 - Display the numbers better
-- Add a fake image for every coin that doesn't have an image
