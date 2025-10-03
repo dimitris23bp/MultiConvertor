@@ -14,6 +14,13 @@ struct ContentView: View {
 
 	@Query(sort: \CryptoCurrency.id, animation: .default) private var cryptocurrencies: [CryptoCurrency]
 
+	@Query(
+		   filter: #Predicate<CryptoCurrency> { $0.favourite },
+		   sort: \.id,
+		   animation: .default
+		 ) private var favouriteCryptos: [CryptoCurrency]
+
+
 	private let imageService = ImageService()
 	private let cryptoService = CryptoService()
 
@@ -25,11 +32,6 @@ struct ContentView: View {
 	@FocusState private var focusedCryptoId: String?
 
 	let imageSize: CGFloat = 42
-	private var dynamicPredicate: Predicate<CryptoCurrency> {
-		#Predicate<CryptoCurrency> { crypto in
-			crypto.favourite
-		}
-	}
 
     var body: some View {
 		Group {
@@ -37,7 +39,7 @@ struct ContentView: View {
 			if cryptocurrencies.filter({ $0.imageData != nil }).count < 50 {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
-						Label("Wait for data to be fetched", image: .bitcoin)
+						Label("Wait for data to be fetched.", image: .bitcoin)
 							.padding()
 						ProgressView()
 							.progressViewStyle(CircularProgressViewStyle())
@@ -46,7 +48,7 @@ struct ContentView: View {
 			} else {
 				NavigationSplitView {
 					List {
-						ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { cryptocurrency in
+						ForEach(favouriteCryptos) { cryptocurrency in
 							HStack {
 								if cryptocurrency.imageData != nil {
 									cryptocurrency.image!
@@ -54,13 +56,10 @@ struct ContentView: View {
 										.scaledToFit()
 										.frame(width: imageSize, height: imageSize)
 								} else {
-//									AsyncImage(url: URL(string:"https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")) { image in
-									//										image.image?
 									Image(systemName: "questionmark")
 											.resizable()
 											.scaledToFit()
 											.frame(width: imageSize, height: imageSize)
-//									}
 
 								}
 
@@ -130,8 +129,10 @@ struct ContentView: View {
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
 				// Check immediately on appear
 				if checkIfNeeded() {
+					updateLastExecution()
 					await updateCryptos()
 				} else if cryptocurrencies.count < 3 {
+					updateLastExecution()
 					await fetchCryptos()
 				}
 				await startTimer()
@@ -145,6 +146,7 @@ struct ContentView: View {
 			case .active:
 				if checkIfNeeded() {
 					Task {
+						updateLastExecution()
 						await updateCryptos()
 					}
 				}
@@ -158,8 +160,8 @@ struct ContentView: View {
 		// Run check every minute while app is open
 		timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
 			if checkIfNeeded() {
+				updateLastExecution()
 				Task {
-					print("Execution inside the timer.")
 					await updateCryptos()
 				}
 			}
@@ -187,10 +189,12 @@ struct ContentView: View {
 		}
 	}
 
-	private func updateCryptos() async {
+	private func updateLastExecution() {
 		lastExecution = Date()
 		UserDefaults.standard.set(lastExecution, forKey: "lastExecution")
+	}
 
+	private func updateCryptos() async {
 		do {
 			let tickers = try await cryptoService.fetchTickers()
 			for ticker in tickers {
@@ -207,9 +211,6 @@ struct ContentView: View {
 	}
 
 	private func fetchCryptos() async {
-		lastExecution = Date()
-		UserDefaults.standard.set(lastExecution, forKey: "lastExecution")
-
 		do {
 			let tickers = try await cryptoService.fetchTickers()
 			for ticker in tickers {
