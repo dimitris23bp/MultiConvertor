@@ -22,9 +22,7 @@ struct ContentView: View {
 
 	// Repository that encapsulates API + SwiftData mutations
 	@State private var repository: CryptoRepository?
-
-	@State private var lastExecution: Date = UserDefaults.standard.object(forKey: "lastExecution") as? Date ?? .distantPast
-	@State private var timer: Timer?
+	@StateObject private var scheduler = TickerUpdateScheduler()
 
 	@State private var inputTexts: [String: Double] = [:]
 	@State private var isShowingSheet = false
@@ -127,25 +125,27 @@ struct ContentView: View {
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
 				// Check immediately on appear
-				if checkIfNeeded() {
-					updateLastExecution()
+				if scheduler.checkIfNeeded() {
+					scheduler.updateLastExecution()
 					try? await repository?.updateTickerValues()
 				} else if cryptocurrencies.count < 3 {
-					updateLastExecution()
+					scheduler.updateLastExecution()
 					try? await repository?.ensureInitialDataIfNeeded()
 				}
-				await startTimer()
+				scheduler.start { [weak repository = repository] in
+					try? await repository?.updateTickerValues()
+				}
 			}
 		}
 		.onDisappear {
-			timer?.invalidate()
+			scheduler.stop()
 		}
 		.onChange(of: scenePhase, { _, newValue in
 			switch newValue {
 			case .active:
-				if checkIfNeeded() {
+				if scheduler.checkIfNeeded() {
 					Task {
-						updateLastExecution()
+						scheduler.updateLastExecution()
 						try? await repository?.updateTickerValues()
 					}
 				}
@@ -155,34 +155,11 @@ struct ContentView: View {
 		})
 	}
 
-	private func startTimer() async {
-		// Run check every minute while app is open
-		timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
-			if checkIfNeeded() {
-				updateLastExecution()
-				Task {
-					try? await repository?.updateTickerValues()
-				}
-			}
-		}
-	}
-
-	private func checkIfNeeded() -> Bool {
-		let now = Date()
-		let elapsed = now.timeIntervalSince(lastExecution)
-		return elapsed >= 3600 // 1 hour
-	}
-
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
 		guard let crypto = cryptocurrencies.first(where: { $0.id == cryptoId }) else { return }
 		for cryptocurrency in cryptocurrencies where cryptocurrency.favourite {
 			inputTexts[cryptocurrency.id] = (crypto.value * value) / cryptocurrency.value
 		}
-	}
-
-	private func updateLastExecution() {
-		lastExecution = Date()
-		UserDefaults.standard.set(lastExecution, forKey: "lastExecution")
 	}
 }
 
