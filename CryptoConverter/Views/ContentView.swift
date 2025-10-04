@@ -79,12 +79,25 @@ struct ContentView: View {
 									TextField("0", text: Binding(
 										get: {
 											let value = inputTexts[cryptocurrency.id]?.amountDouble ?? 0
-											return displayCorrectValue(value)
+											let displayedValue = displayCorrectValue(value)
+											if cryptocurrency.id == "ETH" {
+												print("Value of ETH is: \(displayedValue)")
+											}
+											return displayedValue
 										},
 										set: { input in
+											let previousInput = inputTexts[cryptocurrency.id]?.amountString
+											if input == previousInput {
+												if cryptocurrency.id == "BTC" {
+													print("No need for this")
+												}
+												return
+											}
+
 											let inputValues = inputTexts[cryptocurrency.id] ?? InputValues(amountString: "", amountDouble: 0)
 											if inputValues.amountString != input || input == "" {
-												updateInputs(basedOn: cryptocurrency.id, with: Double(input) ?? 0)
+												// TODO: For me to remember: I switched separetor, now I need to add . or , for the thousands e.g. 1.234.456,56
+												updateInputs(basedOn: cryptocurrency.id, with: parseLocaleDouble(from: input) ?? 0)
 											}
 										}
 									))
@@ -181,13 +194,41 @@ struct ContentView: View {
 		})
 	}
 
-	private func displayCorrectValue(_ value: Double) -> String {
-		if value == 0 {
-			return ""
+	func parseLocaleDouble(from string: String) -> Double? {
+		let formatter = NumberFormatter()
+		formatter.locale = Locale.current
+
+		let stringToParse: String
+		if formatter.groupingSeparator == "," {
+			stringToParse = string.replacingOccurrences(of: ",", with: "")
+		} else if formatter.groupingSeparator == "." {
+			stringToParse = string.replacingOccurrences(of: ".", with: "")
+		} else {
+			stringToParse = string
 		}
-		let formatted = String(format: "%f", value)
-		let trimmed = formatted.replacingOccurrences(of: "0+$", with: "", options: .regularExpression)
-		return trimmed.replacingOccurrences(of: "\\.$", with: "", options: .regularExpression)
+
+		// Configure formatter for decimal numbers
+		formatter.numberStyle = .decimal
+
+		return formatter.number(from: stringToParse)?.doubleValue
+	}
+
+	private func displayCorrectValue(_ value: Double) -> String {
+	    if value == 0 {
+	        return ""
+	    }
+	    let formatter = NumberFormatter()
+	    formatter.locale = Locale.current
+	    formatter.numberStyle = .decimal
+	    formatter.maximumFractionDigits = 8
+	    formatter.minimumFractionDigits = 0
+	    formatter.usesGroupingSeparator = true
+	    
+	    if let formattedString = formatter.string(from: NSNumber(value: value)) {
+	        return formattedString
+	    } else {
+	        return String(value)
+	    }
 	}
 
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
@@ -195,8 +236,10 @@ struct ContentView: View {
 		for cryptocurrency in cryptocurrencies where cryptocurrency.favourite {
 			let valueDouble = (crypto.value * value) / cryptocurrency.value
 			if valueDouble.isZero {
+				// Clear input for zero value to match displayCorrectValue logic
 				inputTexts[cryptocurrency.id] = InputValues(amountString: "", amountDouble: valueDouble)
 			} else {
+				// Use displayCorrectValue to format respecting user's locale
 				let formattedValueString = displayCorrectValue(valueDouble)
 				inputTexts[cryptocurrency.id] = InputValues(amountString: formattedValueString, amountDouble: valueDouble)
 			}
@@ -208,4 +251,3 @@ struct ContentView: View {
     ContentView()
 		.modelContainer(Previews.preview)
 }
-
