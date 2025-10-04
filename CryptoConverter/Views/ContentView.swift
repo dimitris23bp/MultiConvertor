@@ -51,64 +51,68 @@ struct ContentView: View {
 			} else {
 				NavigationSplitView {
 					List {
-						ForEach(favouriteCryptos) { cryptocurrency in
-							HStack {
-								if let image = cryptocurrency.image {
-									image
-										.resizable()
-										.scaledToFit()
-										.frame(width: imageSize, height: imageSize)
-								} else {
-									Image(systemName: "questionmark")
-										.resizable()
-										.scaledToFit()
-										.frame(width: imageSize, height: imageSize)
+						Section {
+							ForEach(favouriteCryptos) { cryptocurrency in
+								HStack {
+									if let image = cryptocurrency.image {
+										image
+											.resizable()
+											.scaledToFit()
+											.frame(width: imageSize, height: imageSize)
+									} else {
+										Image(systemName: "questionmark")
+											.resizable()
+											.scaledToFit()
+											.frame(width: imageSize, height: imageSize)
+									}
+
+									VStack(alignment: .leading) {
+										Text("\(cryptocurrency.id)")
+										Text("\(cryptocurrency.name)")
+											.minimumScaleFactor(0.75)
+											.lineLimit(1)
+									}
+									.padding()
+
+									Spacer()
+
+									TextField("0", text: Binding(
+										get: {
+											let value = inputTexts[cryptocurrency.id]?.amountDouble ?? 0
+											return displayCorrectValue(value)
+										},
+										set: { input in
+											let inputValues = inputTexts[cryptocurrency.id] ?? InputValues(amountString: "", amountDouble: 0)
+											if inputValues.amountString != input || input == "" {
+												updateInputs(basedOn: cryptocurrency.id, with: Double(input) ?? 0)
+											}
+										}
+									))
+									.multilineTextAlignment(.trailing) // aligns text inside TextField to right
+									.keyboardType(.decimalPad)
+									.autocorrectionDisabled()
+									.tint(.clear)
+									.font(.title)
+									.padding(6)
+									.background(RoundedRectangle(cornerRadius: 6).fill(Color.gray.opacity(0.15)))
+									.focused($focusedCryptoId, equals: cryptocurrency.id)
 								}
-
-								VStack(alignment: .leading) {
-									Text("\(cryptocurrency.id)")
-									Text("\(cryptocurrency.name)")
-										.minimumScaleFactor(0.75)
-										.lineLimit(1)
-								}
-								.padding()
-
-								Spacer()
-
-								TextField("0", text: Binding(
-									get: {
-										let value = inputTexts[cryptocurrency.id]?.amountDouble ?? 0
-										return displayCorrectValue(value)
-									},
-									set: { input in
-										let inputValues = inputTexts[cryptocurrency.id] ?? InputValues(amountString: "", amountDouble: 0)
-										if inputValues.amountString != input || input == "" {
-											updateInputs(basedOn: cryptocurrency.id, with: Double(input) ?? 0)
+								.swipeActions(edge: .trailing) {
+									Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
+										withAnimation {
+											cryptocurrency.favourite.toggle()
+										}
+										do {
+											try modelContext.save()
+										} catch {
+											print(error)
 										}
 									}
-								))
-								.multilineTextAlignment(.trailing) // aligns text inside TextField to right
-								.keyboardType(.decimalPad)
-								.autocorrectionDisabled()
-								.tint(.clear)
-								.font(.title)
-								.padding(6)
-								.background(RoundedRectangle(cornerRadius: 6).fill(Color.gray.opacity(0.15)))
-								.focused($focusedCryptoId, equals: cryptocurrency.id)
-							}
-							.swipeActions(edge: .trailing) {
-								Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
-									withAnimation {
-										cryptocurrency.favourite.toggle()
-									}
-									do {
-										try modelContext.save()
-									} catch {
-										print(error)
-									}
+									.tint(.red)
 								}
-								.tint(.red)
 							}
+						} footer: {
+							Text("Last updated: \(scheduler.formattedLastExecutionTime)")
 						}
 					}
 					.scrollDismissesKeyboard(.interactively)
