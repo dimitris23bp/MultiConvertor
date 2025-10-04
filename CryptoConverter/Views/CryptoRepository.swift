@@ -74,7 +74,6 @@ final class CryptoRepository {
     /// Fetches logo URLs for all known cryptos and stores the image data.
     /// Saves after each image assignment to mirror the previous behavior.
     private func fetchAndStoreLogosForAll() async throws {
-		// TODO: Does it need to fetch them? Can't it get them from the function that is calling it?
         let all = try fetchAllCryptos()
         guard !all.isEmpty else { return }
 
@@ -98,8 +97,6 @@ final class CryptoRepository {
     // MARK: - Helpers
 
     private func fetchAllCryptos() throws -> [CryptoCurrency] {
-		// TODO: Isn't it slower to fetch the data all the time than storing them as a Query in our class? I am not sure about the difference between the two in terms of performance
         try modelContext.fetch(FetchDescriptor<CryptoCurrency>())
     }
 }
-
