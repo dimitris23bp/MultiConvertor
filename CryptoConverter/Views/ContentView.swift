@@ -87,8 +87,12 @@ struct ContentView: View {
 
 										// TODO: Not sure if "" or "0"
 										let inputValues = inputTexts[cryptocurrency.id] ?? InputValues(amountString: "", amountDouble: 0)
-										// TODO: Issue is here, because I do Double(input) instead of getting the value from the saved InputValues
-										updateInputs(basedOn: cryptocurrency.id, with: Double(input) ?? 0)
+										print("input is: \(input)")
+										print("inputValues.amountString is: \(inputValues.amountString)")
+										if inputValues.amountString != input || input == "" {
+											// TODO: Issue is here, because I do Double(input) instead of getting the value from the saved InputValues
+											updateInputs(basedOn: cryptocurrency.id, with: Double(input) ?? 0)
+										}
 									}
 								))
 								.multilineTextAlignment(.trailing) // aligns text inside TextField to right
@@ -175,22 +179,23 @@ struct ContentView: View {
 			return ""
 		}
 		let formatted = String(format: "%f", value)
-		let trimmed = formatted.replacingOccurrences(of: "([0]*$)|((\\.)$)", with: "", options: .regularExpression)
-		return trimmed
+		let trimmed = formatted.replacingOccurrences(of: "0+$", with: "", options: .regularExpression)
+		return trimmed.replacingOccurrences(of: "\\.$", with: "", options: .regularExpression)
 	}
 
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
 		guard let crypto = cryptocurrencies.first(where: { $0.id == cryptoId }) else { return }
 		for cryptocurrency in cryptocurrencies where cryptocurrency.favourite {
 			let valueDouble = (crypto.value * value) / cryptocurrency.value
-			print("Value in update is: \(valueDouble)")
+//			print("Value in update is: \(valueDouble)")
 //			inputTexts[cryptocurrency.id] = String(format: "%.8f", valueDouble)
 			if valueDouble.isZero {
 //				inputTexts[cryptocurrency.id] = ""
 				inputTexts[cryptocurrency.id] = InputValues(amountString: "", amountDouble: valueDouble)
 			} else {
 //				inputTexts[cryptocurrency.id] = String(valueDouble)
-				inputTexts[cryptocurrency.id] = InputValues(amountString: String(valueDouble), amountDouble: valueDouble)
+				let formattedValueString = displayCorrectValue(valueDouble)
+				inputTexts[cryptocurrency.id] = InputValues(amountString: formattedValueString, amountDouble: valueDouble)
 			}
 		}
 	}
