@@ -77,20 +77,12 @@ struct ContentView: View {
 
 								TextField("0", text: Binding(
 									get: {
-										// Use the double to not lose any important information
 										let value = inputTexts[cryptocurrency.id]?.amountDouble ?? 0
-//										print("Value: \(value)")
-										// Display only the string to not bloat it with info
 										return displayCorrectValue(value)
 									},
 									set: { input in
-
-										// TODO: Not sure if "" or "0"
 										let inputValues = inputTexts[cryptocurrency.id] ?? InputValues(amountString: "", amountDouble: 0)
-										print("input is: \(input)")
-										print("inputValues.amountString is: \(inputValues.amountString)")
 										if inputValues.amountString != input || input == "" {
-											// TODO: Issue is here, because I do Double(input) instead of getting the value from the saved InputValues
 											updateInputs(basedOn: cryptocurrency.id, with: Double(input) ?? 0)
 										}
 									}
@@ -98,7 +90,10 @@ struct ContentView: View {
 								.multilineTextAlignment(.trailing) // aligns text inside TextField to right
 								.keyboardType(.decimalPad)
 								.autocorrectionDisabled()
+								.tint(.clear)
 								.font(.title)
+								.padding(6)
+								.background(RoundedRectangle(cornerRadius: 6).fill(Color.gray.opacity(0.15)))
 								.focused($focusedCryptoId, equals: cryptocurrency.id)
 							}
 							.swipeActions(edge: .trailing) {
@@ -187,13 +182,9 @@ struct ContentView: View {
 		guard let crypto = cryptocurrencies.first(where: { $0.id == cryptoId }) else { return }
 		for cryptocurrency in cryptocurrencies where cryptocurrency.favourite {
 			let valueDouble = (crypto.value * value) / cryptocurrency.value
-//			print("Value in update is: \(valueDouble)")
-//			inputTexts[cryptocurrency.id] = String(format: "%.8f", valueDouble)
 			if valueDouble.isZero {
-//				inputTexts[cryptocurrency.id] = ""
 				inputTexts[cryptocurrency.id] = InputValues(amountString: "", amountDouble: valueDouble)
 			} else {
-//				inputTexts[cryptocurrency.id] = String(valueDouble)
 				let formattedValueString = displayCorrectValue(valueDouble)
 				inputTexts[cryptocurrency.id] = InputValues(amountString: formattedValueString, amountDouble: valueDouble)
 			}
@@ -205,3 +196,4 @@ struct ContentView: View {
     ContentView()
 		.modelContainer(Previews.preview)
 }
+
