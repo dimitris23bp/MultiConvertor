@@ -126,6 +126,14 @@ struct ContentView: View {
 							.sheet(isPresented: $isShowingSheet) {
 								AddListItems(imageSize: imageSize)
 							}
+							.onChange(of: isShowingSheet) { _, newValue in
+								if newValue {
+									Task {
+										try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+										inputTexts = [:]
+									}
+								}
+							}
 						}
 					}
 				} detail: {
