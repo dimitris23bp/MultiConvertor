@@ -125,12 +125,14 @@ struct ContentView: View {
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
 				// Check immediately on appear
-				if scheduler.checkIfNeeded() {
-					scheduler.updateLastExecution()
-					try? await repository?.updateTickerValues()
-				} else if cryptocurrencies.count < 3 {
+				if cryptocurrencies.count < 3 {
 					scheduler.updateLastExecution()
 					try? await repository?.ensureInitialDataIfNeeded()
+					print("Initial data has happened")
+				} else if scheduler.checkIfNeeded() {
+					scheduler.updateLastExecution()
+					try? await repository?.updateTickerValues()
+					print("Update has happened")
 				}
 				scheduler.start { [weak repository = repository] in
 					try? await repository?.updateTickerValues()
