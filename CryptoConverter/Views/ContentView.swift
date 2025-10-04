@@ -8,6 +8,13 @@
 import SwiftUI
 import SwiftData
 
+struct InputValues {
+	// Store the trimmed value 1.23456789 will be "1.234567"
+	var amountString: String
+	// Stores the real value, to be precise in calculations
+	var amountDouble: Double
+}
+
 struct ContentView: View {
 	@Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
@@ -24,7 +31,7 @@ struct ContentView: View {
 	@State private var repository: CryptoRepository?
 	@StateObject private var scheduler = TickerUpdateScheduler()
 
-	@State private var inputTexts: [String: Double] = [:]
+	@State private var inputTexts: [String: InputValues] = [:]
 	@State private var isShowingSheet = false
 	@FocusState private var focusedCryptoId: String?
 
@@ -70,12 +77,18 @@ struct ContentView: View {
 
 								TextField("0", text: Binding(
 									get: {
-										let value = inputTexts[cryptocurrency.id] ?? 0
-										return value == 0 ? "" : String(format: "%.10f", value)
+										// Use the double to not lose any important information
+										let value = inputTexts[cryptocurrency.id]?.amountDouble ?? 0
+//										print("Value: \(value)")
+										// Display only the string to not bloat it with info
+										return displayCorrectValue(value)
 									},
 									set: { input in
-										inputTexts[cryptocurrency.id] = Double(input) ?? 0
-										updateInputs(basedOn: cryptocurrency.id, with: inputTexts[cryptocurrency.id] ?? 0)
+
+										// TODO: Not sure if "" or "0"
+										let inputValues = inputTexts[cryptocurrency.id] ?? InputValues(amountString: "", amountDouble: 0)
+										// TODO: Issue is here, because I do Double(input) instead of getting the value from the saved InputValues
+										updateInputs(basedOn: cryptocurrency.id, with: Double(input) ?? 0)
 									}
 								))
 								.multilineTextAlignment(.trailing) // aligns text inside TextField to right
@@ -157,10 +170,28 @@ struct ContentView: View {
 		})
 	}
 
+	private func displayCorrectValue(_ value: Double) -> String {
+		if value == 0 {
+			return ""
+		}
+		let formatted = String(format: "%f", value)
+		let trimmed = formatted.replacingOccurrences(of: "([0]*$)|((\\.)$)", with: "", options: .regularExpression)
+		return trimmed
+	}
+
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
 		guard let crypto = cryptocurrencies.first(where: { $0.id == cryptoId }) else { return }
 		for cryptocurrency in cryptocurrencies where cryptocurrency.favourite {
-			inputTexts[cryptocurrency.id] = (crypto.value * value) / cryptocurrency.value
+			let valueDouble = (crypto.value * value) / cryptocurrency.value
+			print("Value in update is: \(valueDouble)")
+//			inputTexts[cryptocurrency.id] = String(format: "%.8f", valueDouble)
+			if valueDouble.isZero {
+//				inputTexts[cryptocurrency.id] = ""
+				inputTexts[cryptocurrency.id] = InputValues(amountString: "", amountDouble: valueDouble)
+			} else {
+//				inputTexts[cryptocurrency.id] = String(valueDouble)
+				inputTexts[cryptocurrency.id] = InputValues(amountString: String(valueDouble), amountDouble: valueDouble)
+			}
 		}
 	}
 }
