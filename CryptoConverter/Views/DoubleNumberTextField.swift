@@ -34,21 +34,7 @@ struct DoubleNumberTextField: UIViewRepresentable {
         }
 
         func textFieldDidBeginEditing(_ textField: UITextField) {
-            // Store the cursor's logical position
-            let originalText = textField.text ?? ""
-            guard let selectedRange = textField.selectedTextRange else { return }
-            let cursorOffset = textField.offset(from: textField.beginningOfDocument, to: selectedRange.start)
-            let textBeforeCursor = String(originalText.prefix(cursorOffset))
-            let separatorsBefore = textBeforeCursor.filter { String($0) == parent.formatter.groupingSeparator }.count
-            
-            let unformattedText = originalText.replacingOccurrences(of: parent.formatter.groupingSeparator, with: "")
-            textField.text = unformattedText
-            
-            // Restore cursor position
-            let newCursorOffset = cursorOffset - separatorsBefore
-            if let newPosition = textField.position(from: textField.beginningOfDocument, offset: newCursorOffset) {
-                textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
-            }
+            // Text remains formatted during editing. No action needed.
         }
 
         func textFieldDidEndEditing(_ textField: UITextField) {
