@@ -62,6 +62,16 @@ struct DoubleNumberTextField: UIViewRepresentable {
             }
             
             let decimalSeparator = parent.formatter.decimalSeparator ?? "."
+            let newText = (originalText as NSString).replacingCharacters(in: range, with: string)
+
+            // Enforce fraction digit limit
+            let components = newText.components(separatedBy: decimalSeparator)
+            if components.count > 1 {
+                let fractionalPart = components[1]
+                if fractionalPart.count > parent.formatter.maximumFractionDigits && !string.isEmpty {
+                    return false
+                }
+            }
             
             // Determine if the edit is happening in the fractional part of the number.
             var isEditingFractionalPart = false
@@ -77,7 +87,6 @@ struct DoubleNumberTextField: UIViewRepresentable {
                 isEditingFractionalPart = true
             }
 
-            let newText = (originalText as NSString).replacingCharacters(in: range, with: string)
             let unformattedText = newText.replacingOccurrences(of: parent.formatter.groupingSeparator, with: "")
 
             // 2. Update the parent's value
