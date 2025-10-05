@@ -56,25 +56,26 @@ struct DoubleNumberTextField: UIViewRepresentable {
                 return false
             }
             
-            // 2. Calculate the new unformatted text and the cursor's new logical position
-            let newText = (originalText as NSString).replacingCharacters(in: range, with: string)
+            let decimalSeparator = parent.formatter.decimalSeparator ?? "."
             
-            // If user is typing a decimal separator, just update the value and text
-            if string == parent.formatter.decimalSeparator {
-                if originalText.contains(string) { return false }
-                parent.value = parent.formatter.number(from: newText)?.doubleValue ?? 0.0
-                textField.text = newText
-                
-                // Set cursor position after the separator
-                if let newPosition = textField.position(from: textField.beginningOfDocument, offset: cursorOffset + string.count) {
-                    textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
+            // Determine if the edit is happening in the fractional part of the number.
+            var isEditingFractionalPart = false
+            if let decimalRange = originalText.range(of: decimalSeparator) {
+                let decimalPosition = originalText.distance(from: originalText.startIndex, to: decimalRange.lowerBound)
+                if range.location > decimalPosition {
+                    isEditingFractionalPart = true
                 }
-                return false
             }
-            
+            // Also true if the user is adding the decimal separator itself
+            if string == decimalSeparator {
+                if originalText.contains(string) { return false } // Don't allow multiple separators
+                isEditingFractionalPart = true
+            }
+
+            let newText = (originalText as NSString).replacingCharacters(in: range, with: string)
             let unformattedText = newText.replacingOccurrences(of: parent.formatter.groupingSeparator, with: "")
-            
-            // 3. Update the parent's value
+
+            // 2. Update the parent's value
             if let number = parent.formatter.number(from: unformattedText) {
                 parent.value = number.doubleValue
             } else if unformattedText.isEmpty {
@@ -83,17 +84,40 @@ struct DoubleNumberTextField: UIViewRepresentable {
                 // Not a valid number, reject the change
                 return false
             }
+
+            // 3. Set the text in the field
+            let textToSet: String
+            if isEditingFractionalPart {
+                let components = unformattedText.components(separatedBy: decimalSeparator)
+                let integerPartString = components.first ?? ""
+                
+                // Format the integer part to get grouping separators
+                let integerNumber = parent.formatter.number(from: integerPartString) ?? 0
+                let formattedIntegerPart = parent.formatter.string(from: integerNumber) ?? integerPartString
+                
+                if components.count > 1 {
+                    let fractionalPartString = components[1]
+                    textToSet = formattedIntegerPart + decimalSeparator + fractionalPartString
+                } else {
+                    // This happens when the user types the decimal separator for the first time
+                    textToSet = formattedIntegerPart + decimalSeparator
+                }
+            } else {
+                // For the integer part, re-format from the number to get grouping separators.
+                textToSet = parent.formatter.string(from: NSNumber(value: parent.value)) ?? ""
+            }
             
-            // 4. Format the text and calculate the new cursor position
-            let formattedText = parent.formatter.string(from: NSNumber(value: parent.value)) ?? ""
-            
+            textField.text = textToSet
+
+            // 4. Calculate and set the new cursor position
             let addedChars = string.count - range.length
-            let logicalCursorOffset = cursorOffset + addedChars
+            // The cursor position in the unformatted string
+            let logicalCursorOffset = cursorOffset - (originalText.prefix(cursorOffset).filter { String($0) == parent.formatter.groupingSeparator }.count) + addedChars
             
             var physicalCursorOffset = 0
             var logicalCharsCounted = 0
             
-            for char in formattedText {
+            for char in textToSet {
                 if logicalCharsCounted < logicalCursorOffset {
                     physicalCursorOffset += 1
                     if String(char) != parent.formatter.groupingSeparator {
@@ -103,16 +127,6 @@ struct DoubleNumberTextField: UIViewRepresentable {
                     break
                 }
             }
-            
-            // This handles a specific case where typing at the beginning can misplace the cursor
-            if logicalCursorOffset == 1 && physicalCursorOffset == 2 && formattedText.count > 1 {
-                 if String(formattedText.prefix(1)) == parent.formatter.groupingSeparator {
-                     physicalCursorOffset = 1
-                 }
-            }
-
-            // 5. Set the new text and cursor position
-            textField.text = formattedText
             
             if let newPosition = textField.position(from: textField.beginningOfDocument, offset: physicalCursorOffset) {
                 textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
