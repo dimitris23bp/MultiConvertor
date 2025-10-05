@@ -34,7 +34,12 @@ struct DoubleNumberTextField: UIViewRepresentable {
         }
 
         func textFieldDidBeginEditing(_ textField: UITextField) {
-            // Text remains formatted during editing. No action needed.
+            DispatchQueue.main.async {
+                // Move cursor to the end of the text
+                if let newPosition = textField.position(from: textField.endOfDocument, offset: 0) {
+                    textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
+                }
+            }
         }
 
         func textFieldDidEndEditing(_ textField: UITextField) {
