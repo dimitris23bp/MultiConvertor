@@ -4,13 +4,9 @@
 
 ### Frontend
 
-- Display the last time the data were updated
 - Display the numbers better
-	- Correct size
 	- Correct number of floating points
-	- No cursor
-	- Always start from the end
-- When I am on the sheet, put all numbers in contentView back to empty
+	- Show an indication that a field is focused
 
 ### Backend
 
@@ -38,8 +34,3 @@
 	- Find API for them
 	- API for the logos or flags of countries
 
-
-# Next on the line
-
-- Add a footer with the time that it was updated last time
-- Display the numbers better

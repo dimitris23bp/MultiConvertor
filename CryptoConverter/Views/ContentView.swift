@@ -8,6 +8,13 @@
 import SwiftUI
 import SwiftData
 
+struct InputValues {
+	// Store the trimmed value 1.23456789 will be "1.234567"
+	var amountString: String
+	// Stores the real value, to be precise in calculations
+	var amountDouble: Double
+}
+
 struct ContentView: View {
 	@Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
@@ -24,11 +31,19 @@ struct ContentView: View {
 	@State private var repository: CryptoRepository?
 	@StateObject private var scheduler = TickerUpdateScheduler()
 
-	@State private var inputTexts: [String: Double] = [:]
+	@State private var amounts: [String: Double] = [:]
 	@State private var isShowingSheet = false
 	@FocusState private var focusedCryptoId: String?
 
 	let imageSize: CGFloat = 42
+	
+	private var numberFormatter: NumberFormatter {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		formatter.locale = Locale.current
+		formatter.maximumFractionDigits = 8
+		return formatter
+	}
 
     var body: some View {
 		Group {
@@ -44,59 +59,60 @@ struct ContentView: View {
 			} else {
 				NavigationSplitView {
 					List {
-						ForEach(favouriteCryptos) { cryptocurrency in
-							HStack {
-								if let image = cryptocurrency.image {
-									image
-										.resizable()
-										.scaledToFit()
-										.frame(width: imageSize, height: imageSize)
-								} else {
-									Image(systemName: "questionmark")
-										.resizable()
-										.scaledToFit()
-										.frame(width: imageSize, height: imageSize)
-								}
-
-								VStack(alignment: .leading) {
-									Text("\(cryptocurrency.id)")
-									Text("\(cryptocurrency.name)")
-										.minimumScaleFactor(0.75)
-										.lineLimit(1)
-								}
-								.padding()
-
-								Spacer()
-
-								TextField("0", text: Binding(
-									get: {
-										let value = inputTexts[cryptocurrency.id] ?? 0
-										return value == 0 ? "" : String(format: "%.10f", value)
-									},
-									set: { input in
-										inputTexts[cryptocurrency.id] = Double(input) ?? 0
-										updateInputs(basedOn: cryptocurrency.id, with: inputTexts[cryptocurrency.id] ?? 0)
+						Section {
+							ForEach(favouriteCryptos) { cryptocurrency in
+								HStack {
+									if let image = cryptocurrency.image {
+										image
+											.resizable()
+											.scaledToFit()
+											.frame(width: imageSize, height: imageSize)
+									} else {
+										Image(systemName: "questionmark")
+											.resizable()
+											.scaledToFit()
+											.frame(width: imageSize, height: imageSize)
 									}
-								))
-								.multilineTextAlignment(.trailing) // aligns text inside TextField to right
-								.keyboardType(.decimalPad)
-								.autocorrectionDisabled()
-								.font(.title)
-								.focused($focusedCryptoId, equals: cryptocurrency.id)
+
+									VStack(alignment: .leading) {
+										Text("\(cryptocurrency.id)")
+										Text("\(cryptocurrency.name)")
+											.minimumScaleFactor(0.75)
+											.lineLimit(1)
+									}
+									.padding()
+
+									Spacer()
+
+									DoubleNumberTextField(
+										value: Binding(
+											get: { amounts[cryptocurrency.id] ?? 0.0 },
+											set: { newValue in
+												amounts[cryptocurrency.id] = newValue
+												updateInputs(basedOn: cryptocurrency.id, with: newValue)
+											}
+										),
+										formatter: numberFormatter
+									)
+									.focused($focusedCryptoId, equals: cryptocurrency.id)
+									.frame(height: 40)
+								}
+								.swipeActions(edge: .trailing) {
+									Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
+										withAnimation {
+											cryptocurrency.favourite.toggle()
+										}
+										do {
+											try modelContext.save()
+										} catch {
+											print(error)
+										}
+									}
+									.tint(.red)
+								}
 							}
-							.swipeActions(edge: .trailing) {
-								Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
-									withAnimation {
-										cryptocurrency.favourite.toggle()
-									}
-									do {
-										try modelContext.save()
-									} catch {
-										print(error)
-									}
-								}
-								.tint(.red)
-							}
+						} footer: {
+							Text("Last updated: \(scheduler.formattedLastExecutionTime)")
 						}
 					}
 					.scrollDismissesKeyboard(.interactively)
@@ -109,6 +125,14 @@ struct ContentView: View {
 							}
 							.sheet(isPresented: $isShowingSheet) {
 								AddListItems(imageSize: imageSize)
+							}
+							.onChange(of: isShowingSheet) { _, newValue in
+								if newValue {
+									Task {
+										try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+										amounts = [:]
+									}
+								}
 							}
 						}
 					}
@@ -160,7 +184,8 @@ struct ContentView: View {
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
 		guard let crypto = cryptocurrencies.first(where: { $0.id == cryptoId }) else { return }
 		for cryptocurrency in cryptocurrencies where cryptocurrency.favourite {
-			inputTexts[cryptocurrency.id] = (crypto.value * value) / cryptocurrency.value
+			let valueDouble = (crypto.value * value) / cryptocurrency.value
+			amounts[cryptocurrency.id] = valueDouble
 		}
 	}
 }

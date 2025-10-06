@@ -10,6 +10,13 @@ final class TickerUpdateScheduler: ObservableObject {
     private let userDefaultsKey = "lastExecution"
     private let minimumInterval: TimeInterval
 
+    var formattedLastExecutionTime: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .medium
+        return formatter.string(from: lastExecution)
+    }
+
     init(minimumInterval: TimeInterval = 3600) {
         self.minimumInterval = minimumInterval
         self.lastExecution = UserDefaults.standard.object(forKey: userDefaultsKey) as? Date ?? .distantPast
