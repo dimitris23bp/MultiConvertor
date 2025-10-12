@@ -33,3 +33,8 @@ To build and run the project, open `CryptoConverter.xcodeproj` in Xcode and run 
 *   **Concurrency:** The application uses `async/await` for asynchronous operations.
 *   **Error Handling:** Errors are handled using Swift's `try/catch` mechanism.
 *   **Dependency Management:** The project does not use any external dependency management tools like Swift Package Manager or CocoaPods.
+
+# Rules to follow
+
+* Always use tabs instead of spaces
+* Always follow the instructions that were given and don't change unrelated code.
