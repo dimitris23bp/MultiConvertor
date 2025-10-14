@@ -110,6 +110,14 @@ struct ContentView: View {
 									)
 									.focused($focusedCryptoId, equals: cryptocurrency.id)
 									.frame(height: 40)
+									.fixedSize(horizontal: true, vertical: false)
+									.padding(.horizontal, 10)
+									.background(
+										RoundedRectangle(cornerRadius: 6)
+											.fill(focusedCryptoId == cryptocurrency.id ? Color.secondary.opacity(0.2) : Color.clear)
+									)
+									.animation(.easeOut(duration: 0.1), value: focusedCryptoId == cryptocurrency.id)
+									.tint(Color.clear)
 								}
 								.swipeActions(edge: .trailing) {
 									Button(role: .destructive) {
@@ -223,7 +231,7 @@ struct ContentView: View {
 		do {
 			try modelContext.save()
 		} catch {
-			print("Failed to save context after reorder: \\(error)")
+			print("Failed to save context after reorder: \(error)")
 		}
 	}
 
