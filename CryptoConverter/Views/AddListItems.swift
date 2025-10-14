@@ -3,8 +3,11 @@ import SwiftData
 
 struct AddListItems: View {
     @Environment(\.dismiss) private var dismiss
+	@Environment(\.modelContext) private var modelContext
+
 	@Query(sort: \CryptoCurrency.marketCap, order: .reverse, animation: .default) private var cryptocurrencies: [CryptoCurrency]
 
+	@State private var repository: CryptoRepository?
 	@State private var searchText: String = ""
 	let imageSize: CGFloat
 
@@ -48,7 +51,14 @@ struct AddListItems: View {
 							Spacer()
 
 							Button {
-								crypto.favourite.toggle()
+								if crypto.favourite == false {
+									let highestOrder = repository?.getHighestOrder() ?? 0
+									crypto.sortOrder = highestOrder + 1
+									crypto.favourite = true
+								} else {
+									crypto.sortOrder = nil
+									crypto.favourite = false
+								}
 							} label: {
 								if !crypto.favourite {
 									Image(systemName: "plus")
@@ -70,6 +80,9 @@ struct AddListItems: View {
                 }
             }
         }
+		.onAppear {
+			repository = CryptoRepository(modelContext: modelContext)
+		}
     }
 }
 

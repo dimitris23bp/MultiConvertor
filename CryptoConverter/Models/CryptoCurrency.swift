@@ -16,6 +16,7 @@ class CryptoCurrency {
 	var imageData: Data?
 	var favourite: Bool = false
 	var marketCap: Double
+	var sortOrder: Int?
 
 
 	init(id: String, name: String, value: Double, imageData: Data, marketCap: Double) {

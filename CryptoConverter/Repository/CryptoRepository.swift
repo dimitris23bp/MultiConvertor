@@ -38,13 +38,14 @@ final class CryptoRepository {
     /// Marks BTC and ETH as favourites, saves once, and then fetches/stores logos.
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
-        let current = try fetchAllCryptos()
+        let current = fetchAllCryptos()
         guard current.count < minCount else { return }
 
         let tickers = try await cryptoService.fetchTickers()
         for ticker in tickers {
             if let crypto = CryptoCurrency(ticker: ticker) {
                 if crypto.id == "BTC" || crypto.id == "ETH" {
+					crypto.sortOrder = getHighestOrder() + 1
                     crypto.favourite = true
                 }
                 modelContext.insert(crypto)
@@ -60,7 +61,7 @@ final class CryptoRepository {
     /// Updates existing crypto values and market caps from the remote API.
     func updateTickerValues() async throws {
         let tickers = try await cryptoService.fetchTickers()
-        let existing = try fetchAllCryptos()
+        let existing = fetchAllCryptos()
 
         for ticker in tickers {
             if let incoming = CryptoCurrency(ticker: ticker),
@@ -74,7 +75,7 @@ final class CryptoRepository {
     /// Fetches logo URLs for all known cryptos and stores the image data.
     /// Saves after each image assignment to mirror the previous behavior.
     private func fetchAndStoreLogosForAll() async throws {
-        let all = try fetchAllCryptos()
+        let all = fetchAllCryptos()
         guard !all.isEmpty else { return }
 
         let ids = all.map { $0.id }
@@ -94,9 +95,31 @@ final class CryptoRepository {
         }
     }
 
+	func getHighestOrder() -> Int {
+		var highest = 0
+		let cryptocurrencies = fetchAllCryptos()
+
+		cryptocurrencies.filter(\.favourite).forEach { cryptocurrency in
+			guard let sortOrder = cryptocurrency.sortOrder else {
+				print("SortOrder is nil for \(cryptocurrency.id) while is it favourite: \(cryptocurrency.favourite).")
+				return
+			}
+			if sortOrder > highest {
+				highest = sortOrder
+			}
+		}
+		return highest
+	}
+
+
     // MARK: - Helpers
 
-    private func fetchAllCryptos() throws -> [CryptoCurrency] {
-        try modelContext.fetch(FetchDescriptor<CryptoCurrency>())
+    private func fetchAllCryptos() -> [CryptoCurrency] {
+        if let cryptos = try? modelContext.fetch(FetchDescriptor<CryptoCurrency>()) {
+            return cryptos
+        } else {
+            print("Couldn't fetch cryptos. Returning an empty list instead.")
+            return []
+        }
     }
 }

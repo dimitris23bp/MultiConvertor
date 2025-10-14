@@ -17,9 +17,10 @@ struct InputValues {
 
 struct ContentView: View {
 	@Environment(\.scenePhase) private var scenePhase
-    @Environment(\.modelContext) private var modelContext
+	@Environment(\.modelContext) private var modelContext
 
-	@Query(sort: \CryptoCurrency.id, animation: .default) private var cryptocurrencies: [CryptoCurrency]
+	// TODO: Sort based on the sortOrder, and also add functionality to edit order on the edit mode.
+	@Query(sort: \CryptoCurrency.sortOrder, animation: .default) private var cryptocurrencies: [CryptoCurrency]
 
 	@Query(
 		filter: #Predicate<CryptoCurrency> { $0.favourite },
@@ -32,6 +33,8 @@ struct ContentView: View {
 	@StateObject private var scheduler = TickerUpdateScheduler()
 
 	@State private var amounts: [String: Double] = [:]
+	@State private var editMode: EditMode = .inactive
+	@State private var selection = Set<CryptoCurrency.ID>()
 	@State private var isShowingSheet = false
 	@FocusState private var focusedCryptoId: String?
 
@@ -45,7 +48,7 @@ struct ContentView: View {
 		return formatter
 	}
 
-    var body: some View {
+	var body: some View {
 		Group {
 			if cryptocurrencies.filter({ $0.imageData != nil }).count < 50 {
 				ContentUnavailableView {
@@ -62,6 +65,17 @@ struct ContentView: View {
 						Section {
 							ForEach(favouriteCryptos) { cryptocurrency in
 								HStack {
+									if editMode.isEditing {
+										Button(action: {
+											if selection.contains(cryptocurrency.id) {
+												selection.remove(cryptocurrency.id)
+											} else {
+												selection.insert(cryptocurrency.id)
+											}
+										}) {
+											Image(systemName: selection.contains(cryptocurrency.id) ? "checkmark.square.fill" : "square")
+										}
+									}
 									if let image = cryptocurrency.image {
 										image
 											.resizable()
@@ -98,17 +112,11 @@ struct ContentView: View {
 									.frame(height: 40)
 								}
 								.swipeActions(edge: .trailing) {
-									Button(cryptocurrency.favourite ? "Remove from favourites" : "Add to favourites", systemImage: "trash") {
-										withAnimation {
-											cryptocurrency.favourite.toggle()
-										}
-										do {
-											try modelContext.save()
-										} catch {
-											print(error)
-										}
+									Button(role: .destructive) {
+										cryptocurrency.favourite = false
+									} label: {
+										Label("Delete", systemImage: "trash")
 									}
-									.tint(.red)
 								}
 							}
 						} footer: {
@@ -117,6 +125,15 @@ struct ContentView: View {
 					}
 					.scrollDismissesKeyboard(.interactively)
 					.toolbar {
+						ToolbarItem(placement: .navigationBarLeading) {
+							Button(action: {
+								withAnimation {
+									editMode = editMode.isEditing ? .inactive : .active
+								}
+							}) {
+								Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
+							}
+						}
 						ToolbarItem(placement: .navigationBarTrailing) {
 							Button(action: {
 								isShowingSheet.toggle()
@@ -136,6 +153,20 @@ struct ContentView: View {
 							}
 						}
 					}
+					.toolbar {
+						if editMode.isEditing {
+							ToolbarItemGroup(placement: .bottomBar) {
+								Spacer()
+								Button(role: .destructive) {
+									deleteSelectedItems()
+								} label: {
+									Text("Delete (\(selection.count)) Selected")
+								}
+								.disabled(selection.isEmpty)
+							}
+						}
+					}
+					.environment(\.editMode, $editMode)
 				} detail: {
 					Text("Select an item")
 				}
@@ -188,9 +219,21 @@ struct ContentView: View {
 			amounts[cryptocurrency.id] = valueDouble
 		}
 	}
+
+	private func deleteSelectedItems() {
+		withAnimation {
+			for id in selection {
+				if let crypto = favouriteCryptos.first(where: { $0.id == id }) {
+					crypto.favourite = false
+				}
+			}
+			selection.removeAll()
+			editMode = .inactive
+		}
+	}
 }
 
 #Preview {
-    ContentView()
+	ContentView()
 		.modelContainer(Previews.preview)
 }
