@@ -24,7 +24,7 @@ struct ContentView: View {
 
 	@Query(
 		filter: #Predicate<CryptoCurrency> { $0.favourite },
-		sort: \.id,
+		sort: \.sortOrder,
 		animation: .default
 	) private var favouriteCryptos: [CryptoCurrency]
 
@@ -119,6 +119,7 @@ struct ContentView: View {
 									}
 								}
 							}
+							.onMove(perform: moveItems)
 						} footer: {
 							Text("Last updated: \(scheduler.formattedLastExecutionTime)")
 						}
@@ -210,6 +211,20 @@ struct ContentView: View {
 				focusedCryptoId = nil
 			}
 		})
+	}
+
+	private func moveItems(from source: IndexSet, to destination: Int) {
+		var reorderedCryptos = favouriteCryptos
+		reorderedCryptos.move(fromOffsets: source, toOffset: destination)
+
+		for (index, crypto) in reorderedCryptos.enumerated() {
+			crypto.sortOrder = index
+		}
+		do {
+			try modelContext.save()
+		} catch {
+			print("Failed to save context after reorder: \\(error)")
+		}
 	}
 
 	private func updateInputs(basedOn cryptoId: String, with value: Double) {
