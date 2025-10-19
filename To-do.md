@@ -4,9 +4,8 @@
 
 ### Frontend
 
-- Display the numbers better
-	- Correct number of floating points
-	- Show an indication that a field is focused
+- Fix the amount of digits, how long the textfield can be etc.
+- When I focus on a new number, the first thing that I press, empties the field and adds the new number
 
 ### Backend
 
@@ -18,6 +17,7 @@
 
 ### Frontend
 
+- On the very beginning, ask what to include (crypto or/and currencies)
 - Add option for purchase
 	- Unlocks higher refresh rate
 	- More cryptos
