@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "xido.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

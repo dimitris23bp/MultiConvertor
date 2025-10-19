@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "spike.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

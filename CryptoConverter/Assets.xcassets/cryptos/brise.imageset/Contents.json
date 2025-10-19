@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "brise.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "sapp.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

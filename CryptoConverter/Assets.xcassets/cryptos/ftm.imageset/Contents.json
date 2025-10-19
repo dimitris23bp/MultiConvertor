@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ftm.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

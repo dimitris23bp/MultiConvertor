@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "plUSDC.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

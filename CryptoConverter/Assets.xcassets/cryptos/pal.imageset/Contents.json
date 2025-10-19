@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "pal.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

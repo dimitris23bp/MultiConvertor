@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "bld.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

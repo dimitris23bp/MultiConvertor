@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "pbr.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
