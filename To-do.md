@@ -4,6 +4,9 @@
 
 ### Frontend
 
+- If name gets small, then remove it
+- If symbol gets small, then remove it
+- If number gets too big, then stop adding digits anywhere. Do that by counting the max digits. 
 - Fix the amount of digits, how long the textfield can be etc.
 - When I focus on a new number, the first thing that I press, empties the field and adds the new number
 

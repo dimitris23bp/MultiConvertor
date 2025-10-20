@@ -50,10 +50,11 @@ struct ContentView: View {
 
 	var body: some View {
 		Group {
-			if cryptocurrencies.filter({ $0.imageData != nil }).count < 50 {
+			if cryptocurrencies.count < 50 {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
-						Label("Wait for data to be fetched.", image: .bitcoin)
+						Text("\(cryptocurrencies.count)")
+						Label("Wait for data to be fetched.", image: .btc)
 							.padding()
 						ProgressView()
 							.progressViewStyle(CircularProgressViewStyle())
@@ -76,17 +77,10 @@ struct ContentView: View {
 											Image(systemName: selection.contains(cryptocurrency.id) ? "checkmark.square.fill" : "square")
 										}
 									}
-									if let image = cryptocurrency.image {
-										image
-											.resizable()
-											.scaledToFit()
-											.frame(width: imageSize, height: imageSize)
-									} else {
-										Image(systemName: "questionmark")
-											.resizable()
-											.scaledToFit()
-											.frame(width: imageSize, height: imageSize)
-									}
+									Image(cryptocurrency.id.lowercased())
+										.resizable()
+										.scaledToFit()
+										.frame(width: imageSize, height: imageSize)
 
 									VStack(alignment: .leading) {
 										Text("\(cryptocurrency.id)")

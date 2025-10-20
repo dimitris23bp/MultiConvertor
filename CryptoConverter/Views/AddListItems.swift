@@ -26,23 +26,21 @@ struct AddListItems: View {
                 List {
 					ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { crypto in
 						HStack {
-							if crypto.imageData != nil {
-								crypto.image!
-									.interpolation(.none)
-									.resizable()
-									.scaledToFit()
-									.frame(width: imageSize, height: imageSize)
-							} else {
-								Image(systemName: "questionmark")
-										.resizable()
-										.scaledToFit()
-										.frame(width: imageSize, height: imageSize)
 
-							}
+							Image(crypto.id.lowercased())
+								.interpolation(.none)
+								.resizable()
+								.scaledToFit()
+								.frame(width: imageSize, height: imageSize)
 
 							VStack(alignment: .leading) {
 								Text("\(crypto.id)")
+									.bold(false)
+//									.font(.default)
+									.lineLimit(1)
 								Text("\(crypto.name)")
+									.bold(true)
+//									.font(.default)
 									.minimumScaleFactor(0.75)
 									.lineLimit(1)
 							}
@@ -62,7 +60,7 @@ struct AddListItems: View {
 							} label: {
 								if !crypto.favourite {
 									Image(systemName: "plus")
-										.font(.title)
+//										.font(.title)
 								}
 							}
 							.padding()

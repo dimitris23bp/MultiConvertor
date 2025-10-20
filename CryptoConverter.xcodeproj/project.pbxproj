@@ -13,8 +13,8 @@
 
 /* Begin PBXFileReference section */
 		B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GEMINI.md; sourceTree = "<group>"; };
-		B76EB8012E89B12F00A5968E /* CryptoConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = CryptoConverter.app; path = "/Users/dimitris/Documents/projects/CryptoConverter/build/Debug-iphoneos/CryptoConverter.app"; sourceTree = "<absolute>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
+		B7FC087B2EA559E600984CAD /* CryptoConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -42,6 +42,7 @@
 				B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */,
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
+				B7FC087B2EA559E600984CAD /* CryptoConverter.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,7 +68,7 @@
 			packageProductDependencies = (
 			);
 			productName = CryptoConverter;
-			productReference = B76EB8012E89B12F00A5968E /* CryptoConverter.app */;
+			productReference = B7FC087B2EA559E600984CAD /* CryptoConverter.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

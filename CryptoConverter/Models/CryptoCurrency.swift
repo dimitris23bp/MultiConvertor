@@ -13,32 +13,15 @@ class CryptoCurrency {
 	@Attribute(.unique) var id: String
 	var name: String
 	var value: Double
-	var imageData: Data?
 	var favourite: Bool = false
 	var marketCap: Double
 	var sortOrder: Int?
-
-
-	init(id: String, name: String, value: Double, imageData: Data, marketCap: Double) {
-		self.id = id
-		self.name = name
-		self.value = value
-		self.imageData = imageData
-		self.marketCap = marketCap
-	}
 
 	init(id: String, name: String, value: Double, marketCap: Double) {
 		self.id = id
 		self.name = name
 		self.value = value
 		self.marketCap = marketCap
-	}
-
-	var image: Image? {
-		if let data = imageData, let uiImage = UIImage(data: data) {
-			return Image(uiImage: uiImage)
-		}
-		return Image(systemName: "questionmark")
 	}
 
 	convenience init?(ticker: CryptoTicker) {
