@@ -34,13 +34,14 @@ struct AddListItems: View {
 								.frame(width: imageSize, height: imageSize)
 
 							VStack(alignment: .leading) {
-								Text("\(crypto.id)")
-									.bold(false)
-//									.font(.default)
+								Text(String(crypto.id))
 									.lineLimit(1)
-								Text("\(crypto.name)")
-									.bold(true)
-//									.font(.default)
+									.font(.body)
+									.fontWeight(.regular)
+
+								Text(String(crypto.name))
+									.font(.body)
+									.fontWeight(.regular)
 									.minimumScaleFactor(0.75)
 									.lineLimit(1)
 							}
@@ -49,18 +50,12 @@ struct AddListItems: View {
 							Spacer()
 
 							Button {
-								if crypto.favourite == false {
-									let highestOrder = repository?.getHighestOrder() ?? 0
-									crypto.sortOrder = highestOrder + 1
-									crypto.favourite = true
-								} else {
-									crypto.sortOrder = nil
-									crypto.favourite = false
-								}
+								buttonPressed(with: crypto)
 							} label: {
 								if !crypto.favourite {
 									Image(systemName: "plus")
-//										.font(.title)
+										.font(.title3)
+										.foregroundColor(.primary)
 								}
 							}
 							.padding()
@@ -82,7 +77,24 @@ struct AddListItems: View {
 			repository = CryptoRepository(modelContext: modelContext)
 		}
     }
+
+	private func buttonPressed(with crypto: CryptoCurrency) {
+		if crypto.favourite == false {
+			let highestOrder = repository?.getHighestOrder() ?? 0
+			crypto.sortOrder = highestOrder + 1
+			crypto.favourite = true
+		} else {
+			crypto.sortOrder = nil
+			crypto.favourite = false
+		}
+		do {
+			try modelContext.save()
+		} catch {
+			print("Failed to save context after reorder: \(error)")
+		}
+	}
 }
+
 
 #Preview {
     AddListItems(imageSize: 48)

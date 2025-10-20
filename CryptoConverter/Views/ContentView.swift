@@ -53,9 +53,13 @@ struct ContentView: View {
 			if cryptocurrencies.count < 50 {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
-						Text("\(cryptocurrencies.count)")
-						Label("Wait for data to be fetched.", image: .btc)
-							.padding()
+						// TODO: Change this with a gif or something else that is not just Bitcoin
+						Image("btc")
+							.resizable()
+							.scaledToFit()
+							.frame(width: 96, height: 96)
+						Text("Wait for data to be fetched.")
+
 						ProgressView()
 							.progressViewStyle(CircularProgressViewStyle())
 					}
