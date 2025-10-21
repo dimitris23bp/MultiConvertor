@@ -1,4 +1,3 @@
-
 import SwiftUI
 import UIKit
 
@@ -28,12 +27,14 @@ struct DoubleNumberTextField: UIViewRepresentable {
 
     class Coordinator: NSObject, UITextFieldDelegate {
         var parent: DoubleNumberTextField
+        var didBeginEditing = true
 
         init(_ parent: DoubleNumberTextField) {
             self.parent = parent
         }
 
         func textFieldDidBeginEditing(_ textField: UITextField) {
+            didBeginEditing = true
             DispatchQueue.main.async {
                 // Move cursor to the end of the text
                 if let newPosition = textField.position(from: textField.endOfDocument, offset: 0) {
@@ -51,6 +52,24 @@ struct DoubleNumberTextField: UIViewRepresentable {
         }
 
         func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+            // If first typing after focus and the string is a digit, replace all text with this digit only
+            if didBeginEditing && !string.isEmpty && string.rangeOfCharacter(from: CharacterSet.decimalDigits) != nil {
+                didBeginEditing = false
+                // Update parent's value
+                if let number = parent.formatter.number(from: string) {
+                    parent.value = number.doubleValue
+                } else {
+                    parent.value = 0
+                }
+                // Set text to the newly typed digit only
+                textField.text = string
+                // Move cursor to the end
+                if let newPosition = textField.position(from: textField.beginningOfDocument, offset: string.count) {
+                    textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
+                }
+                return false
+            }
+
             // 1. Get original state
             let originalText = textField.text ?? ""
             guard let selectedRange = textField.selectedTextRange else { return false }
