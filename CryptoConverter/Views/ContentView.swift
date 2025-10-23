@@ -159,6 +159,7 @@ struct ContentView: View {
 							}
 							.onChange(of: isShowingSheet) { _, newValue in
 								if newValue {
+									focusedCryptoId = nil
 									Task {
 										try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 										amounts = [:]
