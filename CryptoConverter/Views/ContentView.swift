@@ -88,6 +88,8 @@ struct ContentView: View {
 
 									VStack(alignment: .leading) {
 										Text("\(cryptocurrency.id)")
+											.minimumScaleFactor(0.75)
+											.lineLimit(1)
 										Text("\(cryptocurrency.name)")
 											.minimumScaleFactor(0.75)
 											.lineLimit(1)
@@ -96,18 +98,22 @@ struct ContentView: View {
 
 									Spacer()
 
-									DoubleNumberTextField(
-										value: Binding(
-											get: { amounts[cryptocurrency.id] ?? 0.0 },
-											set: { newValue in
-												amounts[cryptocurrency.id] = newValue
-												updateInputs(basedOn: cryptocurrency.id, with: newValue)
-											}
-										),
-										formatter: numberFormatter
-									)
-									.focused($focusedCryptoId, equals: cryptocurrency.id)
-									.frame(height: 40)
+									ScrollView(.horizontal, showsIndicators: false) {
+										DoubleNumberTextField(
+											value: Binding(
+												get: { amounts[cryptocurrency.id] ?? 0.0 },
+												set: { newValue in
+													amounts[cryptocurrency.id] = newValue
+													updateInputs(basedOn: cryptocurrency.id, with: newValue)
+												}
+											),
+											formatter: numberFormatter
+										)
+										.focused($focusedCryptoId, equals: cryptocurrency.id)
+										.frame(height: 40)
+										.fixedSize(horizontal: true, vertical: false)
+									}
+									.frame(maxWidth: 150)
 									.fixedSize(horizontal: true, vertical: false)
 									.padding(.horizontal, 10)
 									.background(
@@ -116,6 +122,7 @@ struct ContentView: View {
 									)
 									.animation(.easeOut(duration: 0.1), value: focusedCryptoId == cryptocurrency.id)
 									.tint(Color.clear)
+									.minimumScaleFactor(0.75)
 								}
 								.swipeActions(edge: .trailing) {
 									Button(role: .destructive) {
