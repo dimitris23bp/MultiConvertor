@@ -103,6 +103,7 @@ struct ContentView: View {
 											value: Binding(
 												get: { amounts[cryptocurrency.id] ?? 0.0 },
 												set: { newValue in
+													// TODO: Should this line go inside the updateInputs?
 													amounts[cryptocurrency.id] = newValue
 													updateInputs(basedOn: cryptocurrency.id, with: newValue)
 												}
@@ -159,9 +160,12 @@ struct ContentView: View {
 							}
 							.onChange(of: isShowingSheet) { _, newValue in
 								if newValue {
+									// In order to remove the focused value too, when I press the plus button
 									focusedCryptoId = nil
 									Task {
+										// To have a delay and make the change without the user noticing
 										try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+										// Empty all the values from the TextFields
 										amounts = [:]
 									}
 								}
