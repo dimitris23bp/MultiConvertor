@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */ = {isa = PBXBuildFile; fileRef = B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */; };
+		B74810B72EE4F9D9005E3C0F /* Playground.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74810B52EE4F9D9005E3C0F /* Playground.swift */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GEMINI.md; sourceTree = "<group>"; };
+		B74810B52EE4F9D9005E3C0F /* Playground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playground.swift; sourceTree = "<group>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
 		B7FC087B2EA559E600984CAD /* CryptoConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +38,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B74810B62EE4F9D9005E3C0F /* Playground */ = {
+			isa = PBXGroup;
+			children = (
+				B74810B52EE4F9D9005E3C0F /* Playground.swift */,
+			);
+			path = Playground;
+			sourceTree = "<group>";
+		};
 		B7EFC44F2E8758F9003B9373 = {
 			isa = PBXGroup;
 			children = (
@@ -43,6 +53,7 @@
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
 				B7FC087B2EA559E600984CAD /* CryptoConverter.app */,
+				B74810B62EE4F9D9005E3C0F /* Playground */,
 			);
 			sourceTree = "<group>";
 		};
@@ -122,6 +133,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B74810B72EE4F9D9005E3C0F /* Playground.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
