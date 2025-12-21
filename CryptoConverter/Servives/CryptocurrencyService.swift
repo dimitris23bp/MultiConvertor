@@ -57,9 +57,7 @@ class CryptocurrencyService {
             currentCursor = nextCursor // Update the cursor for the next iteration
             
         } while currentCursor != nil
-        print("Here we come")
-        print(allRecords)
-        return allRecords
         
+        return allRecords
     }
 }

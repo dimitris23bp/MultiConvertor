@@ -17,7 +17,7 @@ struct Previews {
 			value: 60000,
 			marketCap: 6_000_000,
             // TODO: To fix this preview
-            logoString: ""
+            renderedLogoData: nil
 		)
 	}
 
@@ -27,7 +27,7 @@ struct Previews {
 			name: "Ether",
 			value: 20000,
 			marketCap: 3_300_000,
-            logoString: ""
+            renderedLogoData: nil
 		)
 	}
 

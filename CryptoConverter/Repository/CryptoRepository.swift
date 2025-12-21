@@ -40,7 +40,6 @@ final class CryptoRepository {
         print("Fetching initial cryptocurrencies")
         let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies()
         for crypto in cryptocurrencies {
-            print("Logo is: \(crypto.logoString?.count ?? 0)")
             print("ID is: \(crypto.id)")
             if crypto.logo != nil {
                 print("Inside the insertion")
