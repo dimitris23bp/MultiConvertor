@@ -11,13 +11,19 @@ import CloudKit
 import SVGKit
 
 @Model
-class CryptoCurrency {
+class Cryptocurrency {
+    // e.g. BTC
     var id: String = ""
+    // e.g. Bitcoin
     var name: String = ""
+    // e.g. 100.000 dollars
     var value: Double = 0.0
-    var favourite: Bool = false
-    @Attribute(.externalStorage) private var renderedLogoData: Data? // The cached PNG/UIImage data
+    // e.g. 1.000.000.000.000 dollars
     var marketCap: Double = 0.0
+    var favourite: Bool = false
+    // Data to compute the logo
+    // On external storage to not spend time computing it
+    @Attribute(.externalStorage) private var renderedLogoData: Data?
     var sortOrder: Int?
     
     init(id: String, name: String, value: Double, marketCap: Double, renderedLogoData: Data?) {
@@ -40,8 +46,8 @@ class CryptoCurrency {
             return nil
         }
         
-        let data = logoString.data(using: .utf8)
         // Render SVG to a standard UIImage once to not spend time computing in the main thread with a computed property
+        let data = logoString.data(using: .utf8)
         let renderedLogoData: Data? = if let uiImage = SVGKImage(data: data)?.uiImage {
             uiImage.pngData()
         } else {
@@ -55,7 +61,7 @@ class CryptoCurrency {
         self.sortOrder = record["sortOrder"] as? Int
     }
     
-    // This property is now lightning fast because it just wraps existing Data
+    // This property is fast enough, because it just wraps existing Data
     var logo: UIImage? {
         guard let renderedLogoData else { return nil }
         return UIImage(data: renderedLogoData)

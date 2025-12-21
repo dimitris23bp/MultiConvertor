@@ -20,13 +20,13 @@ struct ContentView: View {
 	@Environment(\.modelContext) private var modelContext
 
 	// TODO: Sort based on the sortOrder, and also add functionality to edit order on the edit mode.
-	@Query(sort: \CryptoCurrency.sortOrder, animation: .default) private var cryptocurrencies: [CryptoCurrency]
+	@Query(sort: \Cryptocurrency.sortOrder, animation: .default) private var cryptocurrencies: [Cryptocurrency]
 
 	@Query(
-		filter: #Predicate<CryptoCurrency> { $0.favourite },
+		filter: #Predicate<Cryptocurrency> { $0.favourite },
 		sort: \.sortOrder,
 		animation: .default
-	) private var favouriteCryptos: [CryptoCurrency]
+	) private var favouriteCryptos: [Cryptocurrency]
 
 	// Repository that encapsulates API + SwiftData mutations
 	@State private var repository: CryptoRepository?
@@ -34,7 +34,7 @@ struct ContentView: View {
 
 	@State private var amounts: [String: Double] = [:]
 	@State private var editMode: EditMode = .inactive
-	@State private var selection = Set<CryptoCurrency.ID>()
+	@State private var selection = Set<Cryptocurrency.ID>()
 	@State private var isShowingSheet = false
 	@FocusState private var focusedCryptoId: String?
 
@@ -196,22 +196,22 @@ struct ContentView: View {
 				if repository == nil {
 					repository = CryptoRepository(modelContext: modelContext)
 				}
-                // TODO: I have to check this cause I don't know if it works. Probably I don't save correctly with the new data from CloudKit
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
 				// Check immediately on appear
 				if cryptocurrencies.count < 3 {
 					scheduler.updateLastExecution()
+                    // TODO: Do an initial load for some cryptos, and then load the rest in the background. Also add a progress bar on the bottom while this is happening as a v2
 					try? await repository?.ensureInitialDataIfNeeded()
 					print("Initial data has happened")
                     print(cryptocurrencies.count)
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
-					try? await repository?.updateTickerValues()
+					try? await repository?.updateAmounts()
 					print("Update has happened")
 				}
 				scheduler.start { [weak repository = repository] in
-					try? await repository?.updateTickerValues()
+					try? await repository?.updateAmounts()
 				}
 			}
 		}
@@ -224,7 +224,7 @@ struct ContentView: View {
 				if scheduler.checkIfNeeded() {
 					Task {
 						scheduler.updateLastExecution()
-						try? await repository?.updateTickerValues()
+						try? await repository?.updateAmounts()
 					}
 				}
 			default:

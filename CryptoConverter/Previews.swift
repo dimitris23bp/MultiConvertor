@@ -10,8 +10,8 @@ import Foundation
 import SwiftUI
 
 struct Previews {
-	static var previewBtc: CryptoCurrency {
-		CryptoCurrency(
+	static var previewBtc: Cryptocurrency {
+		Cryptocurrency(
 			id: "BTC",
 			name: "Bitcoin",
 			value: 60000,
@@ -21,8 +21,8 @@ struct Previews {
 		)
 	}
 
-	static var previewEth: CryptoCurrency {
-		CryptoCurrency(
+	static var previewEth: Cryptocurrency {
+		Cryptocurrency(
 			id: "ETH",
 			name: "Ether",
 			value: 20000,
@@ -33,7 +33,7 @@ struct Previews {
 
 	// The sample preview db
 	static let preview: ModelContainer = {
-		let container = try! ModelContainer(for: CryptoCurrency.self,
+		let container = try! ModelContainer(for: Cryptocurrency.self,
 											 configurations: ModelConfiguration(isStoredInMemoryOnly: true))
 		container.mainContext.insert(previewBtc)
 		container.mainContext.insert(previewEth)

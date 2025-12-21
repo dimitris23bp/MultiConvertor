@@ -1,34 +1,27 @@
-//
-//  CryptocurrencyService.swift
-//  CryptoConverter
-//
-//  Created by Dimitrios Karamanis on 21/12/2025.
-//
-
 import CloudKit
 
 class CryptocurrencyService {
     let publicDatabase = CKContainer.default().publicCloudDatabase
     
-    func fetchCryptocurrencies() async throws -> [CryptoCurrency] {
-        // 1. Fetch the raw CKRecords using your existing logic
+    func fetchCryptocurrencies() async throws -> [Cryptocurrency] {
+        // Fetch the raw CKRecords
         let records = try await fetchAllPublicRecords()
         
-        // 2. Map records to your model objects
+        // Map records to model objects
         // compactMap automatically removes any 'nil' results if a record is malformed
         let cryptos = records.compactMap { record in
-            CryptoCurrency(record: record)
+            Cryptocurrency(record: record)
         }
         
         return cryptos
     }
     
     /// Fetches all records of a specific type, regardless of count.
+    /// Uses cursor for batches, because CloudKit cannot handle more than 250 records in one query.
     private func fetchAllPublicRecords() async throws -> [CKRecord] {
         var allRecords: [CKRecord] = []
         var currentCursor: CKQueryOperation.Cursor? = nil
         
-        // Define your query
         let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
         
         repeat {

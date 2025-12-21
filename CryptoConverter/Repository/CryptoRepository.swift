@@ -1,15 +1,8 @@
-//
-//  CryptoRepository.swift
-//  CryptoConverter
-//
-//  Created by Assistant on 10/3/25.
-//
-
 import Foundation
 import SwiftData
 import SwiftUI
 
-/// A repository responsible for fetching and updating crypto data,
+/// A repository responsible for fetching and updating crypto data in *local storage*.
 /// keeping SwiftData mutations on the main actor.
 @MainActor
 final class CryptoRepository {
@@ -35,33 +28,33 @@ final class CryptoRepository {
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
         let current = fetchAllCryptos()
+        // If I have 3 or more, return
         guard current.count < minCount else { return }
 
         print("Fetching initial cryptocurrencies")
         let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies()
         for crypto in cryptocurrencies {
-            print("ID is: \(crypto.id)")
+            print("Fetching crypto with ID: \(crypto.id)")
             if crypto.logo != nil {
-                print("Inside the insertion")
                 if crypto.id == "BTC" || crypto.id == "ETH" {
                     crypto.sortOrder = getHighestOrder() + 1
                     crypto.favourite = true
                 }
+                print("Inserting crypto with ID: \(crypto.id)")
                 modelContext.insert(crypto)
-			} else {
-//				print("\(crypto.id) doesn't have an image")
 			}
         }
 
         try modelContext.save()
+        print("Initial cryptocurrencies are saved")
     }
 
-    /// Updates existing crypto values and market caps from the remote API.
-    func updateTickerValues() async throws {
-        let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies()
+    /// Updates existing crypto values and market caps from CloudKit's public Database.
+    func updateAmounts() async throws {
+        let cryptocurrenciesInCK = try await cryptocurrencyService.fetchCryptocurrencies()
         let existing = fetchAllCryptos()
 
-        for incoming in cryptocurrencies {
+        for incoming in cryptocurrenciesInCK {
             if let match = existing.first(where: { $0.id == incoming.id }) {
                 match.value = incoming.value
                 match.marketCap = incoming.marketCap
@@ -69,6 +62,8 @@ final class CryptoRepository {
         }
     }
 
+    /// Get the new highest order.
+    /// This is used when a new crypto is added to favourites and it needs a new value in sortOrder.
 	func getHighestOrder() -> Int {
 		var highest = 0
 		let cryptocurrencies = fetchAllCryptos()
@@ -88,8 +83,8 @@ final class CryptoRepository {
 
     // MARK: - Helpers
 
-    private func fetchAllCryptos() -> [CryptoCurrency] {
-        if let cryptos = try? modelContext.fetch(FetchDescriptor<CryptoCurrency>()) {
+    private func fetchAllCryptos() -> [Cryptocurrency] {
+        if let cryptos = try? modelContext.fetch(FetchDescriptor<Cryptocurrency>()) {
             return cryptos
         } else {
             print("Couldn't fetch cryptos. Returning an empty list instead.")

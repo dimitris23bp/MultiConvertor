@@ -12,7 +12,7 @@ import SwiftData
 struct CryptoConverterApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            CryptoCurrency.self,
+            Cryptocurrency.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

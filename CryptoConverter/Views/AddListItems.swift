@@ -5,14 +5,14 @@ struct AddListItems: View {
     @Environment(\.dismiss) private var dismiss
 	@Environment(\.modelContext) private var modelContext
 
-	@Query(sort: \CryptoCurrency.marketCap, order: .reverse, animation: .default) private var cryptocurrencies: [CryptoCurrency]
+	@Query(sort: \Cryptocurrency.marketCap, order: .reverse, animation: .default) private var cryptocurrencies: [Cryptocurrency]
 
 	@State private var repository: CryptoRepository?
 	@State private var searchText: String = ""
 	let imageSize: CGFloat
 
-	private var dynamicPredicate: Predicate<CryptoCurrency> {
-		#Predicate<CryptoCurrency> { crypto in
+	private var dynamicPredicate: Predicate<Cryptocurrency> {
+		#Predicate<Cryptocurrency> { crypto in
 			if !searchText.isEmpty {
 				crypto.id.localizedStandardContains(searchText) || crypto.name.localizedStandardContains(searchText)
 			} else {
@@ -78,7 +78,7 @@ struct AddListItems: View {
 		}
     }
 
-	private func buttonPressed(with crypto: CryptoCurrency) {
+	private func buttonPressed(with crypto: Cryptocurrency) {
 		if crypto.favourite == false {
 			let highestOrder = repository?.getHighestOrder() ?? 0
 			crypto.sortOrder = highestOrder + 1
