@@ -8,18 +8,32 @@
 
 /* Begin PBXBuildFile section */
 		B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */ = {isa = PBXBuildFile; fileRef = B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */; };
-		B74810B72EE4F9D9005E3C0F /* Playground.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74810B52EE4F9D9005E3C0F /* Playground.swift */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5B293CC42EF834EF00DC406D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7EFC4502E8758F9003B9373 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B7EFC4572E8758F9003B9373;
+			remoteInfo = CryptoConverter;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		5B293CC02EF834EF00DC406D /* CryptoConverterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GEMINI.md; sourceTree = "<group>"; };
-		B74810B52EE4F9D9005E3C0F /* Playground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playground.swift; sourceTree = "<group>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
 		B7FC087B2EA559E600984CAD /* CryptoConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5B293CC12EF834EF00DC406D /* CryptoConverterTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CryptoConverterTests;
+			sourceTree = "<group>";
+		};
 		B7EFC45A2E8758F9003B9373 /* CryptoConverter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CryptoConverter;
@@ -28,6 +42,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5B293CBD2EF834EF00DC406D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B7EFC4552E8758F9003B9373 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,14 +59,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B74810B62EE4F9D9005E3C0F /* Playground */ = {
-			isa = PBXGroup;
-			children = (
-				B74810B52EE4F9D9005E3C0F /* Playground.swift */,
-			);
-			path = Playground;
-			sourceTree = "<group>";
-		};
 		B7EFC44F2E8758F9003B9373 = {
 			isa = PBXGroup;
 			children = (
@@ -53,13 +66,37 @@
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
 				B7FC087B2EA559E600984CAD /* CryptoConverter.app */,
-				B74810B62EE4F9D9005E3C0F /* Playground */,
+				5B293CC02EF834EF00DC406D /* CryptoConverterTests.xctest */,
+				5B293CC12EF834EF00DC406D /* CryptoConverterTests */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5B293CBF2EF834EF00DC406D /* CryptoConverterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B293CC62EF834EF00DC406D /* Build configuration list for PBXNativeTarget "CryptoConverterTests" */;
+			buildPhases = (
+				5B293CBC2EF834EF00DC406D /* Sources */,
+				5B293CBD2EF834EF00DC406D /* Frameworks */,
+				5B293CBE2EF834EF00DC406D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B293CC52EF834EF00DC406D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5B293CC12EF834EF00DC406D /* CryptoConverterTests */,
+			);
+			name = CryptoConverterTests;
+			packageProductDependencies = (
+			);
+			productName = CryptoConverterTests;
+			productReference = 5B293CC02EF834EF00DC406D /* CryptoConverterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		B7EFC4572E8758F9003B9373 /* CryptoConverter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B7EFC4652E8758FA003B9373 /* Build configuration list for PBXNativeTarget "CryptoConverter" */;
@@ -89,9 +126,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					5B293CBF2EF834EF00DC406D = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = B7EFC4572E8758F9003B9373;
+					};
 					B7EFC4572E8758F9003B9373 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -112,11 +153,19 @@
 			projectRoot = "";
 			targets = (
 				B7EFC4572E8758F9003B9373 /* CryptoConverter */,
+				5B293CBF2EF834EF00DC406D /* CryptoConverterTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5B293CBE2EF834EF00DC406D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B7EFC4562E8758F9003B9373 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,17 +178,75 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5B293CBC2EF834EF00DC406D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B7EFC4542E8758F9003B9373 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B74810B72EE4F9D9005E3C0F /* Playground.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5B293CC52EF834EF00DC406D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B7EFC4572E8758F9003B9373 /* CryptoConverter */;
+			targetProxy = 5B293CC42EF834EF00DC406D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5B293CC72EF834EF00DC406D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MLKMNABL36;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myorganization.CryptoConverterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CryptoConverter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CryptoConverter";
+			};
+			name = Debug;
+		};
+		5B293CC82EF834EF00DC406D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MLKMNABL36;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myorganization.CryptoConverterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CryptoConverter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CryptoConverter";
+			};
+			name = Release;
+		};
 		B7EFC4632E8758FA003B9373 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -266,6 +373,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CryptoConverter/CryptoConverter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MLKMNABL36;
@@ -298,6 +406,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CryptoConverter/CryptoConverter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MLKMNABL36;
@@ -328,6 +437,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5B293CC62EF834EF00DC406D /* Build configuration list for PBXNativeTarget "CryptoConverterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B293CC72EF834EF00DC406D /* Debug */,
+				5B293CC82EF834EF00DC406D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B7EFC4532E8758F9003B9373 /* Build configuration list for PBXProject "CryptoConverter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
