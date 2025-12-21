@@ -16,14 +16,14 @@ final class CloudKitTests: XCTestCase {
         
         // Use an expectation to handle the async nature of the call
         do {
-            let records = try await manager.fetchAllPublicRecords()
+            let cryptos = try await manager.fetchCryptocurrencies()
             
             // This is where you verify the results
-            XCTAssertFalse(records.isEmpty, "The public database should not be empty.")
-            print("Successfully fetched \(records.count) records.")
+            XCTAssertFalse(cryptos.isEmpty, "The public database should not be empty.")
+            print("Successfully fetched \(cryptos.count) records.")
             
-            for record in records.prefix(5) { // Print first 5 for sanity check
-                print("Record ID: \(record.recordID.recordName)")
+            for crypto in cryptos.prefix(5) { // Print first 5 for sanity check
+                print("Record ID: \(crypto.name)")
             }
         } catch {
             XCTFail("Fetch failed with error: \(error.localizedDescription)")

@@ -9,9 +9,22 @@ import CloudKit
 
 class CryptocurrencyService {
     let publicDatabase = CKContainer.default().publicCloudDatabase
-
+    
+    func fetchCryptocurrencies() async throws -> [CryptoCurrency] {
+        // 1. Fetch the raw CKRecords using your existing logic
+        let records = try await fetchAllPublicRecords()
+        
+        // 2. Map records to your model objects
+        // compactMap automatically removes any 'nil' results if a record is malformed
+        let cryptos = records.compactMap { record in
+            CryptoCurrency(record: record)
+        }
+        
+        return cryptos
+    }
+    
     /// Fetches all records of a specific type, regardless of count.
-    func fetchAllPublicRecords() async throws -> [CKRecord] {
+    private func fetchAllPublicRecords() async throws -> [CKRecord] {
         var allRecords: [CKRecord] = []
         var currentCursor: CKQueryOperation.Cursor? = nil
         
