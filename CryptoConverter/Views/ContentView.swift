@@ -81,7 +81,7 @@ struct ContentView: View {
 											Image(systemName: selection.contains(cryptocurrency.id) ? "checkmark.square.fill" : "square")
 										}
 									}
-									Image(cryptocurrency.id.lowercased())
+                                    Image(uiImage: cryptocurrency.logo ?? UIImage())
 										.resizable()
 										.scaledToFit()
 										.frame(width: imageSize, height: imageSize)
@@ -196,6 +196,7 @@ struct ContentView: View {
 				if repository == nil {
 					repository = CryptoRepository(modelContext: modelContext)
 				}
+                // TODO: I have to check this cause I don't know if it works. Probably I don't save correctly with the new data from CloudKit
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
 				// Check immediately on appear
@@ -203,6 +204,7 @@ struct ContentView: View {
 					scheduler.updateLastExecution()
 					try? await repository?.ensureInitialDataIfNeeded()
 					print("Initial data has happened")
+                    print(cryptocurrencies.count)
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
 					try? await repository?.updateTickerValues()

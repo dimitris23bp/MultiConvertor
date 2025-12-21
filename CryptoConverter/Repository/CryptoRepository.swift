@@ -14,19 +14,19 @@ import SwiftUI
 @MainActor
 final class CryptoRepository {
     private let modelContext: ModelContext
-    private let cryptoService: CryptoService
+    private let cryptocurrencyService: CryptocurrencyService
 
     /// Convenience initializer that constructs default services on the main actor to avoid
     /// evaluating default arguments in a nonisolated context.
     convenience init(modelContext: ModelContext) {
         self.init(modelContext: modelContext,
-                  cryptoService: CryptoService())
+                  cryptocurrencyService: CryptocurrencyService())
     }
 
     init(modelContext: ModelContext,
-         cryptoService: CryptoService) {
+         cryptocurrencyService: CryptocurrencyService) {
         self.modelContext = modelContext
-        self.cryptoService = cryptoService
+        self.cryptocurrencyService = cryptocurrencyService
     }
 
     // MARK: - Public API
@@ -37,18 +37,20 @@ final class CryptoRepository {
         let current = fetchAllCryptos()
         guard current.count < minCount else { return }
 
-        let tickers = try await cryptoService.fetchTickers()
-        for ticker in tickers {
-			if UIImage(named: ticker.symbol.lowercased()) != nil {
-				if let crypto = CryptoCurrency(ticker: ticker) {
-					if crypto.id == "BTC" || crypto.id == "ETH" {
-						crypto.sortOrder = getHighestOrder() + 1
-						crypto.favourite = true
-					}
-					modelContext.insert(crypto)
-				}
+        print("Fetching initial cryptocurrencies")
+        let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies()
+        for crypto in cryptocurrencies {
+            print("Logo is: \(crypto.logoString?.count ?? 0)")
+            print("ID is: \(crypto.id)")
+            if crypto.logo != nil {
+                print("Inside the insertion")
+                if crypto.id == "BTC" || crypto.id == "ETH" {
+                    crypto.sortOrder = getHighestOrder() + 1
+                    crypto.favourite = true
+                }
+                modelContext.insert(crypto)
 			} else {
-				print("\(ticker.symbol) doesn't have an image")
+//				print("\(crypto.id) doesn't have an image")
 			}
         }
 
@@ -57,12 +59,11 @@ final class CryptoRepository {
 
     /// Updates existing crypto values and market caps from the remote API.
     func updateTickerValues() async throws {
-        let tickers = try await cryptoService.fetchTickers()
+        let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies()
         let existing = fetchAllCryptos()
 
-        for ticker in tickers {
-            if let incoming = CryptoCurrency(ticker: ticker),
-               let match = existing.first(where: { $0.id == incoming.id }) {
+        for incoming in cryptocurrencies {
+            if let match = existing.first(where: { $0.id == incoming.id }) {
                 match.value = incoming.value
                 match.marketCap = incoming.marketCap
             }

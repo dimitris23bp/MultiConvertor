@@ -15,7 +15,9 @@ struct Previews {
 			id: "BTC",
 			name: "Bitcoin",
 			value: 60000,
-			marketCap: 6_000_000
+			marketCap: 6_000_000,
+            // TODO: To fix this preview
+            logoString: ""
 		)
 	}
 
@@ -24,7 +26,8 @@ struct Previews {
 			id: "ETH",
 			name: "Ether",
 			value: 20000,
-			marketCap: 3_300_000
+			marketCap: 3_300_000,
+            logoString: ""
 		)
 	}
 

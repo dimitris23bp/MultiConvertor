@@ -50,36 +50,6 @@
             endingLineNumber = "25"
             landmarkName = "testFetchAllRecords()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "3EEB5124-325E-43AF-8F51-A636377C3331 - bf111bb52ee40f49"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for CryptoConverterTests.CloudKitTests.testFetchAllRecords() async throws -&gt; ()"
-                  moduleName = "CryptoConverterTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dimitris.karamanis/Documents/projects/CryptoConverter/CryptoConverterTests/Services/CryptocurrencyService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25">
-               </Location>
-               <Location
-                  uuid = "3EEB5124-325E-43AF-8F51-A636377C3331 - bf111bb52ee40f49"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for CryptoConverterTests.CloudKitTests.testFetchAllRecords() async throws -&gt; ()"
-                  moduleName = "CryptoConverterTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dimitris.karamanis/Documents/projects/CryptoConverter/CryptoConverterTests/Services/CryptocurrencyService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

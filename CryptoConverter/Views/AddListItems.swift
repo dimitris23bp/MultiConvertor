@@ -27,7 +27,7 @@ struct AddListItems: View {
 					ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { crypto in
 						HStack {
 
-							Image(crypto.id.lowercased())
+                            Image(uiImage: crypto.logo ?? UIImage())
 								.interpolation(.none)
 								.resizable()
 								.scaledToFit()
