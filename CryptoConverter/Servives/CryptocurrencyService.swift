@@ -1,10 +1,10 @@
 import CloudKit
 
-final class CryptocurrencyService : Sendable {
+actor CryptocurrencyService {
     // Ensure your init is not restricted to the MainActor
     init() {}
     
-    let publicDatabase = CKContainer.default().publicCloudDatabase
+    nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
     
     func fetchAllCryptocurrencies() async throws -> [Cryptocurrency] {
         

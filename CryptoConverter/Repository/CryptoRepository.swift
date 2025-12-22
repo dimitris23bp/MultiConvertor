@@ -72,13 +72,14 @@ final class CryptoRepository {
 
         // Get a reference to the container (which is thread-safe)
         let container = modelContext.container
+        let service = self.cryptocurrencyService
         
         // Perform work in a separate Task that isn't bound to the MainActor
         Task.detached(priority: .utility) {
             // Create a background context
             let backgroundContext = ModelContext(container)
             
-            let allCryptos: [Cryptocurrency] = try! await self.cryptocurrencyService.fetchAllCryptocurrencies()
+            let allCryptos: [Cryptocurrency] = try! await service.fetchAllCryptocurrencies()
             for crypto in allCryptos {
                 if !ids.contains(crypto.id) {
                     if crypto.logo != nil {

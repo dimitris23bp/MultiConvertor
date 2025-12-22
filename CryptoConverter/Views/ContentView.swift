@@ -207,7 +207,6 @@ struct ContentView: View {
 					try? await repository?.ensureInitialDataIfNeeded()
                     try? await repository?.addInitialFavourites(cryptocurrencies: cryptocurrencies)
 					print("Initial data has happened")
-                    print(cryptocurrencies.count)
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
 					try? await repository?.updateAmounts()

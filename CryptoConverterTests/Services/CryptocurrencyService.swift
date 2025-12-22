@@ -12,11 +12,11 @@ import CloudKit
 final class CloudKitTests: XCTestCase {
 
     func testFetchAllRecords() async throws {
-        let manager = await CryptocurrencyService()
+        let manager = CryptocurrencyService()
         
         // Use an expectation to handle the async nature of the call
         do {
-            let cryptos = try await manager.fetchCryptocurrencies()
+            let cryptos = try await manager.fetchAllCryptocurrencies()
             
             // This is where you verify the results
             XCTAssertFalse(cryptos.isEmpty, "The public database should not be empty.")
