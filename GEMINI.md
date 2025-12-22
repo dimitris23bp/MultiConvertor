@@ -1,40 +1,55 @@
 # Project Overview
 
-This is a SwiftUI application that functions as a cryptocurrency converter. It allows users to select their favorite cryptocurrencies, view their current values in USD, and convert between them. The application fetches real-time cryptocurrency data from the Coinlore API and cryptocurrency logos from the `logos.tradeloop.app` API. It uses SwiftData for local data persistence.
+This is a SwiftUI application that functions as a cryptocurrency converter. It allows users to select their favorite cryptocurrencies, view their current values in USD, and convert between them. 
+
+The application has migrated to using **Apple CloudKit** as its primary data source. It fetches cryptocurrency data (including values and SVG logos) from a public CloudKit database and persists them locally using **SwiftData**.
 
 ## Key Technologies
 
 *   **UI:** SwiftUI
 *   **Data Persistence:** SwiftData
-*   **Networking:** URLSession
-*   **APIs:**
-    *   Coinlore API (`https://api.coinlore.net/api/tickers/`) for cryptocurrency data.
-    *   `logos.tradeloop.app` API for cryptocurrency logos.
+*   **Networking / Backend:** CloudKit (Public Database)
+*   **External Dependencies:** 
+    *   `SVGKit` (Used for parsing and rendering SVG strings stored in CloudKit into UIImages).
 
 ## Architecture
 
-The application follows a simple architecture:
+The application follows a repository-based architecture with background scheduling:
 
-*   **Views:** The UI is built with SwiftUI. `ContentView` is the main view, displaying the list of favorite cryptocurrencies and handling user input.
-*   **Repository:** `CryptoRepository` acts as a single source of truth for cryptocurrency data. It encapsulates the logic for fetching data from the network and storing it in the local SwiftData database.
+*   **Views:** 
+    *   `ContentView`: The main view displaying the list of favorite cryptocurrencies and handling user input.
+    *   `AddListItems`: A view for adding new cryptocurrencies to the favorites list.
+*   **Repository:** 
+    *   `CryptoRepository`: Acts as the single source of truth. It manages the synchronization between the remote CloudKit data and the local SwiftData storage. It handles initial seeding and updating of values.
 *   **Services:**
-    *   `CryptoService` is responsible for fetching cryptocurrency data from the Coinlore API.
-    *   `ImageService` is responsible for fetching cryptocurrency logos from the `logos.tradeloop.app` API.
-*   **Models:** The `CryptoCurrency` model represents a cryptocurrency and is used for both API responses and SwiftData storage.
+    *   `CryptocurrencyService`: A service layer responsible for interacting with CloudKit (fetching records).
+    *   `TickerUpdateScheduler`: A helper class that manages background update intervals (e.g., checking for price updates every 60 seconds).
+*   **Models:** 
+    *   `Cryptocurrency`: The core data model. It is a SwiftData model (`@Model`) that also includes logic to initialize from a `CKRecord` (CloudKit) and render SVG logos using `SVGKit`.
+
+## Data Flow
+
+1.  **Fetching:** `CryptocurrencyService` fetches `CKRecord` objects from the CloudKit public database.
+2.  **Mapping:** Records are mapped to `Cryptocurrency` objects. SVG strings from the records are rendered into PNG data using `SVGKit` upon initialization.
+3.  **Storage:** `CryptoRepository` saves these objects into the local SwiftData database.
+4.  **Display:** SwiftUI views observe the SwiftData context and update automatically when data changes.
+5.  **Updates:** `TickerUpdateScheduler` triggers periodic fetches to keep the prices current.
 
 # Building and Running
 
-To build and run the project, open `CryptoConverter.xcodeproj` in Xcode and run the "CryptoConverter" scheme on a simulator or a physical device.
+To build and run the project:
+1.  Open `CryptoConverter.xcodeproj` in Xcode.
+2.  Ensure you have the necessary iCloud capabilities / signing setup if you intend to write to CloudKit (though reading public data usually requires less valid entitlements, this app seems to read from a public DB).
+3.  Run the "CryptoConverter" scheme on a simulator or physical device.
 
 # Development Conventions
 
 *   **SwiftUI:** The UI is built declaratively using SwiftUI.
-*   **SwiftData:** SwiftData is used for local data persistence.
-*   **Concurrency:** The application uses `async/await` for asynchronous operations.
-*   **Error Handling:** Errors are handled using Swift's `try/catch` mechanism.
-*   **Dependency Management:** The project does not use any external dependency management tools like Swift Package Manager or CocoaPods.
+*   **SwiftData:** Used for local caching and offline capabilities.
+*   **Concurrency:** Heavy use of `async/await` and `@MainActor` to ensure UI safety.
+*   **CloudKit:** Data is fetched in batches using cursors to handle large datasets.
 
 # Rules to follow
 
-* Always use tabs instead of spaces
-* Always follow the instructions that were given and don't change unrelated code.
+*   Always use tabs instead of spaces.
+*   Always follow the instructions that were given and don't change unrelated code.
