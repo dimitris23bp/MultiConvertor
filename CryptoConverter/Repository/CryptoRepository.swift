@@ -44,7 +44,7 @@ final class CryptoRepository {
         guard current.count < minCount else { return }
 
         print("Fetching initial cryptocurrencies")
-        let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies()
+        let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies(amount: 50)
         for crypto in cryptocurrencies {
             print("Fetching crypto with ID: \(crypto.id)")
             if crypto.logo != nil {
@@ -52,14 +52,36 @@ final class CryptoRepository {
                 modelContext.insert(crypto)
 			}
         }
-
+        
         try modelContext.save()
         print("Initial cryptocurrencies are saved")
+        
+        // Remaining data will be saved asynchronously to not wait for them in the first install of the app
+        Task {
+            await ensureRemainingData()
+        }
+    }
+    
+    private func ensureRemainingData() async {
+        print("Adding remaining data")
+        let current = fetchAllCryptos()
+        let ids = Set(current.map(\.id))
+        
+        let allCryptos: [Cryptocurrency] = try! await cryptocurrencyService.fetchAllCryptocurrencies()
+        for crypto in allCryptos {
+            if !ids.contains(crypto.id) {
+                if crypto.logo != nil {
+                    print("Inserting crypto with ID: \(crypto.id)")
+                    modelContext.insert(crypto)
+                }
+            }
+        }
+        print("Remaining cryptos are saved")
     }
 
     /// Updates existing crypto values and market caps from CloudKit's public Database.
     func updateAmounts() async throws {
-        let cryptocurrenciesInCK = try await cryptocurrencyService.fetchCryptocurrencies()
+        let cryptocurrenciesInCK = try await cryptocurrencyService.fetchAllCryptocurrencies()
         let existing = fetchAllCryptos()
 
         for incoming in cryptocurrenciesInCK {

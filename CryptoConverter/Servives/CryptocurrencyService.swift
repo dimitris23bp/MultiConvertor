@@ -3,9 +3,23 @@ import CloudKit
 class CryptocurrencyService {
     let publicDatabase = CKContainer.default().publicCloudDatabase
     
-    func fetchCryptocurrencies() async throws -> [Cryptocurrency] {
+    func fetchAllCryptocurrencies() async throws -> [Cryptocurrency] {
+        
         // Fetch the raw CKRecords
         let records = try await fetchAllPublicRecords()
+        
+        // Map records to model objects
+        // compactMap automatically removes any 'nil' results if a record is malformed
+        let cryptos = records.compactMap { record in
+            Cryptocurrency(record: record)
+        }
+        
+        return cryptos
+    }
+    
+    func fetchCryptocurrencies(amount: Int) async throws -> [Cryptocurrency] {
+        // Fetch the raw CKRecords
+        let records = try await fetchPublicRecords(withAmount: amount)
         
         // Map records to model objects
         // compactMap automatically removes any 'nil' results if a record is malformed
@@ -29,7 +43,7 @@ class CryptocurrencyService {
             
             if let cursor = currentCursor {
                 // Fetch the next batch using the cursor
-                (results, nextCursor) = try await publicDatabase.records(continuingMatchFrom: cursor, resultsLimit: 200)
+                (results, nextCursor) = try await publicDatabase.records(continuingMatchFrom: cursor)
             } else {
                 // Initial fetch
                 (results, nextCursor) = try await publicDatabase.records(matching: query)
@@ -49,7 +63,32 @@ class CryptocurrencyService {
             allRecords.append(contentsOf: records)
             currentCursor = nextCursor // Update the cursor for the next iteration
             
-        } while currentCursor != nil && allRecords.count < 200
+        } while currentCursor != nil
+        
+        return allRecords
+    }
+    
+    // TODO: Make sure amount is maximum 250
+    /// Fetches all records of a specific type, regardless of count.
+    private func fetchPublicRecords(withAmount amount: Int) async throws -> [CKRecord] {
+        var allRecords: [CKRecord] = []
+        
+        let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
+        
+        let (results, _) = try await publicDatabase.records(matching: query, resultsLimit: amount)
+        
+        // Extract the records from the results tuple
+        let records = results.compactMap { (id, result) -> CKRecord? in
+            switch result {
+            case .success(let record):
+                return record
+            case .failure(let error):
+                print("Error fetching individual record \(id): \(error)")
+                return nil
+            }
+        }
+        
+        allRecords.append(contentsOf: records)
         
         return allRecords
     }

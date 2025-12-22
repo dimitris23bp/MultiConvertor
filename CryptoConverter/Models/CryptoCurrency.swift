@@ -32,6 +32,7 @@ class Cryptocurrency {
         self.value = value
         self.marketCap = marketCap
         
+        // This is a convention for the previews
         if logoString == "preview" {
             self.renderedLogoData = logoString.data(using: .utf8)
         } else {
@@ -69,6 +70,7 @@ class Cryptocurrency {
     
     // This property is fast enough, because it just wraps existing Data
     var logo: UIImage? {
+        // This is a convention for the previews
         if renderedLogoData == "preview".data(using: .utf8) {
             return UIImage(systemName: "questionmark.circle")
         }
