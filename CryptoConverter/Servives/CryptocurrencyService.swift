@@ -1,6 +1,9 @@
 import CloudKit
 
-class CryptocurrencyService {
+final class CryptocurrencyService : Sendable {
+    // Ensure your init is not restricted to the MainActor
+    init() {}
+    
     let publicDatabase = CKContainer.default().publicCloudDatabase
     
     func fetchAllCryptocurrencies() async throws -> [Cryptocurrency] {
@@ -17,6 +20,7 @@ class CryptocurrencyService {
         return cryptos
     }
     
+    // TODO: Get the ones with the highest marketCap
     func fetchCryptocurrencies(amount: Int) async throws -> [Cryptocurrency] {
         // Fetch the raw CKRecords
         let records = try await fetchPublicRecords(withAmount: amount)

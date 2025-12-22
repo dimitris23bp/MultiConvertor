@@ -39,6 +39,7 @@ final class CryptoRepository {
     /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
+        // TODO: Fetch only the IDs
         let current = fetchAllCryptos()
         // If I have 3 or more, return
         guard current.count < minCount else { return }
@@ -57,26 +58,38 @@ final class CryptoRepository {
         print("Initial cryptocurrencies are saved")
         
         // Remaining data will be saved asynchronously to not wait for them in the first install of the app
-        Task {
-            await ensureRemainingData()
-        }
+        
+        await ensureRemainingData()
     }
     
+    // TODO: Make this NOT be on the MainActor
     private func ensureRemainingData() async {
         print("Adding remaining data")
+        
+        // TODO: Fetch only the IDs
         let current = fetchAllCryptos()
         let ids = Set(current.map(\.id))
+
+        // Get a reference to the container (which is thread-safe)
+        let container = modelContext.container
         
-        let allCryptos: [Cryptocurrency] = try! await cryptocurrencyService.fetchAllCryptocurrencies()
-        for crypto in allCryptos {
-            if !ids.contains(crypto.id) {
-                if crypto.logo != nil {
-                    print("Inserting crypto with ID: \(crypto.id)")
-                    modelContext.insert(crypto)
+        // Perform work in a separate Task that isn't bound to the MainActor
+        Task.detached(priority: .utility) {
+            // Create a background context
+            let backgroundContext = ModelContext(container)
+            
+            let allCryptos: [Cryptocurrency] = try! await self.cryptocurrencyService.fetchAllCryptocurrencies()
+            for crypto in allCryptos {
+                if !ids.contains(crypto.id) {
+                    if crypto.logo != nil {
+                        print("Inserting crypto with ID: \(crypto.id)")
+                        backgroundContext.insert(crypto)
+                    }
                 }
             }
+            try backgroundContext.save()
+            print("Remaining cryptos are saved")
         }
-        print("Remaining cryptos are saved")
     }
 
     /// Updates existing crypto values and market caps from CloudKit's public Database.
