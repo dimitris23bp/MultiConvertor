@@ -29,7 +29,7 @@ class CryptocurrencyService {
             
             if let cursor = currentCursor {
                 // Fetch the next batch using the cursor
-                (results, nextCursor) = try await publicDatabase.records(continuingMatchFrom: cursor)
+                (results, nextCursor) = try await publicDatabase.records(continuingMatchFrom: cursor, resultsLimit: 200)
             } else {
                 // Initial fetch
                 (results, nextCursor) = try await publicDatabase.records(matching: query)
@@ -49,7 +49,7 @@ class CryptocurrencyService {
             allRecords.append(contentsOf: records)
             currentCursor = nextCursor // Update the cursor for the next iteration
             
-        } while currentCursor != nil
+        } while currentCursor != nil && allRecords.count < 200
         
         return allRecords
     }

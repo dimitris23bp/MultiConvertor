@@ -14,10 +14,21 @@ struct CryptoConverterApp: App {
         let schema = Schema([
             Cryptocurrency.self,
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        
+        let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isPreview)
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            
+            if isPreview {
+                let context = container.mainContext
+                context.insert(Previews.previewBtc)
+                context.insert(Previews.previewEth)
+                context.insert(Previews.previewDot)
+            }
+            
+            return container
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }

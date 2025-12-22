@@ -24,6 +24,18 @@ final class CryptoRepository {
 
     // MARK: - Public API
 
+    func addInitialFavourites(cryptocurrencies: [Cryptocurrency]) async throws {
+        for crypto in cryptocurrencies {
+            if crypto.id == "BTC" || crypto.id == "ETH" {
+                crypto.sortOrder = getHighestOrder() + 1
+                crypto.favourite = true
+            }
+        }
+        try modelContext.save()
+        print("Initial favourites have been added")
+
+    }
+    
     /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
@@ -36,10 +48,6 @@ final class CryptoRepository {
         for crypto in cryptocurrencies {
             print("Fetching crypto with ID: \(crypto.id)")
             if crypto.logo != nil {
-                if crypto.id == "BTC" || crypto.id == "ETH" {
-                    crypto.sortOrder = getHighestOrder() + 1
-                    crypto.favourite = true
-                }
                 print("Inserting crypto with ID: \(crypto.id)")
                 modelContext.insert(crypto)
 			}

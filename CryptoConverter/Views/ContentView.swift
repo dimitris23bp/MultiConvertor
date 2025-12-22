@@ -18,6 +18,8 @@ struct InputValues {
 struct ContentView: View {
 	@Environment(\.scenePhase) private var scenePhase
 	@Environment(\.modelContext) private var modelContext
+    
+    let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
 	// TODO: Sort based on the sortOrder, and also add functionality to edit order on the edit mode.
 	@Query(sort: \Cryptocurrency.sortOrder, animation: .default) private var cryptocurrencies: [Cryptocurrency]
@@ -50,7 +52,7 @@ struct ContentView: View {
 
 	var body: some View {
 		Group {
-			if cryptocurrencies.count < 50 {
+			if cryptocurrencies.count < 3 {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
 						// TODO: Change this with a gif or something else that is not just Bitcoin
@@ -199,10 +201,11 @@ struct ContentView: View {
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
 				// Check immediately on appear
-				if cryptocurrencies.count < 3 {
+				if cryptocurrencies.count < 3 || isPreview {
 					scheduler.updateLastExecution()
                     // TODO: Do an initial load for some cryptos, and then load the rest in the background. Also add a progress bar on the bottom while this is happening as a v2
 					try? await repository?.ensureInitialDataIfNeeded()
+                    try? await repository?.addInitialFavourites(cryptocurrencies: cryptocurrencies)
 					print("Initial data has happened")
                     print(cryptocurrencies.count)
 				} else if scheduler.checkIfNeeded() {

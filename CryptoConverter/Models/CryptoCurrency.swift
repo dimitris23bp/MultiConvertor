@@ -26,12 +26,25 @@ class Cryptocurrency {
     @Attribute(.externalStorage) private var renderedLogoData: Data?
     var sortOrder: Int?
     
-    init(id: String, name: String, value: Double, marketCap: Double, renderedLogoData: Data?) {
+    init(id: String, name: String, value: Double, marketCap: Double, logoString: String) {
         self.id = id
         self.name = name
         self.value = value
         self.marketCap = marketCap
-        self.renderedLogoData = renderedLogoData
+        
+        if logoString == "preview" {
+            self.renderedLogoData = logoString.data(using: .utf8)
+        } else {
+            // Render SVG to a standard UIImage once to not spend time computing in the main thread with a computed property
+            let data = logoString.data(using: .utf8)
+            let renderedLogoData: Data? = if let uiImage = SVGKImage(data: data)?.uiImage {
+                uiImage.pngData()
+            } else {
+                nil
+            }
+            self.renderedLogoData = renderedLogoData
+        }
+        
     }
     
     convenience init?(record: CKRecord) {
@@ -46,15 +59,8 @@ class Cryptocurrency {
             return nil
         }
         
-        // Render SVG to a standard UIImage once to not spend time computing in the main thread with a computed property
-        let data = logoString.data(using: .utf8)
-        let renderedLogoData: Data? = if let uiImage = SVGKImage(data: data)?.uiImage {
-            uiImage.pngData()
-        } else {
-            nil
-        }
         
-        self.init(id: id, name: name, value: value, marketCap: marketCap, renderedLogoData: renderedLogoData)
+        self.init(id: id, name: name, value: value, marketCap: marketCap, logoString: logoString)
         
         // Handle optional or defaulted values
         self.favourite = record["favourite"] as? Bool ?? false
@@ -63,6 +69,9 @@ class Cryptocurrency {
     
     // This property is fast enough, because it just wraps existing Data
     var logo: UIImage? {
+        if renderedLogoData == "preview".data(using: .utf8) {
+            return UIImage(systemName: "questionmark.circle")
+        }
         guard let renderedLogoData else { return nil }
         return UIImage(data: renderedLogoData)
     }
