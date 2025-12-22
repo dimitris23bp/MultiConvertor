@@ -6,31 +6,43 @@ actor CryptocurrencyService {
     
     nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
     
-    func fetchAllCryptocurrencies() async throws -> [Cryptocurrency] {
+    func fetchAllCryptocurrencies() async -> [Cryptocurrency] {
         
-        // Fetch the raw CKRecords
-        let records = try await fetchAllPublicRecords()
-        
-        // Map records to model objects
-        // compactMap automatically removes any 'nil' results if a record is malformed
-        let cryptos = records.compactMap { record in
-            Cryptocurrency(record: record)
+        do {
+            // Fetch the raw CKRecords
+            let records = try await fetchAllPublicRecords()
+            
+            // Map records to model objects
+            // compactMap automatically removes any 'nil' results if a record is malformed
+            let cryptos = records.compactMap { record in
+                Cryptocurrency(record: record)
+            }
+            return cryptos
+        } catch {
+            print("There was an error during fetching cryptos from CloudKit: \(error)")
+            print("Returning an empty list instead")
+            return []
         }
         
-        return cryptos
     }
     
     func fetchCryptocurrencies(amount: Int) async throws -> [Cryptocurrency] {
-        // Fetch the raw CKRecords
-        let records = try await fetchPublicRecords(withAmount: amount)
-        
-        // Map records to model objects
-        // compactMap automatically removes any 'nil' results if a record is malformed
-        let cryptos = records.compactMap { record in
-            Cryptocurrency(record: record)
+        do {
+            // Fetch the raw CKRecords
+            let records = try await fetchPublicRecords(withAmount: amount)
+            
+            // Map records to model objects
+            // compactMap automatically removes any 'nil' results if a record is malformed
+            let cryptos = records.compactMap { record in
+                Cryptocurrency(record: record)
+            }
+            
+            return cryptos
+        } catch {
+            print("There was an error during fetching cryptos from CloudKit: \(error)")
+            print("Returning an empty list instead")
+            return []
         }
-        
-        return cryptos
     }
     
     /// Fetches all records of a specific type, regardless of count.
@@ -72,9 +84,12 @@ actor CryptocurrencyService {
         return allRecords
     }
     
-    // TODO: Make sure amount is maximum 250
     /// Fetches all records of a specific type, regardless of count.
     private func fetchPublicRecords(withAmount amount: Int) async throws -> [CKRecord] {
+        guard amount > 0  && amount <= 250 else {
+            print("The amount cannot be less than 1 or more than 250")
+            return []
+        }
         var allRecords: [CKRecord] = []
         
         let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))

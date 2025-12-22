@@ -78,7 +78,7 @@ final class CryptoRepository {
             // Create a background context
             let backgroundContext = ModelContext(container)
             
-            let allCryptos: [Cryptocurrency] = try! await service.fetchAllCryptocurrencies()
+            let allCryptos: [Cryptocurrency] = await service.fetchAllCryptocurrencies()
             for crypto in allCryptos {
                 if !ids.contains(crypto.id) {
                     if crypto.logo != nil {
@@ -93,8 +93,8 @@ final class CryptoRepository {
     }
 
     /// Updates existing crypto values and market caps from CloudKit's public Database.
-    func updateAmounts() async throws {
-        let cryptocurrenciesInCK = try await cryptocurrencyService.fetchAllCryptocurrencies()
+    func updateAmounts() async {
+        let cryptocurrenciesInCK = await cryptocurrencyService.fetchAllCryptocurrencies()
         let existing = fetchAllCryptos()
 
         for incoming in cryptocurrenciesInCK {
