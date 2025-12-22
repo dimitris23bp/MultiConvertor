@@ -62,7 +62,6 @@ final class CryptoRepository {
         await ensureRemainingData()
     }
     
-    // TODO: Make this NOT be on the MainActor
     private func ensureRemainingData() async {
         print("Adding remaining data")
         

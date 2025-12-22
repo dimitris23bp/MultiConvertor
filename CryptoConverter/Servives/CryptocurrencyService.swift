@@ -20,7 +20,6 @@ actor CryptocurrencyService {
         return cryptos
     }
     
-    // TODO: Get the ones with the highest marketCap
     func fetchCryptocurrencies(amount: Int) async throws -> [Cryptocurrency] {
         // Fetch the raw CKRecords
         let records = try await fetchPublicRecords(withAmount: amount)
@@ -41,6 +40,7 @@ actor CryptocurrencyService {
         var currentCursor: CKQueryOperation.Cursor? = nil
         
         let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
+        query.sortDescriptors = [NSSortDescriptor(key: "marketCap", ascending: false)]
         
         repeat {
             let (results, nextCursor): ([(CKRecord.ID, Result<CKRecord, Error>)], CKQueryOperation.Cursor?)
@@ -78,6 +78,7 @@ actor CryptocurrencyService {
         var allRecords: [CKRecord] = []
         
         let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
+        query.sortDescriptors = [NSSortDescriptor(key: "marketCap", ascending: false)]
         
         let (results, _) = try await publicDatabase.records(matching: query, resultsLimit: amount)
         

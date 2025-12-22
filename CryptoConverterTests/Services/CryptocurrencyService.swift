@@ -16,7 +16,7 @@ final class CloudKitTests: XCTestCase {
         
         // Use an expectation to handle the async nature of the call
         do {
-            let cryptos = try await manager.fetchAllCryptocurrencies()
+            let cryptos = try await manager.fetchCryptocurrencies(amount: 50)
             
             // This is where you verify the results
             XCTAssertFalse(cryptos.isEmpty, "The public database should not be empty.")
