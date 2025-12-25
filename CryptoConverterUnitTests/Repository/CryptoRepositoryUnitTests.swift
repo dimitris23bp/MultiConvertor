@@ -6,7 +6,6 @@ import SwiftData
 final class CryptoRepositoryUnitTests: XCTestCase {
 	var modelContainer: ModelContainer!
 	var modelContext: ModelContext!
-	var mockService: CryptocurrencyServiceMock!
 	var repository: CryptoRepository!
 
 	override func setUp() async throws {
@@ -14,47 +13,54 @@ final class CryptoRepositoryUnitTests: XCTestCase {
 		let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
 		modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
 		modelContext = modelContainer.mainContext
-		mockService = CryptocurrencyServiceMock()
-		repository = CryptoRepository(modelContext: modelContext, cryptocurrencyService: mockService)
+		repository = CryptoRepository(modelContext: modelContext)
 	}
 
 	override func tearDown() {
 		modelContainer = nil
 		modelContext = nil
-		mockService = nil
 		repository = nil
 	}
 
-	func testEnsureInitialDataIfNeeded_WhenStoreIsEmpty_FetchesAndSaves() async throws {
-		// Arrange
+    func testSaveCryptos_PersistsData() async throws {
+        // Arrange
         let dummyData = "preview".data(using: .utf8)
-		let mockDTO = CryptocurrencyDTO(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, renderedLogoData: dummyData, favourite: false, sortOrder: nil)
-		mockService.mockCryptocurrencies = [mockDTO]
+        let crypto = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, logoString: "btc_logo")
+        // Manually set renderedLogoData because saveCryptos checks for it
+        crypto.renderedLogoData = dummyData
+        
+        // Act
+        try await repository.saveCryptos(cryptocurrencies: [crypto])
 
-		// Act
-		try await repository.ensureInitialDataIfNeeded(minCount: 1)
+        // Assert
+        let descriptor = FetchDescriptor<Cryptocurrency>()
+        let savedCryptos = try modelContext.fetch(descriptor)
+        
+        XCTAssertEqual(savedCryptos.count, 1)
+        XCTAssertEqual(savedCryptos.first?.id, "BTC")
+    }
 
-		// Assert
-		let descriptor = FetchDescriptor<Cryptocurrency>()
-		let savedCryptos = try modelContext.fetch(descriptor)
-		
-		XCTAssertEqual(savedCryptos.count, 1)
-		XCTAssertEqual(savedCryptos.first?.id, "BTC")
-		XCTAssertEqual(mockService.fetchWithAmountCalledCount, 1)
-	}
+    func testAddInitialFavourites_UpdatesStatusAndSortOrder() async throws {
+        // Arrange
+        let btc = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 1.0, marketCap: 1.0, logoString: "")
+        let eth = Cryptocurrency(id: "ETH", name: "Ethereum", value: 1.0, marketCap: 1.0, logoString: "")
+        let other = Cryptocurrency(id: "DOGE", name: "Dogecoin", value: 1.0, marketCap: 1.0, logoString: "")
+        
+        modelContext.insert(btc)
+        modelContext.insert(eth)
+        modelContext.insert(other)
+        
+        let cryptos = [btc, eth, other]
 
-	func testEnsureInitialDataIfNeeded_WhenStoreHasEnoughData_DoesNotFetch() async throws {
-		// Arrange
-		let existingCrypto = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, logoString: "preview")
-		modelContext.insert(existingCrypto)
-		try modelContext.save()
-		
-		mockService.mockCryptocurrencies = []
+        // Act
+        try await repository.addInitialFavourites(cryptocurrencies: cryptos)
 
-		// Act
-		try await repository.ensureInitialDataIfNeeded(minCount: 1)
-
-		// Assert
-		XCTAssertEqual(mockService.fetchWithAmountCalledCount, 0)
-	}
+        // Assert
+        XCTAssertTrue(btc.favourite)
+        XCTAssertTrue(eth.favourite)
+        XCTAssertFalse(other.favourite)
+        
+        XCTAssertGreaterThan(btc.sortOrder ?? 0, 0)
+        XCTAssertGreaterThan(eth.sortOrder ?? 0, 0)
+    }
 }
