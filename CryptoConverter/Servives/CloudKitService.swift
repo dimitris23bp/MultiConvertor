@@ -4,6 +4,7 @@ import SVGKit
 protocol CloudKitServiceProtocol: Sendable {
     func fetchAllCryptocurrenciesFromCK() async -> [CryptocurrencyDTO]
     func fetchCryptocurrenciesFromCK(amount: Int) async throws -> [CryptocurrencyDTO]
+	func getLastUpdate() async -> Date?
 }
 
 actor CloudKitService : CloudKitServiceProtocol {
@@ -45,6 +46,21 @@ actor CloudKitService : CloudKitServiceProtocol {
             print("Returning an empty list instead")
             return []
         }
+    }
+    
+    func getLastUpdate() async -> Date? {
+		let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
+		query.sortDescriptors = [NSSortDescriptor(key: "modificationDate", ascending: false)]
+
+		do {
+			let (results, _) = try await publicDatabase.records(matching: query, resultsLimit: 1)
+			if let (_, result) = results.first, case .success(let record) = result {
+				return record.modificationDate
+			}
+		} catch {
+			print("Error fetching last update date: \(error)")
+		}
+		return nil
     }
     
     private func mapCryptoRecordToDTO(record: CKRecord) -> CryptocurrencyDTO? {

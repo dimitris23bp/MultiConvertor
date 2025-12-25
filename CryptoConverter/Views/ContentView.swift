@@ -39,6 +39,7 @@ struct ContentView: View {
 	@State private var editMode: EditMode = .inactive
 	@State private var selection = Set<Cryptocurrency.ID>()
 	@State private var isShowingSheet = false
+    @State private var lastUpdate: String = "NaN"
 	@FocusState private var focusedCryptoId: String?
 
 	let imageSize: CGFloat = 42
@@ -138,7 +139,7 @@ struct ContentView: View {
 							}
 							.onMove(perform: moveItems)
 						} footer: {
-							Text("Last updated: \(scheduler.formattedLastExecutionTime)")
+                            Text("Last updated: \(lastUpdate)")
 						}
 					}
 					.scrollDismissesKeyboard(.interactively)
@@ -204,12 +205,17 @@ struct ContentView: View {
 				}
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
+                
+                // TODO: I need to make sure that service is not nullable
+                lastUpdate = await service!.getLastUpdate()
+                
 				// Check immediately on appear
 				if cryptocurrencies.count < 3 || isPreview {
 					scheduler.updateLastExecution()
                     // TODO: Do an initial load for some cryptos, and then load the rest in the background. Also add a progress bar on the bottom while this is happening as a v2
 					try? await service?.ensureInitialDataIfNeeded()
                     try? await repository?.addInitialFavourites(cryptocurrencies: cryptocurrencies)
+                    
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
@@ -272,6 +278,7 @@ struct ContentView: View {
 			editMode = .inactive
 		}
 	}
+    
 }
 
 #Preview {

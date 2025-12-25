@@ -3,6 +3,7 @@ import SVGKit
 
 protocol CryptocurrencyServiceProtocol: Sendable {
     func ensureInitialDataIfNeeded(minCount: Int) async throws
+	func getLastUpdate() async -> String
 }
 
 actor CryptocurrencyService: CryptocurrencyServiceProtocol {
@@ -60,5 +61,17 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
         let existingCryptos = await cryptoRepository.fetchAllCryptos()
 
         await cryptoRepository.updateAmounts(incomingCryptos: incomingCryptos, existingCryptos: existingCryptos)
-    }
+   }
+
+	func getLastUpdate() async -> String {
+        if let lastUpdate = await cloudkitService.getLastUpdate() {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .medium
+            return formatter.string(from: lastUpdate)
+        } else {
+            return "NaN"
+        }
+
+	}
 }
