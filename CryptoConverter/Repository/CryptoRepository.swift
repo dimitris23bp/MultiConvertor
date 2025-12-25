@@ -47,11 +47,10 @@ final class CryptoRepository {
         print("Fetching initial cryptocurrencies")
         let cryptocurrencyDTOs = try await cryptocurrencyService.fetchCryptocurrencies(amount: 50)
         let cryptocurrencies = cryptocurrencyDTOs.map { Cryptocurrency(dto: $0) }
-        print("Look here")
-        print(cryptocurrencies.map(\.id))
+        
         for crypto in cryptocurrencies {
             print("Fetching crypto with ID: \(crypto.id)")
-            if crypto.logo != nil {
+            if crypto.renderedLogoData != nil {
                 print("Inserting crypto with ID: \(crypto.id)")
                 modelContext.insert(crypto)
 			}
@@ -61,7 +60,6 @@ final class CryptoRepository {
         print("Initial cryptocurrencies are saved")
         
         // Remaining data will be saved asynchronously to not wait for them in the first install of the app
-        
         await ensureRemainingData()
     }
     
@@ -84,9 +82,10 @@ final class CryptoRepository {
             let allCryptoDTOs = await service.fetchAllCryptocurrencies()
             let allCryptos = allCryptoDTOs.map { Cryptocurrency(dto: $0) }
             for crypto in allCryptos {
+                print("Fetching crypto in remaining with ID: \(crypto.id)")
                 if !ids.contains(crypto.id) {
-                    if crypto.logo != nil {
-                        print("Inserting crypto with ID: \(crypto.id)")
+                    if crypto.renderedLogoData != nil {
+                        print("Inserting crypto in remaining with ID: \(crypto.id)")
                         backgroundContext.insert(crypto)
                     }
                 }

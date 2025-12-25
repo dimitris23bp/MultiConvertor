@@ -23,9 +23,17 @@ class Cryptocurrency {
     var favourite: Bool = false
     // Data to compute the logo
     // On external storage to not spend time computing it
-    @Attribute(.externalStorage) private var renderedLogoData: Data?
+    @Attribute(.externalStorage) var renderedLogoData: Data?
     var sortOrder: Int?
     
+    // LogoString is not included and renderedLogoData can be added later
+    init(id: String, name: String, value: Double, marketCap: Double) {
+        self.id = id
+        self.name = name
+        self.value = value
+        self.marketCap = marketCap
+    }
+        
     init(id: String, name: String, value: Double, marketCap: Double, logoString: String) {
         self.id = id
         self.name = name
@@ -47,13 +55,11 @@ class Cryptocurrency {
         }
         
     }
-    
+
     convenience init(dto: CryptocurrencyDTO) {
-        self.init(id: dto.id, name: dto.name, value: dto.value, marketCap: dto.marketCap, logoString: "preview") // Reuse init but override data
+        self.init(id: dto.id, name: dto.name, value: dto.value, marketCap: dto.marketCap)
         // Overwrite the logo data with the pre-calculated one from the DTO
         self.renderedLogoData = dto.renderedLogoData
-        self.favourite = dto.favourite
-        self.sortOrder = dto.sortOrder
     }
     
     convenience init?(record: CKRecord) {
