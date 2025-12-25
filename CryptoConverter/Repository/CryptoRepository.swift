@@ -22,8 +22,6 @@ final class CryptoRepository {
 		self.cryptocurrencyService = cryptocurrencyService
 	}
 
-    // MARK: - Public API
-
     func addInitialFavourites(cryptocurrencies: [Cryptocurrency]) async throws {
         for crypto in cryptocurrencies {
             if crypto.id == "BTC" || crypto.id == "ETH" {
@@ -36,72 +34,44 @@ final class CryptoRepository {
 
     }
     
-    /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
-    /// - Parameter minCount: Minimum number of records considered "seeded".
-    func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
-        // TODO: Fetch only the IDs
-        let current = fetchAllCryptos()
-        // If I have 3 or more, return
-        guard current.count < minCount else { return }
-
-        print("Fetching initial cryptocurrencies")
-        let cryptocurrencyDTOs = try await cryptocurrencyService.fetchCryptocurrencies(amount: 50)
-        let cryptocurrencies = cryptocurrencyDTOs.map { Cryptocurrency(dto: $0) }
-        
+    func saveCryptos(cryptocurrencies: [Cryptocurrency]) async throws {
         for crypto in cryptocurrencies {
             print("Fetching crypto with ID: \(crypto.id)")
             if crypto.renderedLogoData != nil {
                 print("Inserting crypto with ID: \(crypto.id)")
                 modelContext.insert(crypto)
-			}
+            }
         }
         
         try modelContext.save()
-        print("Initial cryptocurrencies are saved")
-        
-        // Remaining data will be saved asynchronously to not wait for them in the first install of the app
-        await ensureRemainingData()
     }
     
-    private func ensureRemainingData() async {
+    func addCryptosIfDontExist(ids: [String], allCryptos: [Cryptocurrency]) async throws {
         print("Adding remaining data")
         
-        // TODO: Fetch only the IDs
-        let current = fetchAllCryptos()
-        let ids = Set(current.map(\.id))
-
         // Get a reference to the container (which is thread-safe)
         let container = modelContext.container
         let service = self.cryptocurrencyService
         
-        // Perform work in a separate Task that isn't bound to the MainActor
-        Task.detached(priority: .utility) {
-            // Create a background context
-            let backgroundContext = ModelContext(container)
-            
-            let allCryptoDTOs = await service.fetchAllCryptocurrencies()
-            let allCryptos = allCryptoDTOs.map { Cryptocurrency(dto: $0) }
-            for crypto in allCryptos {
-                print("Fetching crypto in remaining with ID: \(crypto.id)")
-                if !ids.contains(crypto.id) {
-                    if crypto.renderedLogoData != nil {
-                        print("Inserting crypto in remaining with ID: \(crypto.id)")
-                        backgroundContext.insert(crypto)
-                    }
+        // Create a background context
+        let backgroundContext = ModelContext(container)
+        
+        for crypto in allCryptos {
+            print("Fetching crypto in remaining with ID: \(crypto.id)")
+            if !ids.contains(crypto.id) {
+                if crypto.renderedLogoData != nil {
+                    print("Inserting crypto in remaining with ID: \(crypto.id)")
+                    backgroundContext.insert(crypto)
                 }
             }
-            try backgroundContext.save()
-            print("Remaining cryptos are saved")
         }
+        try backgroundContext.save()
     }
 
     /// Updates existing crypto values and market caps from CloudKit's public Database.
-    func updateAmounts() async {
-        let cryptocurrencyDTOsInCK = await cryptocurrencyService.fetchAllCryptocurrencies()
-        let existing = fetchAllCryptos()
-
-        for incoming in cryptocurrencyDTOsInCK {
-            if let match = existing.first(where: { $0.id == incoming.id }) {
+    func updateAmounts(incomingCryptos: [CryptocurrencyDTO], existingCryptos: [Cryptocurrency]) async {
+        for incoming in incomingCryptos {
+            if let match = existingCryptos.first(where: { $0.id == incoming.id }) {
                 match.value = incoming.value
                 match.marketCap = incoming.marketCap
             }

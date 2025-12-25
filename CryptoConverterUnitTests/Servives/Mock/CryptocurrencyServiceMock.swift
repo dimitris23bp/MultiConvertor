@@ -9,7 +9,7 @@ final class CryptocurrencyServiceMock: CryptocurrencyServiceProtocol {
 	var fetchWithAmountLastAmount = 0
 	var shouldThrowError = false
 
-	func fetchAllCryptocurrencies() async -> [CryptocurrencyDTO] {
+	func fetchAllCryptocurrenciesFromCK() async -> [CryptocurrencyDTO] {
 		fetchAllCalled = true
 		return mockCryptocurrencies
 	}

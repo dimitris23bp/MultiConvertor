@@ -46,7 +46,8 @@ class Cryptocurrency {
         } else {
             // Render SVG to a standard UIImage once to not spend time computing in the main thread with a computed property
             let data = logoString.data(using: .utf8)
-            let renderedLogoData: Data? = if let uiImage = SVGKImage(data: data)?.uiImage {
+            let svgkImage = SVGKImage(data: data)
+            let renderedLogoData: Data? = if let uiImage = svgkImage?.uiImage {
                 uiImage.pngData()
             } else {
                 nil

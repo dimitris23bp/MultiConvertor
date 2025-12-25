@@ -2,148 +2,56 @@ import CloudKit
 import SVGKit
 
 protocol CryptocurrencyServiceProtocol: Sendable {
-    func fetchAllCryptocurrencies() async -> [CryptocurrencyDTO]
-    func fetchCryptocurrencies(amount: Int) async throws -> [CryptocurrencyDTO]
+    func ensureInitialDataIfNeeded(minCount: Int) async throws
 }
 
 actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     
     nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
-    
-    func fetchAllCryptocurrencies() async -> [CryptocurrencyDTO] {
+    private let cryptoRepository = CryptoRepository()
+    private let cloudkitService = CloudKitService()
+
+    /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
+    /// - Parameter minCount: Minimum number of records considered "seeded".
+    func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
+        // TODO: Fetch only the IDs
+        let current = cryptoRepository.fetchAllCryptos()
+        // If I have 3 or more, return
+        guard current.count < minCount else { return }
+
+        print("Fetching initial cryptocurrencies")
+        let cryptocurrencyDTOs = try await cloudkitService.fetchCryptocurrenciesFromCK(amount: 50)
+        let cryptocurrencies = cryptocurrencyDTOs.map { Cryptocurrency(dto: $0) }
         
-        do {
-            // Fetch the raw CKRecords
-            let records = try await fetchAllPublicRecords()
-            
-            // Map records to DTOs
-            let cryptos = records.compactMap { record in
-                mapToDTO(record: record)
-            }
-            return cryptos
-        } catch {
-            print("There was an error during fetching cryptos from CloudKit: \(error)")
-            print("Returning an empty list instead")
-            return []
-        }
+        cryptoRepository.saveCryptos(cryptocurrencies)
         
+        print("Initial cryptocurrencies are saved")
+        
+        // Remaining data will be saved asynchronously to not wait for them in the first install of the app
+        await ensureRemainingData()
     }
     
-    func fetchCryptocurrencies(amount: Int) async throws -> [CryptocurrencyDTO] {
-        do {
-            // Fetch the raw CKRecords
-            let records = try await fetchPublicRecords(withAmount: amount)
-            
-            // Map records to DTOs
-            let cryptos = records.compactMap { record in
-                mapToDTO(record: record)
-            }
-            
-            return cryptos
-        } catch {
-            print("There was an error during fetching cryptos from CloudKit: \(error)")
-            print("Returning an empty list instead")
-            return []
+    private func ensureRemainingData() async {
+        print("Adding remaining data")
+        
+        // TODO: Fetch only the IDs
+        let current: [Cryptocurrency] = cryptoRepository.fetchAllCryptos()
+        let ids = Set(current.map(\.id))
+
+        // Perform work in a separate Task that isn't bound to the MainActor
+        Task.detached(priority: .utility) {
+            let allCryptoDTOs = await cloudkitService.fetchAllCryptocurrenciesFromCK()
+            let allCryptos = allCryptoDTOs.map { Cryptocurrency(dto: $0) }
+            cryptoRepository.addCryptosIfDontExist(ids: ids, allCryptos: allCryptos)
         }
+        
+        print("Remaining cryptos are saved")
     }
     
-    private func mapToDTO(record: CKRecord) -> CryptocurrencyDTO? {
-        guard let id = record["id"] as? String,
-              let name = record["name"] as? String,
-              let value = record["value"] as? Double,
-              let marketCap = record["marketCap"] as? Double,
-              let logoString = record["logo"] as? String
-        else {
-            return nil
-        }
-        
-        // Parsing SVG in the background
-        let data = logoString.data(using: .utf8)
-        let renderedLogoData: Data? = if let uiImage = SVGKImage(data: data)?.uiImage {
-            uiImage.pngData()
-        } else {
-            nil
-        }
-        
-        let favourite = record["favourite"] as? Bool ?? false
-        let sortOrder = record["sortOrder"] as? Int
-        
-        return CryptocurrencyDTO(
-            id: id,
-            name: name,
-            value: value,
-            marketCap: marketCap,
-            renderedLogoData: renderedLogoData,
-            favourite: favourite,
-            sortOrder: sortOrder
-        )
-    }
-    
-    /// Fetches all records of a specific type, regardless of count.
-    /// Uses cursor for batches, because CloudKit cannot handle more than 250 records in one query.
-    private func fetchAllPublicRecords() async throws -> [CKRecord] {
-        var allRecords: [CKRecord] = []
-        var currentCursor: CKQueryOperation.Cursor? = nil
-        
-        let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
-        query.sortDescriptors = [NSSortDescriptor(key: "marketCap", ascending: false)]
-        
-        repeat {
-            let (results, nextCursor): ([(CKRecord.ID, Result<CKRecord, Error>)], CKQueryOperation.Cursor?)
-            
-            if let cursor = currentCursor {
-                // Fetch the next batch using the cursor
-                (results, nextCursor) = try await publicDatabase.records(continuingMatchFrom: cursor)
-            } else {
-                // Initial fetch
-                (results, nextCursor) = try await publicDatabase.records(matching: query)
-            }
-            
-            // Extract the records from the results tuple
-            let records = results.compactMap { (id, result) -> CKRecord? in
-                switch result {
-                case .success(let record):
-                    return record
-                case .failure(let error):
-                    print("Error fetching individual record \(id): \(error)")
-                    return nil
-                }
-            }
-            
-            allRecords.append(contentsOf: records)
-            currentCursor = nextCursor // Update the cursor for the next iteration
-            
-        } while currentCursor != nil
-        
-        return allRecords
-    }
-    
-    /// Fetches all records of a specific type, regardless of count.
-    private func fetchPublicRecords(withAmount amount: Int) async throws -> [CKRecord] {
-        guard amount > 0  && amount <= 250 else {
-            print("The amount cannot be less than 1 or more than 250")
-            return []
-        }
-        var allRecords: [CKRecord] = []
-        
-        let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
-        query.sortDescriptors = [NSSortDescriptor(key: "marketCap", ascending: false)]
-        
-        let (results, _) = try await publicDatabase.records(matching: query, resultsLimit: amount)
-        
-        // Extract the records from the results tuple
-        let records = results.compactMap { (id, result) -> CKRecord? in
-            switch result {
-            case .success(let record):
-                return record
-            case .failure(let error):
-                print("Error fetching individual record \(id): \(error)")
-                return nil
-            }
-        }
-        
-        allRecords.append(contentsOf: records)
-        
-        return allRecords
+    func updateAmountOfCryptos() async {
+        let incomingCryptos = await cloudkitService.fetchAllCryptocurrenciesFromCK()
+        let existingCryptos = cryptoRepository.fetchAllCryptos()
+
+        cryptoRepository.updateAmountOfCryptos(incoming: incomingCryptos, existing: existingCryptos)
     }
 }
