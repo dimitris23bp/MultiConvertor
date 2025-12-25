@@ -32,6 +32,7 @@ struct ContentView: View {
 
 	// Repository that encapsulates API + SwiftData mutations
 	@State private var repository: CryptoRepository?
+    @State private var service: CryptocurrencyService?
 	@StateObject private var scheduler = TickerUpdateScheduler()
 
 	@State private var amounts: [String: Double] = [:]
@@ -196,7 +197,10 @@ struct ContentView: View {
 		.onAppear {
 			Task {
 				if repository == nil {
-					repository = CryptoRepository(modelContext: modelContext)
+                    let repo = CryptoRepository(modelContext: modelContext)
+					repository = repo
+                    let cloudKitService = CloudKitService()
+                    service = CryptocurrencyService(repository: repo, cloudKitService: cloudKitService)
 				}
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
@@ -204,16 +208,16 @@ struct ContentView: View {
 				if cryptocurrencies.count < 3 || isPreview {
 					scheduler.updateLastExecution()
                     // TODO: Do an initial load for some cryptos, and then load the rest in the background. Also add a progress bar on the bottom while this is happening as a v2
-					try? await repository?.ensureInitialDataIfNeeded()
+					try? await service?.ensureInitialDataIfNeeded()
                     try? await repository?.addInitialFavourites(cryptocurrencies: cryptocurrencies)
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
-					await repository?.updateAmounts()
+					await service?.updateAmountOfCryptos()
 					print("Update has happened")
 				}
-				scheduler.start { [weak repository = repository] in
-					await repository?.updateAmounts()
+				scheduler.start { [weak service = service] in
+					await service?.updateAmountOfCryptos()
 				}
 			}
 		}
@@ -226,7 +230,7 @@ struct ContentView: View {
 				if scheduler.checkIfNeeded() {
 					Task {
 						scheduler.updateLastExecution()
-						await repository?.updateAmounts()
+						await service?.updateAmountOfCryptos()
 					}
 				}
 			default:

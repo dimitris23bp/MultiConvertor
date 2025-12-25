@@ -7,19 +7,9 @@ import SwiftUI
 @MainActor
 final class CryptoRepository {
 	private let modelContext: ModelContext
-	private let cryptocurrencyService: CryptocurrencyServiceProtocol
 
-	/// Convenience initializer that constructs default services on the main actor to avoid
-	/// evaluating default arguments in a nonisolated context.
-	convenience init(modelContext: ModelContext) {
-		self.init(modelContext: modelContext,
-				  cryptocurrencyService: CryptocurrencyService())
-	}
-
-	init(modelContext: ModelContext,
-		 cryptocurrencyService: CryptocurrencyServiceProtocol) {
+	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
-		self.cryptocurrencyService = cryptocurrencyService
 	}
 
     func addInitialFavourites(cryptocurrencies: [Cryptocurrency]) async throws {
@@ -46,12 +36,11 @@ final class CryptoRepository {
         try modelContext.save()
     }
     
-    func addCryptosIfDontExist(ids: [String], allCryptos: [Cryptocurrency]) async throws {
+    func addCryptosIfDontExist(ids: Set<String>, allCryptos: [Cryptocurrency]) async throws {
         print("Adding remaining data")
         
         // Get a reference to the container (which is thread-safe)
         let container = modelContext.container
-        let service = self.cryptocurrencyService
         
         // Create a background context
         let backgroundContext = ModelContext(container)
@@ -99,7 +88,7 @@ final class CryptoRepository {
 
     // MARK: - Helpers
 
-    private func fetchAllCryptos() -> [Cryptocurrency] {
+    func fetchAllCryptos() -> [Cryptocurrency] {
         if let cryptos = try? modelContext.fetch(FetchDescriptor<Cryptocurrency>()) {
             return cryptos
         } else {

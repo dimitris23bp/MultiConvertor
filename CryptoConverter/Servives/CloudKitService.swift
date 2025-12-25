@@ -1,7 +1,7 @@
 import CloudKit
 import SVGKit
 
-protocol CloudKitServiceProtocol {
+protocol CloudKitServiceProtocol: Sendable {
     func fetchAllCryptocurrenciesFromCK() async -> [CryptocurrencyDTO]
     func fetchCryptocurrenciesFromCK(amount: Int) async throws -> [CryptocurrencyDTO]
 }
