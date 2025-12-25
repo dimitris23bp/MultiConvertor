@@ -48,6 +48,14 @@ class Cryptocurrency {
         
     }
     
+    convenience init(dto: CryptocurrencyDTO) {
+        self.init(id: dto.id, name: dto.name, value: dto.value, marketCap: dto.marketCap, logoString: "preview") // Reuse init but override data
+        // Overwrite the logo data with the pre-calculated one from the DTO
+        self.renderedLogoData = dto.renderedLogoData
+        self.favourite = dto.favourite
+        self.sortOrder = dto.sortOrder
+    }
+    
     convenience init?(record: CKRecord) {
         // Map CloudKit keys to your properties
         // Use "as?" to safely cast types

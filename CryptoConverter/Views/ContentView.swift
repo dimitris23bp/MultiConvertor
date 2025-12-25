@@ -209,11 +209,11 @@ struct ContentView: View {
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
-					try? await repository?.updateAmounts()
+					await repository?.updateAmounts()
 					print("Update has happened")
 				}
 				scheduler.start { [weak repository = repository] in
-					try? await repository?.updateAmounts()
+					await repository?.updateAmounts()
 				}
 			}
 		}
@@ -226,7 +226,7 @@ struct ContentView: View {
 				if scheduler.checkIfNeeded() {
 					Task {
 						scheduler.updateLastExecution()
-						try? await repository?.updateAmounts()
+						await repository?.updateAmounts()
 					}
 				}
 			default:

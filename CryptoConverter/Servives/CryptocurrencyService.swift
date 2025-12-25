@@ -1,21 +1,24 @@
 import CloudKit
+import SVGKit
 
-actor CryptocurrencyService {
-    // Ensure your init is not restricted to the MainActor
-    init() {}
+protocol CryptocurrencyServiceProtocol: Sendable {
+    func fetchAllCryptocurrencies() async -> [CryptocurrencyDTO]
+    func fetchCryptocurrencies(amount: Int) async throws -> [CryptocurrencyDTO]
+}
+
+actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     
     nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
     
-    func fetchAllCryptocurrencies() async -> [Cryptocurrency] {
+    func fetchAllCryptocurrencies() async -> [CryptocurrencyDTO] {
         
         do {
             // Fetch the raw CKRecords
             let records = try await fetchAllPublicRecords()
             
-            // Map records to model objects
-            // compactMap automatically removes any 'nil' results if a record is malformed
+            // Map records to DTOs
             let cryptos = records.compactMap { record in
-                Cryptocurrency(record: record)
+                mapToDTO(record: record)
             }
             return cryptos
         } catch {
@@ -26,15 +29,14 @@ actor CryptocurrencyService {
         
     }
     
-    func fetchCryptocurrencies(amount: Int) async throws -> [Cryptocurrency] {
+    func fetchCryptocurrencies(amount: Int) async throws -> [CryptocurrencyDTO] {
         do {
             // Fetch the raw CKRecords
             let records = try await fetchPublicRecords(withAmount: amount)
             
-            // Map records to model objects
-            // compactMap automatically removes any 'nil' results if a record is malformed
+            // Map records to DTOs
             let cryptos = records.compactMap { record in
-                Cryptocurrency(record: record)
+                mapToDTO(record: record)
             }
             
             return cryptos
@@ -43,6 +45,38 @@ actor CryptocurrencyService {
             print("Returning an empty list instead")
             return []
         }
+    }
+    
+    private func mapToDTO(record: CKRecord) -> CryptocurrencyDTO? {
+        guard let id = record["id"] as? String,
+              let name = record["name"] as? String,
+              let value = record["value"] as? Double,
+              let marketCap = record["marketCap"] as? Double,
+              let logoString = record["logo"] as? String
+        else {
+            return nil
+        }
+        
+        // Parsing SVG in the background
+        let data = logoString.data(using: .utf8)
+        let renderedLogoData: Data? = if let uiImage = SVGKImage(data: data)?.uiImage {
+            uiImage.pngData()
+        } else {
+            nil
+        }
+        
+        let favourite = record["favourite"] as? Bool ?? false
+        let sortOrder = record["sortOrder"] as? Int
+        
+        return CryptocurrencyDTO(
+            id: id,
+            name: name,
+            value: value,
+            marketCap: marketCap,
+            renderedLogoData: renderedLogoData,
+            favourite: favourite,
+            sortOrder: sortOrder
+        )
     }
     
     /// Fetches all records of a specific type, regardless of count.

@@ -6,21 +6,21 @@ import SwiftUI
 /// keeping SwiftData mutations on the main actor.
 @MainActor
 final class CryptoRepository {
-    private let modelContext: ModelContext
-    private let cryptocurrencyService: CryptocurrencyService
+	private let modelContext: ModelContext
+	private let cryptocurrencyService: CryptocurrencyServiceProtocol
 
-    /// Convenience initializer that constructs default services on the main actor to avoid
-    /// evaluating default arguments in a nonisolated context.
-    convenience init(modelContext: ModelContext) {
-        self.init(modelContext: modelContext,
-                  cryptocurrencyService: CryptocurrencyService())
-    }
+	/// Convenience initializer that constructs default services on the main actor to avoid
+	/// evaluating default arguments in a nonisolated context.
+	convenience init(modelContext: ModelContext) {
+		self.init(modelContext: modelContext,
+				  cryptocurrencyService: CryptocurrencyService())
+	}
 
-    init(modelContext: ModelContext,
-         cryptocurrencyService: CryptocurrencyService) {
-        self.modelContext = modelContext
-        self.cryptocurrencyService = cryptocurrencyService
-    }
+	init(modelContext: ModelContext,
+		 cryptocurrencyService: CryptocurrencyServiceProtocol) {
+		self.modelContext = modelContext
+		self.cryptocurrencyService = cryptocurrencyService
+	}
 
     // MARK: - Public API
 
@@ -45,7 +45,10 @@ final class CryptoRepository {
         guard current.count < minCount else { return }
 
         print("Fetching initial cryptocurrencies")
-        let cryptocurrencies = try await cryptocurrencyService.fetchCryptocurrencies(amount: 50)
+        let cryptocurrencyDTOs = try await cryptocurrencyService.fetchCryptocurrencies(amount: 50)
+        let cryptocurrencies = cryptocurrencyDTOs.map { Cryptocurrency(dto: $0) }
+        print("Look here")
+        print(cryptocurrencies.map(\.id))
         for crypto in cryptocurrencies {
             print("Fetching crypto with ID: \(crypto.id)")
             if crypto.logo != nil {
@@ -78,7 +81,8 @@ final class CryptoRepository {
             // Create a background context
             let backgroundContext = ModelContext(container)
             
-            let allCryptos: [Cryptocurrency] = await service.fetchAllCryptocurrencies()
+            let allCryptoDTOs = await service.fetchAllCryptocurrencies()
+            let allCryptos = allCryptoDTOs.map { Cryptocurrency(dto: $0) }
             for crypto in allCryptos {
                 if !ids.contains(crypto.id) {
                     if crypto.logo != nil {
@@ -94,10 +98,10 @@ final class CryptoRepository {
 
     /// Updates existing crypto values and market caps from CloudKit's public Database.
     func updateAmounts() async {
-        let cryptocurrenciesInCK = await cryptocurrencyService.fetchAllCryptocurrencies()
+        let cryptocurrencyDTOsInCK = await cryptocurrencyService.fetchAllCryptocurrencies()
         let existing = fetchAllCryptos()
 
-        for incoming in cryptocurrenciesInCK {
+        for incoming in cryptocurrencyDTOsInCK {
             if let match = existing.first(where: { $0.id == incoming.id }) {
                 match.value = incoming.value
                 match.marketCap = incoming.marketCap

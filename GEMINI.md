@@ -49,6 +49,20 @@ To build and run the project:
 *   **Concurrency:** Heavy use of `async/await` and `@MainActor` to ensure UI safety.
 *   **CloudKit:** Data is fetched in batches using cursors to handle large datasets.
 
+# Testing Guidelines
+
+*   **Mocking:** Only use mocking in Unit Tests. Integration tests must use real implementations.
+*   **Structure:** Test directories must mirror the project structure.
+    *   `CryptoConverter/Repository/CryptoRepository.swift` -> `CryptoConverterUnitTests/Repository/CryptoRepositoryUnitTests.swift`
+    *   `CryptoConverter/Repository/CryptoRepository.swift` -> `CryptoConverterIntegrationTests/Repository/CryptoRepositoryIntegrationTests.swift`
+*   **Mocks:** Mocks should be placed in a subfolder named `Mock` within the mirrored directory.
+    *   Example: `CryptoConverterUnitTests/Servives/Mock/CryptocurrencyServiceMock.swift`
+*   **Naming:**
+    *   Unit Tests: `[FileName]UnitTests.swift`
+    *   Integration Tests: `[FileName]IntegrationTests.swift`
+    *   Mocks: `[FileName]Mock.swift`
+*   **Libraries:** Use standard, modern libraries (e.g., XCTest, Swift Testing) and dependency injection via protocols.
+
 # Rules to follow
 
 *   Always use tabs instead of spaces.
