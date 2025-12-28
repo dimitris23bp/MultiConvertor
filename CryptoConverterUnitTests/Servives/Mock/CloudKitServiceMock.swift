@@ -21,4 +21,9 @@ final class CloudKitServiceMock: CloudKitServiceProtocol, @unchecked Sendable {
         }
         return mockCryptocurrencies
     }
+    
+    var mockLastUpdateDate: Date?
+    func getLastUpdate() async -> Date? {
+        return mockLastUpdateDate
+    }
 }

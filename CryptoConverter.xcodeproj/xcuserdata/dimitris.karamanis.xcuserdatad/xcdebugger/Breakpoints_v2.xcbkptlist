@@ -5,66 +5,28 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         BreakpointExtensionID = "Xcode.Breakpoint.SwiftErrorBreakpoint">
          <BreakpointContent
-            uuid = "AC979B24-68CD-43C4-AF71-45080E7575A0"
-            shouldBeEnabled = "No"
+            uuid = "34CD449D-8036-431D-B5D8-D5EB50C7BF43"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CryptoConverterTests/Services/CryptocurrencyService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "testFetchAllRecords()"
-            landmarkType = "7">
+            continueAfterRunningActions = "No">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B6E387B8-CF59-4240-95FA-17BF9293EAAA"
-            shouldBeEnabled = "No"
+            uuid = "972BFE0A-B889-43C9-A123-6B2EC23F5E80"
+            shouldBeEnabled = "Yes"
+            condition = "id == &quot;BTC&quot;"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoConverterTests/Services/CryptocurrencyService.swift"
+            filePath = "CryptoConverter/Models/Cryptocurrency.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "testFetchAllRecords()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3EEB5124-325E-43AF-8F51-A636377C3331"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CryptoConverterTests/Services/CryptocurrencyService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "testFetchAllRecords()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B186D555-3693-4AF8-AB55-AA75BAC95F76"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CryptoConverterTests/Services/CryptocurrencyService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "testFetchAllRecords()"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "init(id:name:value:marketCap:logoString:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
