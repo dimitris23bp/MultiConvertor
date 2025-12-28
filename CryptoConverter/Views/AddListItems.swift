@@ -9,6 +9,8 @@ struct AddListItems: View {
 
 	@State private var repository: CryptoRepository?
 	@State private var searchText: String = ""
+	@State private var selectedTab: CurrencyTab = .crypto
+	
 	let imageSize: CGFloat
 
 	private var dynamicPredicate: Predicate<Cryptocurrency> {
@@ -20,52 +22,119 @@ struct AddListItems: View {
 			}
 		}
 	}
+	
+	// Mock Data for Fiat
+	private let fiatCurrencies: [FiatCurrency] = [
+		FiatCurrency(code: "USD", name: "United States Dollar", icon: "dollarsign.circle.fill"),
+		FiatCurrency(code: "EUR", name: "Euro", icon: "eurosign.circle.fill"),
+		FiatCurrency(code: "GBP", name: "British Pound Sterling", icon: "sterlingsign.circle.fill"),
+		FiatCurrency(code: "JPY", name: "Japanese Yen", icon: "yensign.circle.fill"),
+		FiatCurrency(code: "CNY", name: "Chinese Yuan", icon: "yensign.circle.fill")
+	]
+	
+	private var filteredFiat: [FiatCurrency] {
+		if searchText.isEmpty {
+			return fiatCurrencies
+		} else {
+			return fiatCurrencies.filter {
+				$0.code.localizedStandardContains(searchText) || $0.name.localizedStandardContains(searchText)
+			}
+		}
+	}
+
     var body: some View {
         NavigationStack {
             VStack {
                 List {
-					ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { crypto in
-						HStack {
-
-                            Image(uiImage: crypto.logo ?? UIImage())
-								.interpolation(.none)
-								.resizable()
-								.scaledToFit()
-								.frame(width: imageSize, height: imageSize)
-
-							VStack(alignment: .leading) {
-								Text(String(crypto.id))
-									.lineLimit(1)
-									.font(.body)
-									.fontWeight(.regular)
-
-								Text(String(crypto.name))
-									.font(.body)
-									.fontWeight(.regular)
-									.minimumScaleFactor(0.75)
-									.lineLimit(1)
+					if selectedTab == .crypto {
+						ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { crypto in
+							HStack {
+								
+								Image(uiImage: crypto.logo ?? UIImage())
+									.interpolation(.none)
+									.resizable()
+									.scaledToFit()
+									.frame(width: imageSize, height: imageSize)
+								
+								VStack(alignment: .leading) {
+									Text(String(crypto.id))
+										.lineLimit(1)
+										.font(.body)
+										.fontWeight(.regular)
+									
+									Text(String(crypto.name))
+										.font(.body)
+										.fontWeight(.regular)
+										.minimumScaleFactor(0.75)
+										.lineLimit(1)
+								}
+								.padding()
+								
+								Spacer()
+								
+								Button {
+									buttonPressed(with: crypto)
+								} label: {
+									if !crypto.favourite {
+										Image(systemName: "plus")
+											.font(.title3)
+											.foregroundColor(.primary)
+									}
+								}
+								.padding()
 							}
-							.padding()
+						}
+					} else {
+						ForEach(filteredFiat) { fiat in
+							HStack {
+								Image(systemName: fiat.icon)
+									.resizable()
+									.scaledToFit()
+									.frame(width: imageSize, height: imageSize)
+									.foregroundColor(.gray)
 
-							Spacer()
+								VStack(alignment: .leading) {
+									Text(fiat.code)
+										.lineLimit(1)
+										.font(.body)
+										.fontWeight(.regular)
 
-							Button {
-								buttonPressed(with: crypto)
-							} label: {
-								if !crypto.favourite {
+									Text(fiat.name)
+										.font(.body)
+										.fontWeight(.regular)
+										.minimumScaleFactor(0.75)
+										.lineLimit(1)
+								}
+								.padding()
+
+								Spacer()
+								
+								// Placeholder button for Fiat
+								Button {
+									// Action for fiat
+								} label: {
 									Image(systemName: "plus")
 										.font(.title3)
 										.foregroundColor(.primary)
 								}
+								.padding()
 							}
-							.padding()
 						}
-                    }
+					}
                 }
             }
 			.searchable(text: $searchText)
 			.animation(.default, value: searchText)
             .toolbar {
+				ToolbarItem(placement: .principal) {
+					Picker("Currency Type", selection: $selectedTab) {
+						Text("Crypto").tag(CurrencyTab.crypto)
+						Text("Fiat").tag(CurrencyTab.fiat)
+					}
+                    .pickerStyle(.segmented)
+//					.frame(maxWidth: 200)
+				}
+				
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Cancel") {
                         dismiss()
@@ -93,6 +162,18 @@ struct AddListItems: View {
 			print("Failed to save context after reorder: \(error)")
 		}
 	}
+}
+
+enum CurrencyTab {
+	case crypto
+	case fiat
+}
+
+struct FiatCurrency: Identifiable {
+	let id = UUID()
+	let code: String
+	let name: String
+	let icon: String
 }
 
 
