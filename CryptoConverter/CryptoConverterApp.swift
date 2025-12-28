@@ -11,9 +11,6 @@ import SwiftData
 @main
 struct CryptoConverterApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Cryptocurrency.self,
-        ])
         
         let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isPreview)
@@ -26,6 +23,8 @@ struct CryptoConverterApp: App {
                 context.insert(Previews.previewBtc)
                 context.insert(Previews.previewEth)
                 context.insert(Previews.previewDot)
+                context.insert(Previews.previewEur)
+                context.insert(Previews.previewUsd)
             }
             
             return container

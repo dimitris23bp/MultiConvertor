@@ -1,6 +1,5 @@
 import Foundation
 import SwiftData
-import SwiftUI
 
 /// A repository responsible for fetching and updating crypto data in *local storage*.
 /// keeping SwiftData mutations on the main actor.

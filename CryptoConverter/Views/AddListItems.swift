@@ -7,7 +7,10 @@ struct AddListItems: View {
 
 	@Query(sort: \Cryptocurrency.marketCap, order: .reverse, animation: .default) private var cryptocurrencies: [Cryptocurrency]
 
-	@State private var repository: CryptoRepository?
+    @Query(sort: \FiatCurrency.sortOrder, order: .forward, animation: .default) private var fiatCurrencies: [FiatCurrency]
+    
+    @State private var cryptoRepo: CryptoRepository?
+    @State private var fiatRepo: FiatRepository?
 	@State private var searchText: String = ""
 	@State private var selectedTab: CurrencyTab = .crypto
 	
@@ -19,25 +22,6 @@ struct AddListItems: View {
 				crypto.id.localizedStandardContains(searchText) || crypto.name.localizedStandardContains(searchText)
 			} else {
 				true
-			}
-		}
-	}
-	
-	// Mock Data for Fiat
-	private let fiatCurrencies: [FiatCurrency] = [
-		FiatCurrency(code: "USD", name: "United States Dollar", icon: "dollarsign.circle.fill"),
-		FiatCurrency(code: "EUR", name: "Euro", icon: "eurosign.circle.fill"),
-		FiatCurrency(code: "GBP", name: "British Pound Sterling", icon: "sterlingsign.circle.fill"),
-		FiatCurrency(code: "JPY", name: "Japanese Yen", icon: "yensign.circle.fill"),
-		FiatCurrency(code: "CNY", name: "Chinese Yuan", icon: "yensign.circle.fill")
-	]
-	
-	private var filteredFiat: [FiatCurrency] {
-		if searchText.isEmpty {
-			return fiatCurrencies
-		} else {
-			return fiatCurrencies.filter {
-				$0.code.localizedStandardContains(searchText) || $0.name.localizedStandardContains(searchText)
 			}
 		}
 	}
@@ -85,39 +69,40 @@ struct AddListItems: View {
 							}
 						}
 					} else {
-						ForEach(filteredFiat) { fiat in
+						ForEach(fiatCurrencies) { fiat in
 							HStack {
-								Image(systemName: fiat.icon)
-									.resizable()
-									.scaledToFit()
-									.frame(width: imageSize, height: imageSize)
-									.foregroundColor(.gray)
-
-								VStack(alignment: .leading) {
-									Text(fiat.code)
-										.lineLimit(1)
-										.font(.body)
-										.fontWeight(.regular)
-
-									Text(fiat.name)
-										.font(.body)
-										.fontWeight(.regular)
-										.minimumScaleFactor(0.75)
-										.lineLimit(1)
-								}
-								.padding()
-
-								Spacer()
-								
-								// Placeholder button for Fiat
-								Button {
-									// Action for fiat
-								} label: {
-									Image(systemName: "plus")
-										.font(.title3)
-										.foregroundColor(.primary)
-								}
-								.padding()
+                                Image(uiImage: fiat.flag ?? UIImage())
+                                    .interpolation(.none)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: imageSize, height: imageSize)
+                                
+                                VStack(alignment: .leading) {
+                                    Text(String(fiat.id))
+                                        .lineLimit(1)
+                                        .font(.body)
+                                        .fontWeight(.regular)
+                                    
+                                    Text(String(fiat.name))
+                                        .font(.body)
+                                        .fontWeight(.regular)
+                                        .minimumScaleFactor(0.75)
+                                        .lineLimit(1)
+                                }
+                                .padding()
+                                
+                                Spacer()
+                                
+                                Button {
+                                    buttonPressed(with: fiat)
+                                } label: {
+                                    if !fiat.favourite {
+                                        Image(systemName: "plus")
+                                            .font(.title3)
+                                            .foregroundColor(.primary)
+                                    }
+                                }
+                                .padding()
 							}
 						}
 					}
@@ -143,13 +128,35 @@ struct AddListItems: View {
             }
         }
 		.onAppear {
-			repository = CryptoRepository(modelContext: modelContext)
+			cryptoRepo = CryptoRepository(modelContext: modelContext)
+            fiatRepo = FiatRepository(modelContext: modelContext)
 		}
     }
+    
+    private func buttonPressed(forType type: CurrencyTab, with item: Currency) {
+        switch type {
+        case CurrencyTab.crypto:
+            buttonPressed(with: item as! Cryptocurrency)
+        case CurrencyTab.fiat:
+            buttonPressed(with: item as! FiatCurrency)
+        }
+    }
 
+    private func buttonPressed(with fiat: FiatCurrency) {
+        if fiat.favourite == false {
+            fiat.favourite = true
+        } else {
+            fiat.favourite = false
+        }
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save context after reorder: \(error)")
+        }
+    }
 	private func buttonPressed(with crypto: Cryptocurrency) {
 		if crypto.favourite == false {
-			let highestOrder = repository?.getHighestOrder() ?? 0
+			let highestOrder = cryptoRepo?.getHighestOrder() ?? 0
 			crypto.sortOrder = highestOrder + 1
 			crypto.favourite = true
 		} else {
@@ -168,14 +175,6 @@ enum CurrencyTab {
 	case crypto
 	case fiat
 }
-
-struct FiatCurrency: Identifiable {
-	let id = UUID()
-	let code: String
-	let name: String
-	let icon: String
-}
-
 
 #Preview {
     AddListItems(imageSize: 48)

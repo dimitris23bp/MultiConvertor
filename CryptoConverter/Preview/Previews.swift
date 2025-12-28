@@ -2,6 +2,8 @@ import SwiftData
 import Foundation
 import SwiftUI
 
+let schema: Schema = Schema([Cryptocurrency.self, FiatCurrency.self])
+
 struct Previews {
     
 	static var previewBtc: Cryptocurrency {
@@ -10,7 +12,6 @@ struct Previews {
 			name: "Bitcoin",
 			value: 60000,
 			marketCap: 6_000_000,
-            // TODO: To fix this preview
             logoString: "preview"
 		)
 	}
@@ -34,13 +35,35 @@ struct Previews {
             logoString: "preview"
         )
     }
+    
+    static var previewEur: FiatCurrency {
+        FiatCurrency(
+            id: "EUR",
+            name: "Euro",
+            value: 0.80,
+            flagString: "preview"
+        )
+    }
+    
+    static var previewUsd: FiatCurrency {
+        FiatCurrency(
+            id: "USD",
+            name: "US Dollar",
+            value: 1,
+            flagString: "preview"
+        )
+    }
+    
     // The sample preview db
     static let preview: ModelContainer = {
-        let container = try! ModelContainer(for: Cryptocurrency.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let container = try! ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
 		container.mainContext.insert(previewBtc)
 		container.mainContext.insert(previewEth)
         container.mainContext.insert(previewDot)
 
+        container.mainContext.insert(previewEur)
+        container.mainContext.insert(previewUsd)
+        
 		return container
 	}()
 }
