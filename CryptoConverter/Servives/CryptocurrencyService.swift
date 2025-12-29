@@ -21,15 +21,14 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
         // TODO: Fetch only the IDs
-        let current = await cryptoRepository.fetchAllCryptos()
+        let current = await cryptoRepository.fetchAllCryptoIDs()
         // If I have 3 or more, return
         guard current.count < minCount else { return }
 
         print("Fetching initial cryptocurrencies")
         let cryptocurrencyDTOs = try await cloudkitService.fetchCryptocurrenciesFromCK(amount: 50)
-        let cryptocurrencies = cryptocurrencyDTOs.map { Cryptocurrency(dto: $0) }
         
-        try await cryptoRepository.saveCryptos(cryptocurrencies: cryptocurrencies)
+        try await cryptoRepository.saveCryptos(dtos: cryptocurrencyDTOs)
         
         print("Initial cryptocurrencies are saved")
         
@@ -41,16 +40,14 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
         print("Adding remaining data")
         
         // TODO: Fetch only the IDs
-        let current: [Cryptocurrency] = await cryptoRepository.fetchAllCryptos()
-        let ids = Set(current.map(\.id))
+        let ids = await cryptoRepository.fetchAllCryptoIDs()
 
         let cloudkitServiceSelf = self.cloudkitService
         
         // Perform work in a separate Task that isn't bound to the MainActor
         Task.detached(priority: .utility) { [weak cryptoRepository] in
             let allCryptoDTOs = await cloudkitServiceSelf.fetchAllCryptocurrenciesFromCK()
-            let allCryptos = allCryptoDTOs.map { Cryptocurrency(dto: $0) }
-            try? await cryptoRepository?.addCryptosIfDontExist(ids: ids, allCryptos: allCryptos)
+            try? await cryptoRepository?.addCryptosIfDontExist(ids: ids, dtos: allCryptoDTOs)
         }
         
         print("Remaining cryptos are saved")
@@ -58,9 +55,8 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     
     func updateAmountOfCryptos() async {
         let incomingCryptos = await cloudkitService.fetchAllCryptocurrenciesFromCK()
-        let existingCryptos = await cryptoRepository.fetchAllCryptos()
 
-        await cryptoRepository.updateAmounts(incomingCryptos: incomingCryptos, existingCryptos: existingCryptos)
+        await cryptoRepository.updateAmounts(incomingCryptos: incomingCryptos)
    }
 
 	func getLastUpdate() async -> String {

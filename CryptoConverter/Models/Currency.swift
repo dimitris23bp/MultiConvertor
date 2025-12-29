@@ -1,4 +1,5 @@
-protocol Currency {
+@MainActor
+protocol Currency: AnyObject {
     var id: String { get }
     var name: String { get }
     var value: Double { get set }

@@ -4,7 +4,7 @@ import CloudKit
 import SVGKit
 
 @Model
-class FiatCurrency {
+class FiatCurrency : Currency {
     var id: String = ""
     var name: String = ""
     var value: Double = 0.0

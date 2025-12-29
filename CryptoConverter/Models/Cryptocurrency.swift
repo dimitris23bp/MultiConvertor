@@ -11,7 +11,7 @@ import CloudKit
 import SVGKit
 
 @Model
-class Cryptocurrency {
+class Cryptocurrency: Currency {
     // e.g. BTC
     var id: String = ""
     // e.g. Bitcoin

@@ -23,8 +23,9 @@ final class CryptoRepository {
 
     }
     
-    func saveCryptos(cryptocurrencies: [Cryptocurrency]) async throws {
-        for crypto in cryptocurrencies {
+    func saveCryptos(dtos: [CryptocurrencyDTO]) async throws {
+        for dto in dtos {
+            let crypto = Cryptocurrency(dto: dto)
             print("Fetching crypto with ID: \(crypto.id)")
             if crypto.renderedLogoData != nil {
                 print("Inserting crypto with ID: \(crypto.id)")
@@ -35,7 +36,7 @@ final class CryptoRepository {
         try modelContext.save()
     }
     
-    func addCryptosIfDontExist(ids: Set<String>, allCryptos: [Cryptocurrency]) throws {
+    func addCryptosIfDontExist(ids: Set<String>, dtos: [CryptocurrencyDTO]) throws {
         print("Adding remaining data")
         
         // Get a reference to the container (which is thread-safe)
@@ -44,7 +45,8 @@ final class CryptoRepository {
         // Create a background context
         let backgroundContext = ModelContext(container)
         
-        for crypto in allCryptos {
+        for dto in dtos {
+            let crypto = Cryptocurrency(dto: dto)
             print("Fetching crypto in remaining with ID: \(crypto.id)")
             if !ids.contains(crypto.id) {
                 if crypto.renderedLogoData != nil {
@@ -57,7 +59,8 @@ final class CryptoRepository {
     }
 
     /// Updates existing crypto values and market caps from CloudKit's public Database.
-    func updateAmounts(incomingCryptos: [CryptocurrencyDTO], existingCryptos: [Cryptocurrency]) {
+    func updateAmounts(incomingCryptos: [CryptocurrencyDTO]) {
+        let existingCryptos = fetchAllCryptos()
         for incoming in incomingCryptos {
             if let match = existingCryptos.first(where: { $0.id == incoming.id }) {
                 match.value = incoming.value
@@ -92,6 +95,14 @@ final class CryptoRepository {
             return cryptos
         } else {
             print("Couldn't fetch cryptos. Returning an empty list instead.")
+            return []
+        }
+    }
+    
+    func fetchAllCryptoIDs() -> Set<String> {
+        if let cryptos = try? modelContext.fetch(FetchDescriptor<Cryptocurrency>()) {
+            return Set(cryptos.map(\.id))
+        } else {
             return []
         }
     }
