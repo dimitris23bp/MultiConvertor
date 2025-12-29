@@ -60,7 +60,7 @@ final class CryptoRepositoryUnitTests: XCTestCase {
         XCTAssertTrue(eth.favourite)
         XCTAssertFalse(other.favourite)
         
-        XCTAssertGreaterThan(btc.sortOrder ?? 0, 0)
-        XCTAssertGreaterThan(eth.sortOrder ?? 0, 0)
+        XCTAssertGreaterThan(btc.popularity ?? 0, 0)
+        XCTAssertGreaterThan(eth.popularity ?? 0, 0)
     }
 }

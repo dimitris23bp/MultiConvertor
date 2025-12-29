@@ -41,7 +41,8 @@ struct Previews {
             id: "EUR",
             name: "Euro",
             value: 0.80,
-            flagString: "preview"
+            flagString: "preview",
+            popularity: 1
         )
     }
     
@@ -50,7 +51,8 @@ struct Previews {
             id: "USD",
             name: "US Dollar",
             value: 1,
-            flagString: "preview"
+            flagString: "preview",
+            popularity: 2
         )
     }
     

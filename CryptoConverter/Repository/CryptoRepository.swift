@@ -35,7 +35,7 @@ final class CryptoRepository {
         try modelContext.save()
     }
     
-    func addCryptosIfDontExist(ids: Set<String>, allCryptos: [Cryptocurrency]) async throws {
+    func addCryptosIfDontExist(ids: Set<String>, allCryptos: [Cryptocurrency]) throws {
         print("Adding remaining data")
         
         // Get a reference to the container (which is thread-safe)
@@ -57,7 +57,7 @@ final class CryptoRepository {
     }
 
     /// Updates existing crypto values and market caps from CloudKit's public Database.
-    func updateAmounts(incomingCryptos: [CryptocurrencyDTO], existingCryptos: [Cryptocurrency]) async {
+    func updateAmounts(incomingCryptos: [CryptocurrencyDTO], existingCryptos: [Cryptocurrency]) {
         for incoming in incomingCryptos {
             if let match = existingCryptos.first(where: { $0.id == incoming.id }) {
                 match.value = incoming.value

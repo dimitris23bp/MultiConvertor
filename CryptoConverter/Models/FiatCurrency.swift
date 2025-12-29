@@ -4,7 +4,7 @@ import CloudKit
 import SVGKit
 
 @Model
-class FiatCurrency : Currency {
+class FiatCurrency {
     var id: String = ""
     var name: String = ""
     var value: Double = 0.0
@@ -12,6 +12,7 @@ class FiatCurrency : Currency {
     // Data to compute the flag
     // On external storage to not spend time computing it
     @Attribute(.externalStorage) var renderedFlagData: Data?
+    var popularity: Int = 0
     var sortOrder: Int?
     
     var flag: UIImage? {
@@ -24,16 +25,18 @@ class FiatCurrency : Currency {
     }
     
     // LogoString is not included and renderedLogoData can be added later
-    init(id: String, name: String, value: Double) {
+    init(id: String, name: String, value: Double, popularity: Int) {
         self.id = id
         self.name = name
         self.value = value
+        self.popularity = popularity
     }
         
-    init(id: String, name: String, value: Double, flagString: String) {
+    init(id: String, name: String, value: Double, flagString: String, popularity: Int) {
         self.id = id
         self.name = name
         self.value = value
+        self.popularity = popularity
         
         // This is a convention for the previews
         if flagString == "preview" {
@@ -53,7 +56,7 @@ class FiatCurrency : Currency {
     }
 
     convenience init(dto: FiatCurrencyDTO) {
-        self.init(id: dto.id, name: dto.name, value: dto.value)
+        self.init(id: dto.id, name: dto.name, value: dto.value, popularity: dto.popularity)
         // Overwrite the flag data with the pre-calculated one from the DTO
         self.renderedFlagData = dto.renderedFlagData
     }
@@ -64,16 +67,17 @@ class FiatCurrency : Currency {
         guard let id = record["id"] as? String,
               let name = record["name"] as? String,
               let value = record["value"] as? Double,
+              let popularity = record["sort"] as? Int,
               let flagString = record["flag"] as? String
         else {
             return nil
         }
         
         
-        self.init(id: id, name: name, value: value, flagString: flagString)
+        self.init(id: id, name: name, value: value, flagString: flagString, popularity: popularity)
         
         // Handle optional or defaulted values
-        self.favourite = record["favourite"] as? Bool ?? false
-        self.sortOrder = record["sort"] as? Int
+//        self.favourite = record["favourite"] as? Bool ?? false
+//        self.sortOrder = record["sort"] as? Int
     }
 }

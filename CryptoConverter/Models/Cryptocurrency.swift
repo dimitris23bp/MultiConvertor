@@ -11,7 +11,7 @@ import CloudKit
 import SVGKit
 
 @Model
-class Cryptocurrency: Currency {
+class Cryptocurrency {
     // e.g. BTC
     var id: String = ""
     // e.g. Bitcoin
@@ -79,8 +79,9 @@ class Cryptocurrency: Currency {
         self.init(id: id, name: name, value: value, marketCap: marketCap, logoString: logoString)
         
         // Handle optional or defaulted values
-        self.favourite = record["favourite"] as? Bool ?? false
-        self.sortOrder = record["sortOrder"] as? Int
+//        self.favourite = record["favourite"] as? Bool ?? false
+        // TODO: I don't think this is needed, or correct
+//        self.sortOrder = record["sortOrder"] as? Int
     }
     
     // This property is fast enough, because it just wraps existing Data

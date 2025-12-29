@@ -7,7 +7,7 @@ struct AddListItems: View {
 
 	@Query(sort: \Cryptocurrency.marketCap, order: .reverse, animation: .default) private var cryptocurrencies: [Cryptocurrency]
 
-    @Query(sort: \FiatCurrency.sortOrder, order: .forward, animation: .default) private var fiatCurrencies: [FiatCurrency]
+    @Query(sort: \FiatCurrency.popularity, order: .forward, animation: .default) private var fiatCurrencies: [FiatCurrency]
     
     @State private var cryptoRepo: CryptoRepository?
     @State private var fiatRepo: FiatRepository?
@@ -16,7 +16,7 @@ struct AddListItems: View {
 	
 	let imageSize: CGFloat
 
-	private var dynamicPredicate: Predicate<Cryptocurrency> {
+	private var dynamicPredicateForCrypto: Predicate<Cryptocurrency> {
 		#Predicate<Cryptocurrency> { crypto in
 			if !searchText.isEmpty {
 				crypto.id.localizedStandardContains(searchText) || crypto.name.localizedStandardContains(searchText)
@@ -26,12 +26,23 @@ struct AddListItems: View {
 		}
 	}
 
+    private var dynamicPredicateForFiat: Predicate<FiatCurrency> {
+        #Predicate<FiatCurrency> { fiat in
+            if !searchText.isEmpty {
+                fiat.id.localizedStandardContains(searchText) || fiat.name.localizedStandardContains(searchText)
+            } else {
+                true
+            }
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             VStack {
                 List {
 					if selectedTab == .crypto {
-						ForEach((try! cryptocurrencies.filter(dynamicPredicate))) { crypto in
+                        // TODO: This is duplicated. Fix it
+						ForEach((try! cryptocurrencies.filter(dynamicPredicateForCrypto))) { crypto in
 							HStack {
 								
 								Image(uiImage: crypto.logo ?? UIImage())
@@ -69,7 +80,7 @@ struct AddListItems: View {
 							}
 						}
 					} else {
-						ForEach(fiatCurrencies) { fiat in
+                        ForEach((try! fiatCurrencies.filter(dynamicPredicateForFiat))) { fiat in
 							HStack {
                                 Image(uiImage: fiat.flag ?? UIImage())
                                     .interpolation(.none)
@@ -133,14 +144,14 @@ struct AddListItems: View {
 		}
     }
     
-    private func buttonPressed(forType type: CurrencyTab, with item: Currency) {
-        switch type {
-        case CurrencyTab.crypto:
-            buttonPressed(with: item as! Cryptocurrency)
-        case CurrencyTab.fiat:
-            buttonPressed(with: item as! FiatCurrency)
-        }
-    }
+//    private func buttonPressed(forType type: CurrencyTab, with item: Currency) {
+//        switch type {
+//        case CurrencyTab.crypto:
+//            buttonPressed(with: item as! Cryptocurrency)
+//        case CurrencyTab.fiat:
+//            buttonPressed(with: item as! FiatCurrency)
+//        }
+//    }
 
     private func buttonPressed(with fiat: FiatCurrency) {
         if fiat.favourite == false {
