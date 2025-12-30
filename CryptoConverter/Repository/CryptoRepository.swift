@@ -11,18 +11,6 @@ final class CryptoRepository {
 		self.modelContext = modelContext
 	}
 
-    func addInitialFavourites(cryptocurrencies: [Cryptocurrency]) async throws {
-        for crypto in cryptocurrencies {
-            if crypto.id == "BTC" || crypto.id == "ETH" {
-                crypto.sortOrder = getHighestOrder() + 1
-                crypto.favourite = true
-            }
-        }
-        try modelContext.save()
-        print("Initial favourites have been added")
-
-    }
-    
     func saveCryptos(dtos: [CryptocurrencyDTO]) async throws {
         for dto in dtos {
             let crypto = Cryptocurrency(dto: dto)
@@ -69,25 +57,6 @@ final class CryptoRepository {
         }
     }
 
-    /// Get the new highest order.
-    /// This is used when a new crypto is added to favourites and it needs a new value in sortOrder.
-	func getHighestOrder() -> Int {
-		var highest = 0
-		let cryptocurrencies = fetchAllCryptos()
-
-		cryptocurrencies.filter(\.favourite).forEach { cryptocurrency in
-			guard let sortOrder = cryptocurrency.sortOrder else {
-				print("SortOrder is nil for \(cryptocurrency.id) while is it favourite: \(cryptocurrency.favourite).")
-				return
-			}
-			if sortOrder > highest {
-				highest = sortOrder
-			}
-		}
-		return highest
-	}
-
-
     // MARK: - Helpers
 
     func fetchAllCryptos() -> [Cryptocurrency] {
@@ -95,6 +64,15 @@ final class CryptoRepository {
             return cryptos
         } else {
             print("Couldn't fetch cryptos. Returning an empty list instead.")
+            return []
+        }
+    }
+
+    func fetchAllFiats() -> [FiatCurrency] {
+        if let fiats = try? modelContext.fetch(FetchDescriptor<FiatCurrency>()) {
+            return fiats
+        } else {
+            print("Couldn't fetch fiats. Returning an empty list instead.")
             return []
         }
     }

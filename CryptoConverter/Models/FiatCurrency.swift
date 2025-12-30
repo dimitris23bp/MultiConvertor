@@ -23,6 +23,8 @@ class FiatCurrency : Currency {
         guard let renderedFlagData else { return nil }
         return UIImage(data: renderedFlagData)
     }
+
+    var icon: UIImage? { flag }
     
     // LogoString is not included and renderedLogoData can be added later
     init(id: String, name: String, value: Double, popularity: Int) {
@@ -67,7 +69,7 @@ class FiatCurrency : Currency {
         guard let id = record["id"] as? String,
               let name = record["name"] as? String,
               let value = record["value"] as? Double,
-              let popularity = record["sort"] as? Int,
+              let popularity = record["order"] as? Int,
               let flagString = record["flag"] as? String
         else {
             return nil
@@ -75,9 +77,5 @@ class FiatCurrency : Currency {
         
         
         self.init(id: id, name: name, value: value, flagString: flagString, popularity: popularity)
-        
-        // Handle optional or defaulted values
-//        self.favourite = record["favourite"] as? Bool ?? false
-//        self.sortOrder = record["sort"] as? Int
     }
 }

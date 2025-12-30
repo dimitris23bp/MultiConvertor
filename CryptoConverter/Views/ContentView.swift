@@ -30,9 +30,33 @@ struct ContentView: View {
 		animation: .default
 	) private var favouriteCryptos: [Cryptocurrency]
 
+    @Query(sort: \FiatCurrency.popularity, animation: .default) private var fiatCurrencies: [FiatCurrency]
+
+    @Query(
+        filter: #Predicate<FiatCurrency> { $0.favourite },
+        sort: \.sortOrder,
+        animation: .default
+    ) private var favouriteFiats: [FiatCurrency]
+    
+    private var combinedFavourites: [any Currency] {
+        let all = (favouriteCryptos as [any Currency]) + (favouriteFiats as [any Currency])
+        return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
+    }
+
+    private var allCurrencies: [any Currency] {
+        let all = (cryptocurrencies as [any Currency]) + (fiatCurrencies as [any Currency])
+        return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
+    }
+    
 	// Repository that encapsulates API + SwiftData mutations
-	@State private var repository: CryptoRepository?
-    @State private var service: CryptocurrencyService?
+	@State private var cryptoRepo: CryptoRepository?
+    @State private var cryptoService: CryptocurrencyService?
+    // TODO: Fill these files and then use them
+    @State private var fiatRepo: FiatRepository?
+    @State private var fiatService: FiatCurrencyService?
+    
+    @State private var allRepo: AllRepository?
+    
 	@StateObject private var scheduler = TickerUpdateScheduler()
 
 	@State private var amounts: [String: Double] = [:]
@@ -40,7 +64,7 @@ struct ContentView: View {
 	@State private var selection = Set<Cryptocurrency.ID>()
 	@State private var isShowingSheet = false
     @State private var lastUpdate: String = "NaN"
-	@FocusState private var focusedCryptoId: String?
+	@FocusState private var focusedCurrencyId: String?
 
 	let imageSize: CGFloat = 42
 	
@@ -72,70 +96,30 @@ struct ContentView: View {
 				NavigationSplitView {
 					List {
 						Section {
-							ForEach(favouriteCryptos) { cryptocurrency in
-								HStack {
-									if editMode.isEditing {
-										Button(action: {
-											if selection.contains(cryptocurrency.id) {
-												selection.remove(cryptocurrency.id)
-											} else {
-												selection.insert(cryptocurrency.id)
-											}
-										}) {
-											Image(systemName: selection.contains(cryptocurrency.id) ? "checkmark.square.fill" : "square")
-										}
-									}
-                                    Image(uiImage: cryptocurrency.logo ?? UIImage())
-										.resizable()
-										.scaledToFit()
-										.frame(width: imageSize, height: imageSize)
-
-									VStack(alignment: .leading) {
-										Text("\(cryptocurrency.id)")
-											.minimumScaleFactor(0.75)
-											.lineLimit(1)
-										Text("\(cryptocurrency.name)")
-											.minimumScaleFactor(0.75)
-											.lineLimit(1)
-									}
-									.padding()
-
-									Spacer()
-
-									ScrollView(.horizontal, showsIndicators: false) {
-										DoubleNumberTextField(
-											value: Binding(
-												get: { amounts[cryptocurrency.id] ?? 0.0 },
-												set: { newValue in
-													// TODO: Should this line go inside the updateInputs?
-													amounts[cryptocurrency.id] = newValue
-													updateInputs(basedOn: cryptocurrency.id, with: newValue)
-												}
-											),
-											formatter: numberFormatter
-										)
-										.focused($focusedCryptoId, equals: cryptocurrency.id)
-										.frame(height: 40)
-										.fixedSize(horizontal: true, vertical: false)
-									}
-									.frame(maxWidth: 150)
-									.fixedSize(horizontal: true, vertical: false)
-									.padding(.horizontal, 10)
-									.background(
-										RoundedRectangle(cornerRadius: 6)
-											.fill(focusedCryptoId == cryptocurrency.id ? Color.secondary.opacity(0.2) : Color.clear)
-									)
-									.animation(.easeOut(duration: 0.1), value: focusedCryptoId == cryptocurrency.id)
-									.tint(Color.clear)
-									.minimumScaleFactor(0.75)
-								}
-								.swipeActions(edge: .trailing) {
-									Button(role: .destructive) {
-										cryptocurrency.favourite = false
-									} label: {
-										Label("Delete", systemImage: "trash")
-									}
-								}
+							ForEach(combinedFavourites, id: \.id) { currency in
+                                CurrencyRowView(
+                                    currency: currency,
+                                    isEditing: editMode.isEditing,
+                                    isSelected: selection.contains(currency.id),
+                                    amount: amounts[currency.id] ?? 0.0,
+                                    imageSize: imageSize,
+                                    numberFormatter: numberFormatter,
+                                    focusedCurrencyId: $focusedCurrencyId,
+                                    onToggleSelection: {
+                                        if selection.contains(currency.id) {
+                                            selection.remove(currency.id)
+                                        } else {
+                                            selection.insert(currency.id)
+                                        }
+                                    },
+                                    onAmountChange: { newValue in
+                                        amounts[currency.id] = newValue
+                                        updateInputs(basedOn: currency.id, with: newValue)
+                                    },
+                                    onDelete: {
+                                        currency.favourite = false
+                                    }
+                                )
 							}
 							.onMove(perform: moveItems)
 						} footer: {
@@ -165,7 +149,7 @@ struct ContentView: View {
 							.onChange(of: isShowingSheet) { _, newValue in
 								if newValue {
 									// In order to remove the focused value too, when I press the plus button
-									focusedCryptoId = nil
+									focusedCurrencyId = nil
 									Task {
 										// To have a delay and make the change without the user noticing
 										try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
@@ -197,33 +181,32 @@ struct ContentView: View {
 		}
 		.onAppear {
 			Task {
-				if repository == nil {
-                    let repo = CryptoRepository(modelContext: modelContext)
-					repository = repo
-                    let cloudKitService = CloudKitService()
-                    service = CryptocurrencyService(repository: repo, cloudKitService: cloudKitService)
-				}
+                initializeReposAndServices()
+                
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
                 
                 // TODO: I need to make sure that service is not nullable
-                lastUpdate = await service!.getLastUpdate()
+                lastUpdate = await cryptoService!.getLastUpdate()
                 
 				// Check immediately on appear
 				if cryptocurrencies.count < 3 || isPreview {
 					scheduler.updateLastExecution()
                     // TODO: Do an initial load for some cryptos, and then load the rest in the background. Also add a progress bar on the bottom while this is happening as a v2
-					try? await service?.ensureInitialDataIfNeeded()
-                    try? await repository?.addInitialFavourites(cryptocurrencies: cryptocurrencies)
-                    
+					try? await cryptoService?.ensureInitialDataIfNeeded()
+                    try? await fiatService?.ensureInitialDataIfNeeded()
+                    try? await allRepo?.addInitialFavourites(currencies: allCurrencies)
+
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
-					await service?.updateAmountOfCryptos()
+					await cryptoService?.updateAmountOfCryptos()
+                    await fiatService?.updateAmountOfFiats()
 					print("Update has happened")
 				}
-				scheduler.start { [weak service = service] in
-					await service?.updateAmountOfCryptos()
+				scheduler.start { [weak cService = cryptoService, weak fService = fiatService] in
+					await cService?.updateAmountOfCryptos()
+                    await fService?.updateAmountOfFiats()
 				}
 			}
 		}
@@ -236,21 +219,22 @@ struct ContentView: View {
 				if scheduler.checkIfNeeded() {
 					Task {
 						scheduler.updateLastExecution()
-						await service?.updateAmountOfCryptos()
+						await cryptoService?.updateAmountOfCryptos()
+                        await fiatService?.updateAmountOfFiats()
 					}
 				}
 			default:
-				focusedCryptoId = nil
+				focusedCurrencyId = nil
 			}
 		})
 	}
 
 	private func moveItems(from source: IndexSet, to destination: Int) {
-		var reorderedCryptos = favouriteCryptos
-		reorderedCryptos.move(fromOffsets: source, toOffset: destination)
+		var reorderedCurrencies = combinedFavourites
+		reorderedCurrencies.move(fromOffsets: source, toOffset: destination)
 
-		for (index, crypto) in reorderedCryptos.enumerated() {
-			crypto.sortOrder = index
+		for (index, currency) in reorderedCurrencies.enumerated() {
+			currency.sortOrder = index
 		}
 		do {
 			try modelContext.save()
@@ -259,11 +243,16 @@ struct ContentView: View {
 		}
 	}
 
-	private func updateInputs(basedOn cryptoId: String, with value: Double) {
-		guard let crypto = cryptocurrencies.first(where: { $0.id == cryptoId }) else { return }
-		for cryptocurrency in cryptocurrencies where cryptocurrency.favourite {
-			let valueDouble = (crypto.value * value) / cryptocurrency.value
-			amounts[cryptocurrency.id] = valueDouble
+	private func updateInputs(basedOn currencyId: String, with value: Double) {
+        // Find the source currency in either list
+        let sourceCurrency: (any Currency)? = cryptocurrencies.first(where: { $0.id == currencyId })
+            ?? fiatCurrencies.first(where: { $0.id == currencyId })
+        
+		guard let source = sourceCurrency else { return }
+        
+		for currency in combinedFavourites {
+			let valueDouble = (source.value * value) / currency.value
+			amounts[currency.id] = valueDouble
 		}
 	}
 
@@ -272,14 +261,103 @@ struct ContentView: View {
 			for id in selection {
 				if let crypto = favouriteCryptos.first(where: { $0.id == id }) {
 					crypto.favourite = false
-				}
+				} else if let fiat = favouriteFiats.first(where: { $0.id == id }) {
+                    fiat.favourite = false
+                }
 			}
 			selection.removeAll()
 			editMode = .inactive
 		}
 	}
     
+    private func initializeReposAndServices() {
+        // TODO: Do I need to check them both?
+        // TODO: Do I need temp vars?
+        if cryptoRepo == nil && fiatRepo == nil {
+            let repoCrypto = CryptoRepository(modelContext: modelContext)
+            cryptoRepo = repoCrypto
+            
+            let repoFiat = FiatRepository(modelContext: modelContext)
+            fiatRepo = repoFiat
+            
+            let repoAll = AllRepository(modelContext: modelContext)
+            allRepo = repoAll
+            
+            let cloudKitService = CloudKitService()
+            cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
+            fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
+        }
+    }
+    
 }
+
+struct CurrencyRowView: View {
+    let currency: any Currency
+    let isEditing: Bool
+    let isSelected: Bool
+    let amount: Double
+    let imageSize: CGFloat
+    let numberFormatter: NumberFormatter
+    var focusedCurrencyId: FocusState<String?>.Binding
+    let onToggleSelection: () -> Void
+    let onAmountChange: (Double) -> Void
+    let onDelete: () -> Void
+    
+    var body: some View {
+        HStack {
+            if isEditing {
+                Button(action: onToggleSelection) {
+                    Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                }
+            }
+            Image(uiImage: currency.icon ?? UIImage())
+                .resizable()
+                .scaledToFit()
+                .frame(width: imageSize, height: imageSize)
+
+            VStack(alignment: .leading) {
+                Text("\(currency.id)")
+                    .minimumScaleFactor(0.75)
+                    .lineLimit(1)
+                Text("\(currency.name)")
+                    .minimumScaleFactor(0.75)
+                    .lineLimit(1)
+            }
+            .padding()
+
+            Spacer()
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                DoubleNumberTextField(
+                    value: Binding(
+                        get: { amount },
+                        set: onAmountChange
+                    ),
+                    formatter: numberFormatter
+                )
+                .focused(focusedCurrencyId, equals: currency.id)
+                .frame(height: 40)
+                .fixedSize(horizontal: true, vertical: false)
+            }
+            .frame(maxWidth: 150)
+            .fixedSize(horizontal: true, vertical: false)
+            .padding(.horizontal, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
+            )
+            .animation(.easeOut(duration: 0.1), value: focusedCurrencyId.wrappedValue == currency.id)
+            .tint(Color.clear)
+            .minimumScaleFactor(0.75)
+        }
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive, action: onDelete) {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+    }
+}
+
 
 #Preview {
 	ContentView()

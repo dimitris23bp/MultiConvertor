@@ -41,6 +41,7 @@ To build and run the project:
 1.  Open `CryptoConverter.xcodeproj` in Xcode.
 2.  Ensure you have the necessary iCloud capabilities / signing setup if you intend to write to CloudKit (though reading public data usually requires less valid entitlements, this app seems to read from a public DB).
 3.  Run the "CryptoConverter" scheme on a simulator or physical device.
+4.  Use always `-quiet`, so you won't launch an interactive shell.
 
 # Development Conventions
 

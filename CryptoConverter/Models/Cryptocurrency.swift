@@ -93,4 +93,6 @@ class Cryptocurrency: Currency {
         guard let renderedLogoData else { return nil }
         return UIImage(data: renderedLogoData)
     }
+
+    var icon: UIImage? { logo }
 }
