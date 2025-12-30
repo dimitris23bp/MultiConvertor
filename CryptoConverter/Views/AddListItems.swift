@@ -14,8 +14,6 @@ struct AddListItems: View {
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
 
-    @State private var cryptoRepo: CryptoRepository?
-    @State private var fiatRepo: FiatRepository?
     @State private var allRepo: AllRepository?
 	@State private var searchText: String = ""
 	@State private var selectedTab: CurrencyTab = .crypto
@@ -145,9 +143,9 @@ struct AddListItems: View {
             }
         }
 		.onAppear {
-			cryptoRepo = CryptoRepository(modelContext: modelContext)
-            fiatRepo = FiatRepository(modelContext: modelContext)
-            allRepo = AllRepository(modelContext: modelContext)
+			let cryptoRepo = CryptoRepository(modelContext: modelContext)
+            let fiatRepo = FiatRepository(modelContext: modelContext)
+            allRepo = AllRepository(modelContext: modelContext, cryptoRepo: cryptoRepo, fiatRepo: fiatRepo)
 		}
     }
     

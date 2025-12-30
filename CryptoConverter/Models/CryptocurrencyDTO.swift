@@ -2,7 +2,7 @@ import Foundation
 
 /// A thread-safe intermediate representation of cryptocurrency data.
 /// Used to transfer data from the background Service to the MainActor Repository.
-struct CryptocurrencyDTO: Sendable {
+struct CryptocurrencyDTO: CurrencyDTO, Sendable {
     let id: String
     let name: String
     let value: Double

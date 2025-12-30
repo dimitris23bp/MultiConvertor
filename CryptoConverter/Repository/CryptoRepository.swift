@@ -67,15 +67,6 @@ final class CryptoRepository {
             return []
         }
     }
-
-    func fetchAllFiats() -> [FiatCurrency] {
-        if let fiats = try? modelContext.fetch(FetchDescriptor<FiatCurrency>()) {
-            return fiats
-        } else {
-            print("Couldn't fetch fiats. Returning an empty list instead.")
-            return []
-        }
-    }
     
     func fetchAllCryptoIDs() -> Set<String> {
         if let cryptos = try? modelContext.fetch(FetchDescriptor<Cryptocurrency>()) {

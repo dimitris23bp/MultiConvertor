@@ -1,6 +1,6 @@
 import Foundation
 
-struct FiatCurrencyDTO: Sendable {
+struct FiatCurrencyDTO: CurrencyDTO, Sendable {
     let id: String
     let name: String
     let value: Double

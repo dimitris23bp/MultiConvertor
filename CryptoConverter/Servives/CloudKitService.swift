@@ -209,8 +209,6 @@ actor CloudKitService : CloudKitServiceProtocol {
             return nil
         }
         
-        print("Inside mapper from fiat with ID: \(id)")
-        
         // Parsing SVG in the background
         let data = flagString.data(using: .utf8)
         

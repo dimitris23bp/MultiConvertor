@@ -49,10 +49,10 @@ struct ContentView: View {
     }
     
 	// Repository that encapsulates API + SwiftData mutations
-	@State private var cryptoRepo: CryptoRepository?
+//	@State private var cryptoRepo: CryptoRepository?
     @State private var cryptoService: CryptocurrencyService?
     // TODO: Fill these files and then use them
-    @State private var fiatRepo: FiatRepository?
+//    @State private var fiatRepo: FiatRepository?
     @State private var fiatService: FiatCurrencyService?
     
     @State private var allRepo: AllRepository?
@@ -332,19 +332,17 @@ struct ContentView: View {
 	}
     
     private func initializeReposAndServices() {
-        // TODO: Do I need to check them both?
         // TODO: Do I need temp vars?
-        if cryptoRepo == nil && fiatRepo == nil {
+        if allRepo == nil  {
             let repoCrypto = CryptoRepository(modelContext: modelContext)
-            cryptoRepo = repoCrypto
             
             let repoFiat = FiatRepository(modelContext: modelContext)
-            fiatRepo = repoFiat
             
-            let repoAll = AllRepository(modelContext: modelContext)
+            let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
             allRepo = repoAll
             
             let cloudKitService = CloudKitService()
+            // TODO: This may also need to use the AllRepository
             cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
             fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
         }
