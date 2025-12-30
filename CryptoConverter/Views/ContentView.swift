@@ -61,7 +61,7 @@ struct ContentView: View {
 
 	@State private var amounts: [String: Double] = [:]
 	@State private var editMode: EditMode = .inactive
-	@State private var selection = Set<Cryptocurrency.ID>()
+    @State private var selection = Set<String>()
 	@State private var isShowingSheet = false
     @State private var lastUpdate: String = "NaN"
 	@FocusState private var focusedCurrencyId: String?
@@ -249,9 +249,15 @@ struct ContentView: View {
             ?? fiatCurrencies.first(where: { $0.id == currencyId })
         
 		guard let source = sourceCurrency else { return }
+        // Example
+        // amount = 2
+        // source = usd
+        // currentCurrency = eur
+        // (1 * 2) * 0,84
+        
         
 		for currency in combinedFavourites {
-			let valueDouble = (source.value * value) / currency.value
+			let valueDouble = (source.value * value) * currency.value
 			amounts[currency.id] = valueDouble
 		}
 	}
@@ -335,6 +341,7 @@ struct CurrencyRowView: View {
                     ),
                     formatter: numberFormatter
                 )
+                .id(currency.id)
                 .focused(focusedCurrencyId, equals: currency.id)
                 .frame(height: 40)
                 .fixedSize(horizontal: true, vertical: false)

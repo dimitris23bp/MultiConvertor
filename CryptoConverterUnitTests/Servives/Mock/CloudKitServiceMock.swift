@@ -22,6 +22,14 @@ final class CloudKitServiceMock: CloudKitServiceProtocol, @unchecked Sendable {
         return mockCryptocurrencies
     }
     
+    func fetchAllFiatCurrenciesFromCK() async -> [FiatCurrencyDTO] {
+        return []
+    }
+
+    func fetchFiatCurrenciesFromCK(amount: Int) async throws -> [FiatCurrencyDTO] {
+        return []
+    }
+    
     var mockLastUpdateDate: Date?
     func getLastUpdate() async -> Date? {
         return mockLastUpdateDate
