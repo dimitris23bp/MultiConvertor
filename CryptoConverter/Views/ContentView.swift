@@ -97,29 +97,69 @@ struct ContentView: View {
 					List {
 						Section {
 							ForEach(combinedFavourites, id: \.id) { currency in
-                                CurrencyRowView(
-                                    currency: currency,
-                                    isEditing: editMode.isEditing,
-                                    isSelected: selection.contains(currency.id),
-                                    amount: amounts[currency.id] ?? 0.0,
-                                    imageSize: imageSize,
-                                    numberFormatter: numberFormatter,
-                                    focusedCurrencyId: $focusedCurrencyId,
-                                    onToggleSelection: {
-                                        if selection.contains(currency.id) {
-                                            selection.remove(currency.id)
-                                        } else {
-                                            selection.insert(currency.id)
+                                HStack {
+                                    if editMode.isEditing {
+                                        Button(action: {
+                                            if selection.contains(currency.id) {
+                                                selection.remove(currency.id)
+                                            } else {
+                                                selection.insert(currency.id)
+                                            }
+                                        }) {
+                                            Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
                                         }
-                                    },
-                                    onAmountChange: { newValue in
-                                        amounts[currency.id] = newValue
-                                        updateInputs(basedOn: currency.id, with: newValue)
-                                    },
-                                    onDelete: {
-                                        currency.favourite = false
                                     }
-                                )
+                                    Image(uiImage: currency.icon ?? UIImage())
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: imageSize, height: imageSize)
+
+                                    VStack(alignment: .leading) {
+                                        Text("\(currency.id)")
+                                            .minimumScaleFactor(0.75)
+                                            .lineLimit(1)
+                                        Text("\(currency.name)")
+                                            .minimumScaleFactor(0.75)
+                                            .lineLimit(1)
+                                    }
+                                    .padding()
+
+                                    Spacer()
+
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        DoubleNumberTextField(
+                                            value: Binding(
+                                                get: { amounts[currency.id] ?? 0.0 },
+                                                set: { newValue in
+                                                    amounts[currency.id] = newValue
+                                                    updateInputs(basedOn: currency.id, with: newValue)
+                                                }
+                                            ),
+                                            formatter: numberFormatter
+                                        )
+                                        .id(currency.id)
+                                        .focused($focusedCurrencyId, equals: currency.id)
+                                        .frame(height: 40)
+                                        .fixedSize(horizontal: true, vertical: false)
+                                    }
+                                    .frame(maxWidth: 150)
+                                    .fixedSize(horizontal: true, vertical: false)
+                                    .padding(.horizontal, 10)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(focusedCurrencyId == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
+                                    )
+                                    .animation(.easeOut(duration: 0.1), value: focusedCurrencyId == currency.id)
+                                    .tint(Color.clear)
+                                    .minimumScaleFactor(0.75)
+                                }
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive, action: {
+                                        currency.favourite = false
+                                    }) {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
 							}
 							.onMove(perform: moveItems)
 						} footer: {
@@ -310,74 +350,6 @@ struct ContentView: View {
         }
     }
     
-}
-
-struct CurrencyRowView: View {
-    let currency: any Currency
-    let isEditing: Bool
-    let isSelected: Bool
-    let amount: Double
-    let imageSize: CGFloat
-    let numberFormatter: NumberFormatter
-    var focusedCurrencyId: FocusState<String?>.Binding
-    let onToggleSelection: () -> Void
-    let onAmountChange: (Double) -> Void
-    let onDelete: () -> Void
-    
-    var body: some View {
-        HStack {
-            if isEditing {
-                Button(action: onToggleSelection) {
-                    Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                }
-            }
-            Image(uiImage: currency.icon ?? UIImage())
-                .resizable()
-                .scaledToFit()
-                .frame(width: imageSize, height: imageSize)
-
-            VStack(alignment: .leading) {
-                Text("\(currency.id)")
-                    .minimumScaleFactor(0.75)
-                    .lineLimit(1)
-                Text("\(currency.name)")
-                    .minimumScaleFactor(0.75)
-                    .lineLimit(1)
-            }
-            .padding()
-
-            Spacer()
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                DoubleNumberTextField(
-                    value: Binding(
-                        get: { amount },
-                        set: onAmountChange
-                    ),
-                    formatter: numberFormatter
-                )
-                .id(currency.id)
-                .focused(focusedCurrencyId, equals: currency.id)
-                .frame(height: 40)
-                .fixedSize(horizontal: true, vertical: false)
-            }
-            .frame(maxWidth: 150)
-            .fixedSize(horizontal: true, vertical: false)
-            .padding(.horizontal, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
-            )
-            .animation(.easeOut(duration: 0.1), value: focusedCurrencyId.wrappedValue == currency.id)
-            .tint(Color.clear)
-            .minimumScaleFactor(0.75)
-        }
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive, action: onDelete) {
-                Label("Delete", systemImage: "trash")
-            }
-        }
-    }
 }
 
 
