@@ -68,6 +68,5 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
         } else {
             return "NaN"
         }
-
 	}
 }

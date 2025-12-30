@@ -1,0 +1,44 @@
+protocol CurrencyServiceProtocol: Sendable {
+    func ensureInitialDataIfNeeded(minCount: Int) async throws
+    func updateAmounts() async
+    func getLastUpdate() async -> String
+}
+
+actor CurrencyService: CurrencyServiceProtocol {
+    private let fiatService: FiatCurrencyService
+    private let cryptoService: CryptocurrencyService
+    private let currencyRepository: AllRepository
+    
+    init(fiatService: FiatCurrencyService, cryptoService: CryptocurrencyService, currencyRepository: AllRepository) {
+        self.fiatService = fiatService
+        self.cryptoService = cryptoService
+        self.currencyRepository = currencyRepository
+    }
+    
+    func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
+        async let fiatData: () = fiatService.ensureInitialDataIfNeeded(minCount: minCount)
+        async let cryptoData: () = cryptoService.ensureInitialDataIfNeeded(minCount: minCount)
+        
+        _ = try await [fiatData, cryptoData]
+    }
+    
+    func updateAmounts() async {
+        async let updateFiatData: () = fiatService.updateAmountOfFiats()
+        async let updateCryptoData: () = cryptoService.updateAmountOfCryptos()
+        
+        _ = await [updateFiatData, updateCryptoData]
+    }
+    
+    // This could be from either crypto of fiat. Since they are updated at the same time, I don't have to get a specific one.
+    func getLastUpdate() async -> String {
+        return await cryptoService.getLastUpdate()
+    }
+    
+    func addInitialFavourites(currencies: [Currency]) async {
+        do {
+            try await currencyRepository.addInitialFavourites(currencies: currencies)
+        } catch {
+            print("Cannot add successfully all favourites.")
+        }
+    }
+}

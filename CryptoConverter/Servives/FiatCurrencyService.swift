@@ -2,6 +2,7 @@ import CloudKit
 
 protocol FiatCurrencyServiceProtocol: Sendable {
     func ensureInitialDataIfNeeded(minCount: Int) async throws
+    func updateAmountOfFiats() async
 }
 
 actor FiatCurrencyService : FiatCurrencyServiceProtocol {

@@ -48,13 +48,7 @@ struct ContentView: View {
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
     
-	// Repository that encapsulates API + SwiftData mutations
-//	@State private var cryptoRepo: CryptoRepository?
-    @State private var cryptoService: CryptocurrencyService?
-    // TODO: Fill these files and then use them
-//    @State private var fiatRepo: FiatRepository?
-    @State private var fiatService: FiatCurrencyService?
-    
+    @State private var currencyService: CurrencyService?
     @State private var allRepo: AllRepository?
     
 	@StateObject private var scheduler = TickerUpdateScheduler()
@@ -227,26 +221,21 @@ struct ContentView: View {
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
                 
                 // TODO: I need to make sure that service is not nullable
-                lastUpdate = await cryptoService!.getLastUpdate()
+                lastUpdate = await currencyService!.getLastUpdate()
                 
 				// Check immediately on appear
 				if cryptocurrencies.count < 3 || isPreview {
 					scheduler.updateLastExecution()
-                    // TODO: Do an initial load for some cryptos, and then load the rest in the background. Also add a progress bar on the bottom while this is happening as a v2
-					try? await cryptoService?.ensureInitialDataIfNeeded()
-                    try? await fiatService?.ensureInitialDataIfNeeded()
-                    try? await allRepo?.addInitialFavourites(currencies: allCurrencies)
-
+                    try? await currencyService?.ensureInitialDataIfNeeded()
+                    await currencyService?.addInitialFavourites(currencies: allCurrencies)
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
-					await cryptoService?.updateAmountOfCryptos()
-                    await fiatService?.updateAmountOfFiats()
+                    await currencyService?.updateAmounts()
 					print("Update has happened")
 				}
-				scheduler.start { [weak cService = cryptoService, weak fService = fiatService] in
-					await cService?.updateAmountOfCryptos()
-                    await fService?.updateAmountOfFiats()
+				scheduler.start { [weak service = currencyService] in
+                    await service?.updateAmounts()
 				}
 			}
 		}
@@ -259,8 +248,7 @@ struct ContentView: View {
 				if scheduler.checkIfNeeded() {
 					Task {
 						scheduler.updateLastExecution()
-						await cryptoService?.updateAmountOfCryptos()
-                        await fiatService?.updateAmountOfFiats()
+                        await currencyService?.updateAmounts()
 					}
 				}
 			default:
@@ -335,16 +323,16 @@ struct ContentView: View {
         // TODO: Do I need temp vars?
         if allRepo == nil  {
             let repoCrypto = CryptoRepository(modelContext: modelContext)
-            
             let repoFiat = FiatRepository(modelContext: modelContext)
-            
             let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
             allRepo = repoAll
             
             let cloudKitService = CloudKitService()
+            
             // TODO: This may also need to use the AllRepository
-            cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
-            fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
+            let cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
+            let fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
+            currencyService = CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
         }
     }
     

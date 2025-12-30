@@ -14,7 +14,6 @@ struct AddListItems: View {
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
 
-    @State private var allRepo: AllRepository?
 	@State private var searchText: String = ""
 	@State private var selectedTab: CurrencyTab = .crypto
 	
@@ -142,11 +141,6 @@ struct AddListItems: View {
                 }
             }
         }
-		.onAppear {
-			let cryptoRepo = CryptoRepository(modelContext: modelContext)
-            let fiatRepo = FiatRepository(modelContext: modelContext)
-            allRepo = AllRepository(modelContext: modelContext, cryptoRepo: cryptoRepo, fiatRepo: fiatRepo)
-		}
     }
     
 //    private func buttonPressed(forType type: CurrencyTab, with item: Currency) {
@@ -160,7 +154,7 @@ struct AddListItems: View {
 
     private func buttonPressed(with fiat: FiatCurrency) {
         if fiat.favourite == false {
-            let highestOrder = allRepo?.getHighestOrder(currencies: allCurrencies) ?? 0
+            let highestOrder = allCurrencies.getHighestOrder()
             fiat.sortOrder = highestOrder + 1
             fiat.favourite = true
         } else {
@@ -175,7 +169,7 @@ struct AddListItems: View {
     }
 	private func buttonPressed(with crypto: Cryptocurrency) {
 		if crypto.favourite == false {
-            let highestOrder = allRepo?.getHighestOrder(currencies: allCurrencies) ?? 0
+            let highestOrder = allCurrencies.getHighestOrder()
 			crypto.sortOrder = highestOrder + 1
 			crypto.favourite = true
 		} else {

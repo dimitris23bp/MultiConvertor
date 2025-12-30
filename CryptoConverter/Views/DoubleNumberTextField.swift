@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 
+// BUG: If I have typed something on a field, then I remove them all, then the value that is left is zero. On that zero, if I never lose the focus of the field and I type again, it will type a number before the zero. So if I type '7', it will say '70'. Then if I type '8', instead of '708', it will type '780'.
 struct DoubleNumberTextField: UIViewRepresentable {
     @Binding var value: Double
     let formatter: NumberFormatter
