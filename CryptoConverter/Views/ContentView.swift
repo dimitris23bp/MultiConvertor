@@ -249,18 +249,33 @@ struct ContentView: View {
             ?? fiatCurrencies.first(where: { $0.id == currencyId })
         
 		guard let source = sourceCurrency else { return }
-        // Example
-        // amount = 2
-        // source = usd
-        // currentCurrency = eur
-        // (1 * 2) * 0,84
-        
         
 		for currency in combinedFavourites {
-			let valueDouble = (source.value * value) * currency.value
-			amounts[currency.id] = valueDouble
+            if currency.id == source.id {
+                amounts[currency.id] = value
+            } else {
+                let sourcePrice = priceInUSD(for: source)
+                let targetPrice = priceInUSD(for: currency)
+                
+                if targetPrice != 0 {
+                    let valueDouble = (sourcePrice * value) / targetPrice
+                    amounts[currency.id] = valueDouble
+                } else {
+                    amounts[currency.id] = 0
+                }
+            }
 		}
 	}
+    
+    private func priceInUSD(for currency: any Currency) -> Double {
+        if let _ = currency as? FiatCurrency {
+            // Fiat value is units per USD. Price in USD is 1 / value.
+            return currency.value > 0 ? 1.0 / currency.value : 0.0
+        } else {
+            // Crypto value is USD per unit.
+            return currency.value
+        }
+    }
 
 	private func deleteSelectedItems() {
 		withAnimation {
