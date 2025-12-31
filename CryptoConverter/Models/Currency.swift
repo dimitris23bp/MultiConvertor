@@ -8,6 +8,6 @@ protocol Currency: AnyObject {
     var value: Double { get set }
     var favourite: Bool { get set }
     var sortOrder: Int? { get set }
-    var iconString: String? { get }
-    var icon: (any View)? { get }
+    var iconData: Data? { get }
+    var icon: UIImage? { get }
 }

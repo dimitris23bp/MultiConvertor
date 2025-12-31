@@ -7,7 +7,7 @@ struct CryptocurrencyDTO: CurrencyDTO, Sendable {
     let name: String
     let value: Double
     let marketCap: Double
-    let iconString: String?
+    let iconData: Data?
     let favourite: Bool
     let sortOrder: Int?
 }

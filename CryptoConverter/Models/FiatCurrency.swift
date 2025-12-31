@@ -12,13 +12,15 @@ class FiatCurrency : Currency {
     var favourite: Bool = false
     // Data to compute the flag
     // On external storage to not spend time computing it
-    @Attribute(.externalStorage) var iconString: String?
+    @Attribute(.externalStorage) var iconData: Data?
     var popularity: Int = 0
     var sortOrder: Int?
     
-    var icon: (any View)? {
-        // TODO: Have a preview SVG (maybe with a questionmark)
-        SVGView(string: iconString ?? "")
+    var icon: UIImage? {
+        if let data = iconData, let uiImage = UIImage(data: data) {
+            return uiImage
+        }
+        return nil
     }
     
     // LogoString is not included and renderedLogoData can be added later
@@ -29,18 +31,18 @@ class FiatCurrency : Currency {
         self.popularity = popularity
     }
         
-    init(id: String, name: String, value: Double, iconString: String, popularity: Int) {
+    init(id: String, name: String, value: Double, iconData: Data?, popularity: Int) {
         self.id = id
         self.name = name
         self.value = value
         self.popularity = popularity
-        self.iconString = iconString
+        self.iconData = iconData
     }
 
     convenience init(dto: FiatCurrencyDTO) {
         self.init(id: dto.id, name: dto.name, value: dto.value, popularity: dto.popularity)
         // Overwrite the flag data with the pre-calculated one from the DTO
-        self.iconString = dto.iconString
+        self.iconData = dto.iconData
     }
     
     convenience init?(record: CKRecord) {
@@ -50,12 +52,12 @@ class FiatCurrency : Currency {
               let name = record["name"] as? String,
               let value = record["value"] as? Double,
               let popularity = record["order"] as? Int,
-              let flagString = record["flag"] as? String
+              let flagData = record["flag"] as? Data
         else {
             return nil
         }
         
         
-        self.init(id: id, name: name, value: value, iconString: flagString, popularity: popularity)
+        self.init(id: id, name: name, value: value, iconData: flagData, popularity: popularity)
     }
 }

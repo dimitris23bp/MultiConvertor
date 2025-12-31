@@ -8,7 +8,7 @@ actor Mapper {
               let name = record["name"] as? String,
               let value = record["value"] as? Double,
               let marketCap = record["marketCap"] as? Double,
-              let logoString = record["logo"] as? String
+              let logoData = record["logo"] as? Data
         else {
             return nil
         }
@@ -18,7 +18,7 @@ actor Mapper {
             name: name,
             value: value,
             marketCap: marketCap,
-            iconString: logoString,
+            iconData: logoData,
             favourite: false,
             sortOrder: nil
         )

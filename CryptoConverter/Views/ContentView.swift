@@ -105,8 +105,9 @@ struct ContentView: View {
                                         }
                                     }
                                     
-                                    SVGView(string: currency.iconString ?? "")
-                                        .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
+                                    Image(uiImage: currency.icon ?? UIImage())
+                                        .resizable()
+                                        .scaledToFit()
                                         .frame(width: imageSize, height: imageSize)
 
                                     VStack(alignment: .leading) {

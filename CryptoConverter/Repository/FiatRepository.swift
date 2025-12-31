@@ -22,7 +22,7 @@ final class FiatRepository {
         for dto in dtos {
             let fiat = FiatCurrency(dto: dto)
             print("Fetching fiat with ID: \(fiat.id)")
-            if fiat.iconString != nil {
+                            if fiat.iconData != nil {
                 print("Inserting fiat with ID: \(fiat.id)")
                 modelContext.insert(fiat)
             }
@@ -52,7 +52,7 @@ final class FiatRepository {
             let fiat = FiatCurrency(dto: dto)
             print("Fetching fiat in remaining with ID: \(fiat.id)")
             if !ids.contains(fiat.id) {
-                if fiat.iconString != nil {
+                                if fiat.iconData != nil {
                     print("Inserting fiat in remaining with ID: \(fiat.id)")
                     backgroundContext.insert(fiat)
                 }

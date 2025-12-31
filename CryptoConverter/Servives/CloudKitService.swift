@@ -174,7 +174,7 @@ actor CloudKitService : CloudKitServiceProtocol {
               let name = record["name"] as? String,
               let value = record["value"] as? Double,
               let marketCap = record["marketCap"] as? Double,
-              let logoString = record["logo"] as? String
+              let logoData = record["icon"] as? Data
         else {
             return nil
         }
@@ -184,7 +184,7 @@ actor CloudKitService : CloudKitServiceProtocol {
             name: name,
             value: value,
             marketCap: marketCap,
-            iconString: logoString,
+            iconData: logoData,
             favourite: false,
             sortOrder: nil
         )
@@ -195,7 +195,7 @@ actor CloudKitService : CloudKitServiceProtocol {
               let name = record["name"] as? String,
               let value = record["value"] as? Double,
               let popularity = record["order"] as? Int,
-              let flagString = record["flag"] as? String
+              let flagData = record["icon"] as? Data
         else {
             return nil
         }
@@ -204,7 +204,7 @@ actor CloudKitService : CloudKitServiceProtocol {
             id: id,
             name: name,
             value: value,
-            iconString: flagString,
+            iconData: flagData,
             favourite: false,
             popularity: popularity,
             sortOrder: nil

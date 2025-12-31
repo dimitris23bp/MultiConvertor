@@ -49,14 +49,16 @@ struct AddListItems: View {
 						ForEach((try! cryptocurrencies.filter(dynamicPredicateForCrypto))) { crypto in
 							HStack {
 								
-//								Image(uiImage: crypto.logo ?? UIImage())
-//									.interpolation(.none)
-//									.resizable()
-//									.scaledToFit()
-//									.frame(width: imageSize, height: imageSize)
-                                SVGView(string: crypto.iconString ?? "")
-                                    .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
-                                    .frame(width: imageSize, height: imageSize)
+								Image(uiImage: crypto.icon ?? UIImage())
+									.interpolation(.none)
+									.resizable()
+									.scaledToFit()
+									.frame(width: imageSize, height: imageSize)
+//                                if let icon = crypto.icon {
+//                                    AnyView(icon)
+//                                        .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
+//                                        .frame(width: imageSize, height: imageSize)
+//                                }
 
 								VStack(alignment: .leading) {
 									Text(String(crypto.id))
@@ -89,15 +91,17 @@ struct AddListItems: View {
 					} else {
                         ForEach((try! fiatCurrencies.filter(dynamicPredicateForFiat))) { fiat in
 							HStack {
-//                                Image(uiImage: fiat.flag ?? UIImage())
-//                                    .interpolation(.none)
-//                                    .resizable()
-//                                    .scaledToFit()
-//                                    .frame(width: imageSize, height: imageSize)
-                                
-                                SVGView(string: fiat.iconString ?? "")
-                                    .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
+                                Image(uiImage: fiat.icon ?? UIImage())
+                                    .interpolation(.none)
+                                    .resizable()
+                                    .scaledToFit()
                                     .frame(width: imageSize, height: imageSize)
+                                
+//                                if let icon = fiat.icon {
+//                                    AnyView(icon)
+//                                        .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
+//                                        .frame(width: imageSize, height: imageSize)
+//                                }
                                 
                                 VStack(alignment: .leading) {
                                     Text(String(fiat.id))
