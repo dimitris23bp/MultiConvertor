@@ -4,5 +4,6 @@ protocol CurrencyDTO: Sendable {
     var value: Double { get }
     var favourite: Bool { get }
     var sortOrder: Int? { get }
+    var iconString: String? { get }
 
 }

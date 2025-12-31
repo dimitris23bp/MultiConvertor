@@ -8,7 +8,7 @@
 import SwiftData
 import SwiftUI
 import CloudKit
-import SVGKit
+import SVGView
 
 @Model
 class Cryptocurrency: Currency {
@@ -23,9 +23,14 @@ class Cryptocurrency: Currency {
     var favourite: Bool = false
     // Data to compute the logo
     // On external storage to not spend time computing it
-    @Attribute(.externalStorage) var renderedLogoData: Data?
+    @Attribute(.externalStorage) var iconString: String?
     var sortOrder: Int?
     
+    var icon: (any View)? {
+        // TODO: Have a preview SVG (maybe with a questionmark)
+        SVGView(string: iconString ?? "")
+    }
+
     // LogoString is not included and renderedLogoData can be added later
     init(id: String, name: String, value: Double, marketCap: Double) {
         self.id = id
@@ -34,33 +39,19 @@ class Cryptocurrency: Currency {
         self.marketCap = marketCap
     }
         
-    init(id: String, name: String, value: Double, marketCap: Double, logoString: String) {
+    init(id: String, name: String, value: Double, marketCap: Double, iconString: String) {
         self.id = id
         self.name = name
         self.value = value
         self.marketCap = marketCap
-        
-        // This is a convention for the previews
-        if logoString == "preview" {
-            self.renderedLogoData = logoString.data(using: .utf8)
-        } else {
-            // Render SVG to a standard UIImage once to not spend time computing in the main thread with a computed property
-            let data = logoString.data(using: .utf8)
-            let svgkImage = SVGKImage(data: data)
-            let renderedLogoData: Data? = if let uiImage = svgkImage?.uiImage {
-                uiImage.pngData()
-            } else {
-                nil
-            }
-            self.renderedLogoData = renderedLogoData
-        }
-        
+        self.iconString = iconString
     }
 
     convenience init(dto: CryptocurrencyDTO) {
         self.init(id: dto.id, name: dto.name, value: dto.value, marketCap: dto.marketCap)
         // Overwrite the logo data with the pre-calculated one from the DTO
-        self.renderedLogoData = dto.renderedLogoData
+        // TODO: Do I need that anymore? Maybe this constructor is useless
+        self.iconString = dto.iconString
     }
     
     convenience init?(record: CKRecord) {
@@ -75,24 +66,6 @@ class Cryptocurrency: Currency {
             return nil
         }
         
-        
-        self.init(id: id, name: name, value: value, marketCap: marketCap, logoString: logoString)
-        
-        // Handle optional or defaulted values
-//        self.favourite = record["favourite"] as? Bool ?? false
-        // TODO: I don't think this is needed, or correct
-//        self.sortOrder = record["sortOrder"] as? Int
+        self.init(id: id, name: name, value: value, marketCap: marketCap, iconString: logoString)
     }
-    
-    // This property is fast enough, because it just wraps existing Data
-    var logo: UIImage? {
-        // This is a convention for the previews
-        if renderedLogoData == "preview".data(using: .utf8) {
-            return UIImage(systemName: "questionmark.circle")
-        }
-        guard let renderedLogoData else { return nil }
-        return UIImage(data: renderedLogoData)
-    }
-
-    var icon: UIImage? { logo }
 }

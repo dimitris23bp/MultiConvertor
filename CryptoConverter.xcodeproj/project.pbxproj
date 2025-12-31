@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B6E6CC92F04950B007D7B7E /* SVGView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B6E6CC82F04950B007D7B7E /* SVGView */; };
 		5BC7A0632EF883340095F785 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC7A0622EF883340095F785 /* SVGKit */; };
 		B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */ = {isa = PBXBuildFile; fileRef = B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
@@ -74,6 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B6E6CC92F04950B007D7B7E /* SVGView in Frameworks */,
 				5BC7A0632EF883340095F785 /* SVGKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,6 +164,7 @@
 			name = CryptoConverter;
 			packageProductDependencies = (
 				5BC7A0622EF883340095F785 /* SVGKit */,
+				5B6E6CC82F04950B007D7B7E /* SVGView */,
 			);
 			productName = CryptoConverter;
 			productReference = B7FC087B2EA559E600984CAD /* CryptoConverter.app */;
@@ -201,6 +204,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				5BC7A0612EF883340095F785 /* XCRemoteSwiftPackageReference "SVGKit" */,
+				5B6E6CC72F04950B007D7B7E /* XCRemoteSwiftPackageReference "SVGView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B7EFC44F2E8758F9003B9373;
@@ -595,6 +599,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5B6E6CC72F04950B007D7B7E /* XCRemoteSwiftPackageReference "SVGView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/SVGView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.6;
+			};
+		};
 		5BC7A0612EF883340095F785 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SVGKit/SVGKit.git";
@@ -606,6 +618,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5B6E6CC82F04950B007D7B7E /* SVGView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B6E6CC72F04950B007D7B7E /* XCRemoteSwiftPackageReference "SVGView" */;
+			productName = SVGView;
+		};
 		5BC7A0622EF883340095F785 /* SVGKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5BC7A0612EF883340095F785 /* XCRemoteSwiftPackageReference "SVGKit" */;

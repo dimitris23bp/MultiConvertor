@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import SVGView
 
 struct AddListItems: View {
     @Environment(\.dismiss) private var dismiss
@@ -48,12 +49,15 @@ struct AddListItems: View {
 						ForEach((try! cryptocurrencies.filter(dynamicPredicateForCrypto))) { crypto in
 							HStack {
 								
-								Image(uiImage: crypto.logo ?? UIImage())
-									.interpolation(.none)
-									.resizable()
-									.scaledToFit()
-									.frame(width: imageSize, height: imageSize)
-								
+//								Image(uiImage: crypto.logo ?? UIImage())
+//									.interpolation(.none)
+//									.resizable()
+//									.scaledToFit()
+//									.frame(width: imageSize, height: imageSize)
+                                SVGView(string: crypto.iconString ?? "")
+                                    .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
+                                    .frame(width: imageSize, height: imageSize)
+
 								VStack(alignment: .leading) {
 									Text(String(crypto.id))
 										.lineLimit(1)
@@ -85,10 +89,14 @@ struct AddListItems: View {
 					} else {
                         ForEach((try! fiatCurrencies.filter(dynamicPredicateForFiat))) { fiat in
 							HStack {
-                                Image(uiImage: fiat.flag ?? UIImage())
-                                    .interpolation(.none)
-                                    .resizable()
-                                    .scaledToFit()
+//                                Image(uiImage: fiat.flag ?? UIImage())
+//                                    .interpolation(.none)
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .frame(width: imageSize, height: imageSize)
+                                
+                                SVGView(string: fiat.iconString ?? "")
+                                    .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
                                     .frame(width: imageSize, height: imageSize)
                                 
                                 VStack(alignment: .leading) {

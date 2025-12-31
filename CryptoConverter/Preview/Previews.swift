@@ -12,7 +12,7 @@ struct Previews {
 			name: "Bitcoin",
 			value: 60000,
 			marketCap: 6_000_000,
-            logoString: "preview"
+            iconString: "preview"
 		)
 	}
 
@@ -22,7 +22,7 @@ struct Previews {
 			name: "Ether",
 			value: 20000,
 			marketCap: 3_300_000,
-            logoString: "preview"
+            iconString: "preview"
 		)
 	}
 
@@ -32,7 +32,7 @@ struct Previews {
             name: "Polkadot",
             value: 1500,
             marketCap: 2_250_000,
-            logoString: "preview"
+            iconString: "preview"
         )
     }
     
@@ -41,7 +41,7 @@ struct Previews {
             id: "EUR",
             name: "Euro",
             value: 0.80,
-            flagString: "preview",
+            iconString: "preview",
             popularity: 1
         )
     }
@@ -51,7 +51,7 @@ struct Previews {
             id: "USD",
             name: "US Dollar",
             value: 1,
-            flagString: "preview",
+            iconString: "preview",
             popularity: 2
         )
     }

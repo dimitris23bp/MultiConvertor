@@ -4,7 +4,7 @@ struct FiatCurrencyDTO: CurrencyDTO, Sendable {
     let id: String
     let name: String
     let value: Double
-    let renderedFlagData: Data?
+    let iconString: String?
     let favourite: Bool
     let popularity: Int
     let sortOrder: Int?

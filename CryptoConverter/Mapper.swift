@@ -13,21 +13,12 @@ actor Mapper {
             return nil
         }
         
-        // Parsing SVG in the background
-        let data = logoString.data(using: .utf8)
-        // TODO: This is null for BTC the first time. I need to fix that somehow.
-        let renderedLogoData: Data? = if let uiImage = SVGKImage(data: data)?.uiImage {
-            uiImage.pngData()
-        } else {
-            nil
-        }
-        
         return CryptocurrencyDTO(
             id: id,
             name: name,
             value: value,
             marketCap: marketCap,
-            renderedLogoData: renderedLogoData,
+            iconString: logoString,
             favourite: false,
             sortOrder: nil
         )

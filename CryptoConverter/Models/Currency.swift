@@ -1,5 +1,5 @@
 import Foundation
-import UIKit
+import SwiftUI
 
 @MainActor
 protocol Currency: AnyObject {
@@ -8,5 +8,6 @@ protocol Currency: AnyObject {
     var value: Double { get set }
     var favourite: Bool { get set }
     var sortOrder: Int? { get set }
-    var icon: UIImage? { get }
+    var iconString: String? { get }
+    var icon: (any View)? { get }
 }

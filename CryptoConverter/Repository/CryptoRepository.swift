@@ -15,7 +15,7 @@ final class CryptoRepository {
         for dto in dtos {
             let crypto = Cryptocurrency(dto: dto)
             print("Fetching crypto with ID: \(crypto.id)")
-            if crypto.renderedLogoData != nil {
+            if crypto.iconString != nil {
                 print("Inserting crypto with ID: \(crypto.id)")
                 modelContext.insert(crypto)
             }
@@ -37,7 +37,7 @@ final class CryptoRepository {
             let crypto = Cryptocurrency(dto: dto)
             print("Fetching crypto in remaining with ID: \(crypto.id)")
             if !ids.contains(crypto.id) {
-                if crypto.renderedLogoData != nil {
+                if crypto.iconString != nil {
                     print("Inserting crypto in remaining with ID: \(crypto.id)")
                     backgroundContext.insert(crypto)
                 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import SVGView
 
 struct InputValues {
 	// Store the trimmed value 1.23456789 will be "1.234567"
@@ -103,9 +104,9 @@ struct ContentView: View {
                                             Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
                                         }
                                     }
-                                    Image(uiImage: currency.icon ?? UIImage())
-                                        .resizable()
-                                        .scaledToFit()
+                                    
+                                    SVGView(string: currency.iconString ?? "")
+                                        .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
                                         .frame(width: imageSize, height: imageSize)
 
                                     VStack(alignment: .leading) {
