@@ -41,8 +41,8 @@ struct Previews {
             id: "EUR",
             name: "Euro",
             value: 0.80,
-            iconData: nil,
-            popularity: 1
+            popularity: 1,
+            iconData: nil
         )
     }
     
@@ -51,8 +51,8 @@ struct Previews {
             id: "USD",
             name: "US Dollar",
             value: 1,
-            iconData: nil,
-            popularity: 2
+            popularity: 2,
+            iconData: nil
         )
     }
     

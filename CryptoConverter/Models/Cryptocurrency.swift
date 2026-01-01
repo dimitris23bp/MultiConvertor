@@ -32,14 +32,6 @@ class Cryptocurrency: Currency {
         }
         return nil
     }
-
-    // LogoString is not included and renderedLogoData can be added later
-    init(id: String, name: String, value: Double, marketCap: Double) {
-        self.id = id
-        self.name = name
-        self.value = value
-        self.marketCap = marketCap
-    }
         
     init(id: String, name: String, value: Double, marketCap: Double, iconData: Data?) {
         self.id = id
@@ -50,10 +42,7 @@ class Cryptocurrency: Currency {
     }
 
     convenience init(dto: CryptocurrencyDTO) {
-        self.init(id: dto.id, name: dto.name, value: dto.value, marketCap: dto.marketCap)
-        // Overwrite the logo data with the pre-calculated one from the DTO
-        // TODO: Do I need that anymore? Maybe this constructor is useless
-        self.iconData = dto.iconData
+        self.init(id: dto.id, name: dto.name, value: dto.value, marketCap: dto.marketCap, iconData: dto.iconData)
     }
     
     convenience init?(record: CKRecord) {

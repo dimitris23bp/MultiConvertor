@@ -22,16 +22,8 @@ class FiatCurrency : Currency {
         }
         return nil
     }
-    
-    // LogoString is not included and renderedLogoData can be added later
-    init(id: String, name: String, value: Double, popularity: Int) {
-        self.id = id
-        self.name = name
-        self.value = value
-        self.popularity = popularity
-    }
         
-    init(id: String, name: String, value: Double, iconData: Data?, popularity: Int) {
+    init(id: String, name: String, value: Double, popularity: Int, iconData: Data?,) {
         self.id = id
         self.name = name
         self.value = value
@@ -40,9 +32,7 @@ class FiatCurrency : Currency {
     }
 
     convenience init(dto: FiatCurrencyDTO) {
-        self.init(id: dto.id, name: dto.name, value: dto.value, popularity: dto.popularity)
-        // Overwrite the flag data with the pre-calculated one from the DTO
-        self.iconData = dto.iconData
+        self.init(id: dto.id, name: dto.name, value: dto.value, popularity: dto.popularity, iconData: dto.iconData)
     }
     
     convenience init?(record: CKRecord) {
@@ -58,6 +48,6 @@ class FiatCurrency : Currency {
         }
         
         
-        self.init(id: id, name: name, value: value, iconData: flagData, popularity: popularity)
+        self.init(id: id, name: name, value: value, popularity: popularity, iconData: flagData)
     }
 }
