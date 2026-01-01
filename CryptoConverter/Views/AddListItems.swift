@@ -45,81 +45,9 @@ struct AddListItems: View {
             VStack {
                 List {
 					if selectedTab == .crypto {
-                        // TODO: This is duplicated. Fix it
-						ForEach((try! cryptocurrencies.filter(dynamicPredicateForCrypto))) { crypto in
-							HStack {
-								
-								Image(uiImage: crypto.icon ?? UIImage())
-									.interpolation(.none)
-									.resizable()
-									.scaledToFit()
-									.frame(width: imageSize, height: imageSize)
-
-								VStack(alignment: .leading) {
-									Text(String(crypto.id))
-										.lineLimit(1)
-										.font(.body)
-										.fontWeight(.regular)
-									
-									Text(String(crypto.name))
-										.font(.body)
-										.fontWeight(.regular)
-										.minimumScaleFactor(0.75)
-										.lineLimit(1)
-								}
-								.padding()
-								
-								Spacer()
-								
-								Button {
-									buttonPressed(with: crypto)
-								} label: {
-									if !crypto.favourite {
-										Image(systemName: "plus")
-											.font(.title3)
-											.foregroundColor(.primary)
-									}
-								}
-								.padding()
-							}
-						}
+                        ListCategory(currencies: cryptocurrencies, dynamicPredicate: dynamicPredicateForCrypto, imageSize: imageSize, buttonPressed: buttonPressed(with:))
 					} else {
-                        ForEach((try! fiatCurrencies.filter(dynamicPredicateForFiat))) { fiat in
-							HStack {
-                                Image(uiImage: fiat.icon ?? UIImage())
-                                    .interpolation(.none)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: imageSize, height: imageSize)
-                                
-                                VStack(alignment: .leading) {
-                                    Text(String(fiat.id))
-                                        .lineLimit(1)
-                                        .font(.body)
-                                        .fontWeight(.regular)
-                                    
-                                    Text(String(fiat.name))
-                                        .font(.body)
-                                        .fontWeight(.regular)
-                                        .minimumScaleFactor(0.75)
-                                        .lineLimit(1)
-                                }
-                                .padding()
-                                
-                                Spacer()
-                                
-                                Button {
-                                    buttonPressed(with: fiat)
-                                } label: {
-                                    if !fiat.favourite {
-                                        Image(systemName: "plus")
-                                            .font(.title3)
-                                            .foregroundColor(.primary)
-                                    }
-                                }
-                                .padding()
-							}
-						}
+                        ListCategory(currencies: fiatCurrencies, dynamicPredicate: dynamicPredicateForFiat, imageSize: imageSize, buttonPressed: buttonPressed(with:))
 					}
                 }
             }

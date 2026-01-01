@@ -22,7 +22,6 @@ struct ContentView: View {
     
     let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
-	// TODO: Sort based on the sortOrder, and also add functionality to edit order on the edit mode.
 	@Query(sort: \Cryptocurrency.sortOrder, animation: .default) private var cryptocurrencies: [Cryptocurrency]
 
 	@Query(
