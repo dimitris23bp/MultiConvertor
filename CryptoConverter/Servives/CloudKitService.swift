@@ -1,5 +1,4 @@
 import CloudKit
-import SVGKit
 
 protocol CloudKitServiceProtocol: Sendable {
     func fetchAllCryptocurrenciesFromCK() async -> [CryptocurrencyDTO]
@@ -12,7 +11,6 @@ protocol CloudKitServiceProtocol: Sendable {
 actor CloudKitService : CloudKitServiceProtocol {
     
     nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
-    private let mapper = Mapper()
 
     func fetchAllFiatCurrenciesFromCK() async -> [FiatCurrencyDTO] {
         do {
@@ -21,7 +19,7 @@ actor CloudKitService : CloudKitServiceProtocol {
             
             // Map records to DTOs
             let fiats = records.compactMap { record in
-                mapFiatRecordToDTO(record: record)
+                Mapper.mapFiatRecordToDTO(record: record)
             }
             return fiats
         } catch {
@@ -39,7 +37,7 @@ actor CloudKitService : CloudKitServiceProtocol {
             
             // Map records to DTOs
             let cryptos = records.compactMap { record in
-                mapCryptoRecordToDTO(record: record)
+                Mapper.mapCryptoRecordToDTO(record: record)
             }
             return cryptos
         } catch {
@@ -57,7 +55,7 @@ actor CloudKitService : CloudKitServiceProtocol {
             
             // Map records to DTOs
             let fiats = records.compactMap { record in
-                mapFiatRecordToDTO(record: record)
+                Mapper.mapFiatRecordToDTO(record: record)
             }
             return fiats
         } catch {
@@ -74,7 +72,7 @@ actor CloudKitService : CloudKitServiceProtocol {
             
             // Map records to DTOs
             let cryptos = records.compactMap { record in
-                mapCryptoRecordToDTO(record: record)
+                Mapper.mapCryptoRecordToDTO(record: record)
             }
             return cryptos
         } catch {
@@ -166,48 +164,5 @@ actor CloudKitService : CloudKitServiceProtocol {
         allRecords.append(contentsOf: records)
         
         return allRecords
-    }
-    
-    // TODO: To move mappers later
-    private func mapCryptoRecordToDTO(record: CKRecord) -> CryptocurrencyDTO? {
-        guard let id = record["id"] as? String,
-              let name = record["name"] as? String,
-              let value = record["value"] as? Double,
-              let marketCap = record["marketCap"] as? Double,
-              let logoData = record["icon"] as? Data
-        else {
-            return nil
-        }
-        
-        return CryptocurrencyDTO(
-            id: id,
-            name: name,
-            value: value,
-            marketCap: marketCap,
-            iconData: logoData,
-            favourite: false,
-            sortOrder: nil
-        )
-    }
-    
-    private func mapFiatRecordToDTO(record: CKRecord) -> FiatCurrencyDTO? {
-        guard let id = record["id"] as? String,
-              let name = record["name"] as? String,
-              let value = record["value"] as? Double,
-              let popularity = record["order"] as? Int,
-              let flagData = record["icon"] as? Data
-        else {
-            return nil
-        }
-        
-        return FiatCurrencyDTO(
-            id: id,
-            name: name,
-            value: value,
-            iconData: flagData,
-            favourite: false,
-            popularity: popularity,
-            sortOrder: nil
-        )
     }
 }

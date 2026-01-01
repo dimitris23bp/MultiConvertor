@@ -1,14 +1,16 @@
 import CloudKit
-import SVGKit
+import Foundation
 
-actor Mapper {
+final class Mapper: Sendable {
     
-    func mapCryptoRecordToDTO(record: CKRecord) -> CryptocurrencyDTO? {
+    private init() {}
+    
+    nonisolated static func mapCryptoRecordToDTO(record: CKRecord) -> CryptocurrencyDTO? {
         guard let id = record["id"] as? String,
               let name = record["name"] as? String,
               let value = record["value"] as? Double,
               let marketCap = record["marketCap"] as? Double,
-              let logoData = record["logo"] as? Data
+              let logoData = record["icon"] as? Data
         else {
             return nil
         }
@@ -24,4 +26,24 @@ actor Mapper {
         )
     }
     
+    nonisolated static func mapFiatRecordToDTO(record: CKRecord) -> FiatCurrencyDTO? {
+        guard let id = record["id"] as? String,
+              let name = record["name"] as? String,
+              let value = record["value"] as? Double,
+              let popularity = record["order"] as? Int,
+              let flagData = record["icon"] as? Data
+        else {
+            return nil
+        }
+        
+        return FiatCurrencyDTO(
+            id: id,
+            name: name,
+            value: value,
+            iconData: flagData,
+            favourite: false,
+            popularity: popularity,
+            sortOrder: nil
+        )
+    }
 }
