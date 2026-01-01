@@ -10,6 +10,8 @@
 
 ### Backend
 
+- Make logger work
+    - Add more logs
 - Add unit tests
 	- For services
 	- For SwiftUI
