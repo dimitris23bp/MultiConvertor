@@ -1,5 +1,4 @@
 import CloudKit
-import SVGKit
 
 protocol CryptocurrencyServiceProtocol: Sendable {
     func ensureInitialDataIfNeeded(minCount: Int) async throws

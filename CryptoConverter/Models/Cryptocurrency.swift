@@ -8,7 +8,6 @@
 import SwiftData
 import SwiftUI
 import CloudKit
-import SVGView
 
 @Model
 class Cryptocurrency: Currency {

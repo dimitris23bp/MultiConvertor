@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import SVGView
 
 struct AddListItems: View {
     @Environment(\.dismiss) private var dismiss

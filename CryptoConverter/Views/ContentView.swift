@@ -1,13 +1,5 @@
-//
-//  ContentView.swift
-//  CryptoConverter
-//
-//  Created by Dimitris Karamanis on 27/9/25.
-//
-
 import SwiftUI
 import SwiftData
-import SVGView
 
 struct InputValues {
 	// Store the trimmed value 1.23456789 will be "1.234567"

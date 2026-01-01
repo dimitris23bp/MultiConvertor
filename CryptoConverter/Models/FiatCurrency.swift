@@ -1,8 +1,6 @@
 import SwiftData
 import SwiftUI
 import CloudKit
-import SVGKit
-import SVGView
 
 @Model
 class FiatCurrency : Currency {
