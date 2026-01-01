@@ -20,7 +20,6 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
-        // TODO: Fetch only the IDs
         let current = await cryptoRepository.fetchAllCryptoIDs()
         // If I have 3 or more, return
         guard current.count < minCount else { return }
@@ -39,7 +38,6 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     private func ensureRemainingData() async {
         print("Adding remaining data")
         
-        // TODO: Fetch only the IDs
         let ids = await cryptoRepository.fetchAllCryptoIDs()
 
         let cloudkitServiceSelf = self.cloudkitService

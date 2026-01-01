@@ -69,7 +69,10 @@ final class CryptoRepository {
     }
     
     func fetchAllCryptoIDs() -> Set<String> {
-        if let cryptos = try? modelContext.fetch(FetchDescriptor<Cryptocurrency>()) {
+        var descriptor = FetchDescriptor<Cryptocurrency>()
+        descriptor.propertiesToFetch = [\.id]
+        
+        if let cryptos = try? modelContext.fetch(descriptor) {
             return Set(cryptos.map(\.id))
         } else {
             return []

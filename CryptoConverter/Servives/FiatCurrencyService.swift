@@ -19,8 +19,7 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
     /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
-        // TODO: Fetch only the IDs
-        let current = await fiatRepository.fetchAllFiat()
+        let current = await fiatRepository.fetchAllFiatIDs()
         // If I have 3 or more, return
         guard current.count < minCount else { return }
 

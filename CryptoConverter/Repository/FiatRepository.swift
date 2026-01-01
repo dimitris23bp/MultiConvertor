@@ -31,14 +31,6 @@ final class FiatRepository {
         try modelContext.save()
     }
     
-    func fetchAllFiatIDs() -> Set<String> {
-        if let fiats = try? modelContext.fetch(FetchDescriptor<FiatCurrency>()) {
-            return Set(fiats.map(\.id))
-        } else {
-            return []
-        }
-    }
-    
     func addFiatsIfDontExist(ids: Set<String>, dtos: [FiatCurrencyDTO]) throws {
         print("Adding remaining data")
         
@@ -70,5 +62,15 @@ final class FiatRepository {
             }
         }
     }
+    
+    func fetchAllFiatIDs() -> Set<String> {
+        var descriptor = FetchDescriptor<FiatCurrency>()
+        descriptor.propertiesToFetch = [\.id]
+        
+        if let fiats = try? modelContext.fetch(descriptor) {
+            return Set(fiats.map(\.id))
+        } else {
+            return []
+        }
+    }
 }
-
