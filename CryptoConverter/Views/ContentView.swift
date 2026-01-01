@@ -49,9 +49,18 @@ struct ContentView: View {
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
     
-    @State private var currencyService: CurrencyService?
-    @State private var allRepo: AllRepository?
-    
+    private var currencyService: CurrencyService {
+        let repoCrypto = CryptoRepository(modelContext: modelContext)
+        let repoFiat = FiatRepository(modelContext: modelContext)
+        let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
+        
+        let cloudKitService = CloudKitService()
+        
+        let cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
+        let fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
+        return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
+    }
+
 	@StateObject private var scheduler = TickerUpdateScheduler()
 
 	@State private var amounts: [String: Double] = [:]
@@ -217,27 +226,26 @@ struct ContentView: View {
 		}
 		.onAppear {
 			Task {
-                initializeReposAndServices()
-                
 				print("Task is called.")
 				print("Cryptos saved so far: \(cryptocurrencies.count)")
                 
-                // TODO: I need to make sure that service is not nullable
-                lastUpdate = await currencyService!.getLastUpdate()
+                lastUpdate = await currencyService.getLastUpdate()
                 
 				// Check immediately on appear
 				if cryptocurrencies.count < 3 || isPreview {
 					scheduler.updateLastExecution()
-                    try? await currencyService?.ensureInitialDataIfNeeded()
-                    await currencyService?.addInitialFavourites(currencies: allCurrencies)
+                    try? await currencyService.ensureInitialDataIfNeeded()
+                    await currencyService.addInitialFavourites(currencies: allCurrencies)
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
-                    await currencyService?.updateAmounts()
+                    await currencyService.updateAmounts()
 					print("Update has happened")
 				}
-				scheduler.start { [weak service = currencyService] in
-                    await service?.updateAmounts()
+				scheduler.start { [service = currencyService] in
+                    print("Inside the scheduler start. Going to update amounts")
+                    await service.updateAmounts()
+                    print("The amounts have been updated")
 				}
 			}
 		}
@@ -250,7 +258,7 @@ struct ContentView: View {
 				if scheduler.checkIfNeeded() {
 					Task {
 						scheduler.updateLastExecution()
-                        await currencyService?.updateAmounts()
+                        await currencyService.updateAmounts()
 					}
 				}
 			default:
@@ -320,23 +328,6 @@ struct ContentView: View {
 			editMode = .inactive
 		}
 	}
-    
-    private func initializeReposAndServices() {
-        // TODO: Do I need temp vars?
-        if allRepo == nil  {
-            let repoCrypto = CryptoRepository(modelContext: modelContext)
-            let repoFiat = FiatRepository(modelContext: modelContext)
-            let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
-            allRepo = repoAll
-            
-            let cloudKitService = CloudKitService()
-            
-            // TODO: This may also need to use the AllRepository
-            let cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
-            let fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
-            currencyService = CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
-        }
-    }
     
 }
 

@@ -47,9 +47,9 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
         let cloudkitServiceSelf = self.cloudkitService
         
         // Perform work in a separate Task that isn't bound to the MainActor
-        Task.detached(priority: .utility) { [weak fiatRepository] in
+        Task.detached(priority: .utility) { [fiatRepository] in
             let allFiatDTOs = await cloudkitServiceSelf.fetchAllFiatCurrenciesFromCK()
-            try? await fiatRepository?.addFiatsIfDontExist(ids: ids, dtos: allFiatDTOs)
+            try? await fiatRepository.addFiatsIfDontExist(ids: ids, dtos: allFiatDTOs)
         }
         
         print("Remaining fiats are saved")

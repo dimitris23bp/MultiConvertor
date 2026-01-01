@@ -43,9 +43,9 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
         let cloudkitServiceSelf = self.cloudkitService
         
         // Perform work in a separate Task that isn't bound to the MainActor
-        Task.detached(priority: .utility) { [weak cryptoRepository] in
+        Task.detached(priority: .utility) { [cryptoRepository] in
             let allCryptoDTOs = await cloudkitServiceSelf.fetchAllCryptocurrenciesFromCK()
-            try? await cryptoRepository?.addCryptosIfDontExist(ids: ids, dtos: allCryptoDTOs)
+            try? await cryptoRepository.addCryptosIfDontExist(ids: ids, dtos: allCryptoDTOs)
         }
         
         print("Remaining cryptos are saved")

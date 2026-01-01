@@ -54,11 +54,6 @@ struct AddListItems: View {
 									.resizable()
 									.scaledToFit()
 									.frame(width: imageSize, height: imageSize)
-//                                if let icon = crypto.icon {
-//                                    AnyView(icon)
-//                                        .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
-//                                        .frame(width: imageSize, height: imageSize)
-//                                }
 
 								VStack(alignment: .leading) {
 									Text(String(crypto.id))
@@ -96,12 +91,6 @@ struct AddListItems: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: imageSize, height: imageSize)
-                                
-//                                if let icon = fiat.icon {
-//                                    AnyView(icon)
-//                                        .aspectRatio(contentMode: .fit) // Equivalent to .scaledToFit()
-//                                        .frame(width: imageSize, height: imageSize)
-//                                }
                                 
                                 VStack(alignment: .leading) {
                                     Text(String(fiat.id))
