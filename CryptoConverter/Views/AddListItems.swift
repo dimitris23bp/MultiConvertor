@@ -144,23 +144,14 @@ struct AddListItems: View {
         }
     }
     
-//    private func buttonPressed(forType type: CurrencyTab, with item: Currency) {
-//        switch type {
-//        case CurrencyTab.crypto:
-//            buttonPressed(with: item as! Cryptocurrency)
-//        case CurrencyTab.fiat:
-//            buttonPressed(with: item as! FiatCurrency)
-//        }
-//    }
-
-    private func buttonPressed(with fiat: FiatCurrency) {
-        if fiat.favourite == false {
+    private func buttonPressed(with currency: Currency) {
+        if currency.favourite == false {
             let highestOrder = allCurrencies.getHighestOrder()
-            fiat.sortOrder = highestOrder + 1
-            fiat.favourite = true
+            currency.sortOrder = highestOrder + 1
+            currency.favourite = true
         } else {
-            fiat.sortOrder = nil
-            fiat.favourite = false
+            currency.sortOrder = nil
+            currency.favourite = false
         }
         do {
             try modelContext.save()
@@ -168,21 +159,6 @@ struct AddListItems: View {
             print("Failed to save context after reorder: \(error)")
         }
     }
-	private func buttonPressed(with crypto: Cryptocurrency) {
-		if crypto.favourite == false {
-            let highestOrder = allCurrencies.getHighestOrder()
-			crypto.sortOrder = highestOrder + 1
-			crypto.favourite = true
-		} else {
-			crypto.sortOrder = nil
-			crypto.favourite = false
-		}
-		do {
-			try modelContext.save()
-		} catch {
-			print("Failed to save context after reorder: \(error)")
-		}
-	}
 }
 
 enum CurrencyTab {
