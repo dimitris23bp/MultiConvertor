@@ -6,6 +6,7 @@
 
 - If name gets small, then remove it
 - If symbol gets small, then remove it
+- Change initial BTC logo with a gif or something else that is not just Bitcoin
 
 ### Backend
 
@@ -29,4 +30,3 @@
 
 ### Backend
 
-- Add regular currencies

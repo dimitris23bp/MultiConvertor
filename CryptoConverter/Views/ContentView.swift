@@ -76,7 +76,6 @@ struct ContentView: View {
 			if cryptocurrencies.count < 3 {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
-						// TODO: Change this with a gif or something else that is not just Bitcoin
 						Image("btc")
 							.resizable()
 							.scaledToFit()
