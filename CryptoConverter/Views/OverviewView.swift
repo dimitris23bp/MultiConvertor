@@ -194,6 +194,7 @@ struct OverviewView: View {
 				}
 			}
 			.environment(\.editMode, $editMode)
+			.toolbar(editMode.isEditing ? .hidden : .visible, for: .tabBar)
 		} detail: {
 			Text("Select an item")
 		}
