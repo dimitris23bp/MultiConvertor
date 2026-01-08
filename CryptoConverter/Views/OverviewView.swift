@@ -52,7 +52,7 @@ struct OverviewView: View {
         return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
     }
 
-	@StateObject private var scheduler = TickerUpdateScheduler()
+	@ObservedObject var scheduler: TickerUpdateScheduler
 
 	@State private var amounts: [String: Double] = [:]
 	@State private var editMode: EditMode = .inactive
@@ -72,186 +72,138 @@ struct OverviewView: View {
 	}
 
 	var body: some View {
-		Group {
-			if cryptocurrencies.count < 3 {
-				ContentUnavailableView {
-					VStack(spacing: 8) {
-						Image("btc")
-							.resizable()
-							.scaledToFit()
-							.frame(width: 96, height: 96)
-						Text("Wait for data to be fetched.")
-
-						ProgressView()
-							.progressViewStyle(CircularProgressViewStyle())
-					}
-				}
-			} else {
-				NavigationSplitView {
-					List {
-						Section {
-							ForEach(combinedFavourites, id: \.id) { currency in
-                                HStack {
-                                    if editMode.isEditing {
-                                        Button(action: {
-                                            if selection.contains(currency.id) {
-                                                selection.remove(currency.id)
-                                            } else {
-                                                selection.insert(currency.id)
-                                            }
-                                        }) {
-                                            Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
-                                        }
-                                    }
-                                    
-                                    Image(uiImage: currency.icon ?? UIImage())
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: imageSize, height: imageSize)
-
-                                    VStack(alignment: .leading) {
-                                        Text("\(currency.id)")
-                                            .minimumScaleFactor(0.75)
-                                            .lineLimit(1)
-                                        Text("\(currency.name)")
-                                            .minimumScaleFactor(0.75)
-                                            .lineLimit(1)
-                                    }
-                                    .padding()
-
-                                    Spacer()
-
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        DoubleNumberTextField(
-                                            value: Binding(
-                                                get: { amounts[currency.id] ?? 0.0 },
-                                                set: { newValue in
-                                                    amounts[currency.id] = newValue
-                                                    updateInputs(basedOn: currency.id, with: newValue)
-                                                }
-                                            ),
-                                            formatter: numberFormatter
-                                        )
-                                        .id(currency.id)
-                                        .focused($focusedCurrencyId, equals: currency.id)
-                                        .frame(height: 40)
-                                        .fixedSize(horizontal: true, vertical: false)
-                                    }
-                                    .frame(maxWidth: 150)
-                                    .fixedSize(horizontal: true, vertical: false)
-                                    .padding(.horizontal, 10)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .fill(focusedCurrencyId == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
-                                    )
-                                    .animation(.easeOut(duration: 0.1), value: focusedCurrencyId == currency.id)
-                                    .tint(Color.clear)
-                                    .minimumScaleFactor(0.75)
-                                }
-                                .swipeActions(edge: .trailing) {
-                                    Button(role: .destructive, action: {
-                                        currency.favourite = false
-                                    }) {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-							}
-							.onMove(perform: moveItems)
-						} footer: {
-                            Text("Last updated: \(lastUpdate)")
-						}
-					}
-					.scrollDismissesKeyboard(.interactively)
-					.toolbar {
-						ToolbarItem(placement: .navigationBarLeading) {
-							Button(action: {
-								withAnimation {
-									editMode = editMode.isEditing ? .inactive : .active
-								}
-							}) {
-								Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
-							}
-						}
-						ToolbarItem(placement: .navigationBarTrailing) {
-							Button(action: {
-								isShowingSheet.toggle()
-							}) {
-								Image(systemName: "plus")
-							}
-							.sheet(isPresented: $isShowingSheet) {
-								AddListItems(imageSize: imageSize)
-							}
-							.onChange(of: isShowingSheet) { _, newValue in
-								if newValue {
-									// In order to remove the focused value too, when I press the plus button
-									focusedCurrencyId = nil
-									Task {
-										// To have a delay and make the change without the user noticing
-										try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
-										// Empty all the values from the TextFields
-										amounts = [:]
+		NavigationSplitView {
+			List {
+				Section {
+					ForEach(combinedFavourites, id: \.id) { currency in
+						HStack {
+							if editMode.isEditing {
+								Button(action: {
+									if selection.contains(currency.id) {
+										selection.remove(currency.id)
+									} else {
+										selection.insert(currency.id)
 									}
+								}) {
+									Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
 								}
+							}
+
+							Image(uiImage: currency.icon ?? UIImage())
+								.resizable()
+								.scaledToFit()
+								.frame(width: imageSize, height: imageSize)
+
+							VStack(alignment: .leading) {
+								Text("\(currency.id)")
+									.minimumScaleFactor(0.75)
+									.lineLimit(1)
+								Text("\(currency.name)")
+									.minimumScaleFactor(0.75)
+									.lineLimit(1)
+							}
+							.padding()
+
+							Spacer()
+
+							ScrollView(.horizontal, showsIndicators: false) {
+								DoubleNumberTextField(
+									value: Binding(
+										get: { amounts[currency.id] ?? 0.0 },
+										set: { newValue in
+											amounts[currency.id] = newValue
+											updateInputs(basedOn: currency.id, with: newValue)
+										}
+									),
+									formatter: numberFormatter
+								)
+								.id(currency.id)
+								.focused($focusedCurrencyId, equals: currency.id)
+								.frame(height: 40)
+								.fixedSize(horizontal: true, vertical: false)
+							}
+							.frame(maxWidth: 150)
+							.fixedSize(horizontal: true, vertical: false)
+							.padding(.horizontal, 10)
+							.background(
+								RoundedRectangle(cornerRadius: 6)
+									.fill(focusedCurrencyId == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
+							)
+							.animation(.easeOut(duration: 0.1), value: focusedCurrencyId == currency.id)
+							.tint(Color.clear)
+							.minimumScaleFactor(0.75)
+						}
+						.swipeActions(edge: .trailing) {
+							Button(role: .destructive, action: {
+								currency.favourite = false
+							}) {
+								Label("Delete", systemImage: "trash")
 							}
 						}
 					}
-					.toolbar {
-						if editMode.isEditing {
-							ToolbarItemGroup(placement: .bottomBar) {
-								Spacer()
-								Button(role: .destructive) {
-									deleteSelectedItems()
-								} label: {
-									Text("Delete (\(selection.count)) Selected")
-								}
-								.disabled(selection.isEmpty)
-							}
-						}
-					}
-					.environment(\.editMode, $editMode)
-				} detail: {
-					Text("Select an item")
+					.onMove(perform: moveItems)
+				} footer: {
+					Text("Last updated: \(lastUpdate)")
 				}
 			}
+			.scrollDismissesKeyboard(.interactively)
+			.toolbar {
+				ToolbarItem(placement: .navigationBarLeading) {
+					Button(action: {
+						withAnimation {
+							editMode = editMode.isEditing ? .inactive : .active
+						}
+					}) {
+						Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
+					}
+				}
+				ToolbarItem(placement: .navigationBarTrailing) {
+					Button(action: {
+						isShowingSheet.toggle()
+					}) {
+						Image(systemName: "plus")
+					}
+					.sheet(isPresented: $isShowingSheet) {
+						AddListItems(imageSize: imageSize)
+					}
+					.onChange(of: isShowingSheet) { _, newValue in
+						if newValue {
+							// In order to remove the focused value too, when I press the plus button
+							focusedCurrencyId = nil
+							Task {
+								// To have a delay and make the change without the user noticing
+								try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+								// Empty all the values from the TextFields
+								amounts = [:]
+							}
+						}
+					}
+				}
+			}
+			.toolbar {
+				if editMode.isEditing {
+					ToolbarItemGroup(placement: .bottomBar) {
+						Spacer()
+						Button(role: .destructive) {
+							deleteSelectedItems()
+						} label: {
+							Text("Delete (\(selection.count)) Selected")
+						}
+						.disabled(selection.isEmpty)
+					}
+				}
+			}
+			.environment(\.editMode, $editMode)
+		} detail: {
+			Text("Select an item")
 		}
 		.onAppear {
 			Task {
-				print("Task is called.")
-				print("Cryptos saved so far: \(cryptocurrencies.count)")
-                
-                lastUpdate = await currencyService.getLastUpdate()
-                
-				// Check immediately on appear
-				if cryptocurrencies.count < 3 || isPreview {
-					scheduler.updateLastExecution()
-                    try? await currencyService.ensureInitialDataIfNeeded()
-                    await currencyService.addInitialFavourites(currencies: allCurrencies)
-					print("Initial data has happened")
-				} else if scheduler.checkIfNeeded() {
-					scheduler.updateLastExecution()
-                    await currencyService.updateAmounts()
-					print("Update has happened")
-				}
-				scheduler.start { [service = currencyService] in
-                    print("Inside the scheduler start. Going to update amounts")
-                    await service.updateAmounts()
-                    print("The amounts have been updated")
-				}
+				lastUpdate = await currencyService.getLastUpdate()
 			}
 		}
-		.onDisappear {
-			scheduler.stop()
-		}
 		.onChange(of: scenePhase, { _, newValue in
-			switch newValue {
-			case .active:
-				if scheduler.checkIfNeeded() {
-					Task {
-						scheduler.updateLastExecution()
-                        await currencyService.updateAmounts()
-					}
-				}
-			default:
+			if newValue != .active {
 				focusedCurrencyId = nil
 			}
 		})
@@ -323,6 +275,6 @@ struct OverviewView: View {
 
 
 #Preview {
-	OverviewView()
+	OverviewView(scheduler: TickerUpdateScheduler())
 		.modelContainer(Previews.preview)
 }
