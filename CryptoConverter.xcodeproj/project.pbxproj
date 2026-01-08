@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B73923EC2F10455E00D8CD6D /* Privacy_Policy.md in Resources */ = {isa = PBXBuildFile; fileRef = B73923EB2F10455E00D8CD6D /* Privacy_Policy.md */; };
 		B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */ = {isa = PBXBuildFile; fileRef = B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
 /* End PBXBuildFile section */
@@ -32,10 +31,9 @@
 /* Begin PBXFileReference section */
 		5BC7A0792EF9E4380095F785 /* CryptoConverterUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC7A0862EF9E50A0095F785 /* CryptoConverterIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B73923EB2F10455E00D8CD6D /* Privacy_Policy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Privacy_Policy.md; sourceTree = "<group>"; };
 		B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GEMINI.md; sourceTree = "<group>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
-		B7FC087B2EA559E600984CAD /* CryptoConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7FC087B2EA559E600984CAD /* Currency Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Currency Converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,11 +82,10 @@
 		B7EFC44F2E8758F9003B9373 = {
 			isa = PBXGroup;
 			children = (
-				B73923EB2F10455E00D8CD6D /* Privacy_Policy.md */,
 				B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */,
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
-				B7FC087B2EA559E600984CAD /* CryptoConverter.app */,
+				B7FC087B2EA559E600984CAD /* Currency Converter.app */,
 				5BC7A0792EF9E4380095F785 /* CryptoConverterUnitTests.xctest */,
 				5BC7A07A2EF9E4380095F785 /* CryptoConverterUnitTests */,
 				5BC7A0862EF9E50A0095F785 /* CryptoConverterIntegrationTests.xctest */,
@@ -164,7 +161,7 @@
 			packageProductDependencies = (
 			);
 			productName = CryptoConverter;
-			productReference = B7FC087B2EA559E600984CAD /* CryptoConverter.app */;
+			productReference = B7FC087B2EA559E600984CAD /* Currency Converter.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -175,7 +172,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2620;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					5BC7A0782EF9E4380095F785 = {
 						CreatedOnToolsVersion = 26.2;
@@ -233,7 +230,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */,
-				B73923EC2F10455E00D8CD6D /* Privacy_Policy.md in Resources */,
 				B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -425,6 +421,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -482,6 +479,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -509,7 +507,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.myorganization.CryptoConverter;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Currency Converter";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -542,7 +540,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.myorganization.CryptoConverter;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Currency Converter";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
