@@ -1,8 +1,8 @@
 # Project Overview
 
-This is a SwiftUI application that functions as a cryptocurrency converter. It allows users to select their favorite cryptocurrencies, view their current values in USD, and convert between them. 
+This is a SwiftUI application that functions as a cryptocurrency and fiat currency converter. It allows users to select their favorite currencies (crypto or fiat), view their current values, and convert between them. 
 
-The application has migrated to using **Apple CloudKit** as its primary data source. It fetches cryptocurrency data (including values and SVG logos) from a public CloudKit database and persists them locally using **SwiftData**.
+The application has migrated to using **Apple CloudKit** as its primary data source. It fetches currency data (including values and logos) from a public CloudKit database and persists them locally using **SwiftData**.
 
 ## Key Technologies
 
@@ -14,26 +14,34 @@ The application has migrated to using **Apple CloudKit** as its primary data sou
 
 ## Architecture
 
-The application follows a repository-based architecture with background scheduling:
+The application follows a repository-based architecture with background scheduling and DTO usage for thread safety:
 
 *   **Views:** 
-    *   `ContentView`: The main view displaying the list of favorite cryptocurrencies and handling user input.
-    *   `AddListItems`: A view for adding new cryptocurrencies to the favorites list.
+    *   `ContentView`: The main view displaying the list of favorite currencies and handling user input.
+    *   `AddListItems`: A view for adding new currencies to the favorites list.
+    *   `ListCategory`: A generic view used to display lists of currencies (Crypto or Fiat).
+    *   `DoubleNumberTextField`: A custom `UIViewRepresentable` text field handling specific number formatting and focus behaviors.
 *   **Repository:** 
-    *   `CryptoRepository`: Acts as the single source of truth. It manages the synchronization between the remote CloudKit data and the local SwiftData storage. It handles initial seeding and updating of values.
+    *   `AllRepository`: The main coordinator repository (`@MainActor`). It manages `CryptoRepository` and `FiatRepository` and handles generic actions for types conforming to `CurrencyDTO`.
+    *   `CryptoRepository`: Manages synchronization of `Cryptocurrency` data.
+    *   `FiatRepository`: Manages synchronization of `FiatCurrency` data.
 *   **Services:**
-    *   `CryptocurrencyService`: A service layer responsible for interacting with CloudKit (fetching records).
-    *   `TickerUpdateScheduler`: A helper class that manages background update intervals (e.g., checking for price updates every 60 seconds).
+    *   `CryptocurrencyService` & `FiatCurrencyService`: Service layers responsible for interacting with CloudKit to fetch records.
+    *   `CloudKitService`: A shared service protocol/implementation for CloudKit operations.
+    *   `TickerUpdateScheduler`: Manages background update intervals.
 *   **Models:** 
-    *   `Cryptocurrency`: The core data model. It is a SwiftData model (`@Model`) that also includes logic to initialize from a `CKRecord` (CloudKit) and render SVG logos using `SVGKit`.
+    *   `Currency` (Protocol): Unifies `Cryptocurrency` and `FiatCurrency`.
+    *   `Cryptocurrency` & `FiatCurrency`: SwiftData models (`@Model`). They include logic to initialize from DTOs or `CKRecord` and handle image data (external storage).
+    *   **DTOs**: `CryptocurrencyDTO`, `FiatCurrencyDTO`. Thread-safe intermediate structs used to transfer data from background services to the main actor repositories.
 
 ## Data Flow
 
-1.  **Fetching:** `CryptocurrencyService` fetches `CKRecord` objects from the CloudKit public database.
-2.  **Mapping:** Records are mapped to `Cryptocurrency` objects. SVG strings from the records are rendered into PNG data using `SVGKit` upon initialization.
-3.  **Storage:** `CryptoRepository` saves these objects into the local SwiftData database.
-4.  **Display:** SwiftUI views observe the SwiftData context and update automatically when data changes.
-5.  **Updates:** `TickerUpdateScheduler` triggers periodic fetches to keep the prices current.
+1.  **Fetching:** Services (`CryptocurrencyService`, `FiatCurrencyService`) fetch `CKRecord` objects from the CloudKit public database via `CloudKitService`.
+2.  **DTO Mapping:** Records are mapped to DTOs (`CryptocurrencyDTO`, `FiatCurrencyDTO`). SVG strings or image data are processed at this stage or upon initialization.
+3.  **Transfer:** DTOs are passed to `AllRepository` (or specific repositories).
+4.  **Storage:** Repositories map DTOs to SwiftData models (`Cryptocurrency`, `FiatCurrency`) and save them to the local database.
+5.  **Display:** SwiftUI views (`ListCategory` inside `ContentView`/`AddListItems`) observe the SwiftData context and update automatically.
+6.  **Updates:** `TickerUpdateScheduler` triggers periodic fetches to keep values current.
 
 # Building and Running
 
