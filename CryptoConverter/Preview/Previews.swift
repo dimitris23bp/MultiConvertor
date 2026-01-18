@@ -7,53 +7,63 @@ let schema: Schema = Schema([Cryptocurrency.self, FiatCurrency.self])
 struct Previews {
     
 	static var previewBtc: Cryptocurrency {
-		Cryptocurrency(
+		let currency = Cryptocurrency(
 			id: "BTC",
 			name: "Bitcoin",
 			value: 60000,
 			marketCap: 6_000_000,
             iconData: nil
 		)
+		currency .favourite = true
+        return currency
 	}
 
 	static var previewEth: Cryptocurrency {
-		Cryptocurrency(
+		let currency = Cryptocurrency(
 			id: "ETH",
 			name: "Ether",
 			value: 20000,
 			marketCap: 3_300_000,
             iconData: nil
 		)
+		currency.favourite = true
+		return currency
 	}
 
     static var previewDot: Cryptocurrency {
-        Cryptocurrency(
+        let currency = Cryptocurrency(
             id: "DOT",
             name: "Polkadot",
             value: 1500,
             marketCap: 2_250_000,
             iconData: nil
         )
+		currency.favourite = true
+		return currency
     }
     
     static var previewEur: FiatCurrency {
-        FiatCurrency(
+        let currency = FiatCurrency(
             id: "EUR",
             name: "Euro",
             value: 0.80,
             popularity: 1,
             iconData: nil
         )
+		currency.favourite = true
+		return currency
     }
     
     static var previewUsd: FiatCurrency {
-        FiatCurrency(
+        let currency = FiatCurrency(
             id: "USD",
             name: "US Dollar",
             value: 1,
             popularity: 2,
             iconData: nil
         )
+        currency.favourite = true
+        return currency
     }
     
     // The sample preview db
