@@ -59,7 +59,8 @@ struct OverviewView: View {
     @State private var selection = Set<String>()
 	@State private var isShowingSheet = false
     @State private var lastUpdate: String = "NaN"
-	@FocusState private var focusedCurrencyId: String?
+	// No need for @FocusState, because it is handled inside the DoubleNumberTextField
+	@State private var focusedCurrencyId: String? = nil
 
 	let imageSize: CGFloat = 42
 	
@@ -115,10 +116,19 @@ struct OverviewView: View {
 											updateInputs(basedOn: currency.id, with: newValue)
 										}
 									),
-									formatter: numberFormatter
+									formatter: numberFormatter,
+									isFocused: Binding(
+										get: { focusedCurrencyId == currency.id },
+										set: { newValue in
+											if newValue {
+												focusedCurrencyId = currency.id
+											} else if focusedCurrencyId == currency.id {
+												focusedCurrencyId = nil
+											}
+										}
+									)
 								)
 								.id(currency.id)
-								.focused($focusedCurrencyId, equals: currency.id)
 								.frame(height: 40)
 								.fixedSize(horizontal: true, vertical: false)
 							}
@@ -132,6 +142,20 @@ struct OverviewView: View {
 							.animation(.easeOut(duration: 0.1), value: focusedCurrencyId == currency.id)
 							.tint(Color.clear)
 							.minimumScaleFactor(0.75)
+						}
+						// Make sure there are not "transparent" places like the Spacers that my tapGesture won't be registered
+						.contentShape(Rectangle())
+						// Tap Gesture to handle the click of an item, the openning of the keyboard, etc.
+						.onTapGesture {
+							if editMode.isEditing {
+								if selection.contains(currency.id) {
+									selection.remove(currency.id)
+								} else {
+									selection.insert(currency.id)
+								}
+							} else {
+								focusedCurrencyId = currency.id
+							}
 						}
 						.swipeActions(edge: .trailing) {
 							Button(role: .destructive, action: {
