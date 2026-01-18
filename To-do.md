@@ -29,6 +29,7 @@
 - Ads
 - Add certain information about each crypto when they press on them
 - Better keyboard for the numbers (and add + - * / and options like this)
+- Create a widget that show the value of a currency based on the main currency (USD by default?)
 
 ### Backend
 

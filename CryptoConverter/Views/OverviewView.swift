@@ -41,6 +41,7 @@ struct OverviewView: View {
     }
     
     private var currencyService: CurrencyService {
+		print("Beginning of service setup")
         let repoCrypto = CryptoRepository(modelContext: modelContext)
         let repoFiat = FiatRepository(modelContext: modelContext)
         let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
@@ -49,6 +50,7 @@ struct OverviewView: View {
         
         let cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
         let fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
+		print("End of service setup")
         return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
     }
 
@@ -59,6 +61,7 @@ struct OverviewView: View {
     @State private var selection = Set<String>()
 	@State private var isShowingSheet = false
     @State private var lastUpdate: String = "NaN"
+    @State private var displayMode: DisplayMode = .merged
 	@FocusState private var focusedCurrencyId: String?
 
 	let imageSize: CGFloat = 42
@@ -74,97 +77,43 @@ struct OverviewView: View {
 	var body: some View {
 		NavigationSplitView {
 			ScrollViewReader { proxy in
-				List {
-					Section {
-						ForEach(combinedFavourites, id: \.id) { currency in
-							HStack {
-								if editMode.isEditing {
-									Button(action: {
-										if selection.contains(currency.id) {
-											selection.remove(currency.id)
-										} else {
-											selection.insert(currency.id)
-										}
-									}) {
-										Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
-									}
-								}
-
-								Image(uiImage: currency.icon ?? UIImage())
-									.resizable()
-									.scaledToFit()
-									.frame(width: imageSize, height: imageSize)
-
-								VStack(alignment: .leading) {
-									Text("\(currency.id)")
-										.minimumScaleFactor(0.75)
-										.lineLimit(1)
-									Text("\(currency.name)")
-										.minimumScaleFactor(0.75)
-										.lineLimit(1)
-								}
-								.padding()
-
-								Spacer()
-
-								ScrollView(.horizontal, showsIndicators: false) {
-									DoubleNumberTextField(
-										value: Binding(
-											get: { amounts[currency.id] ?? 0.0 },
-											set: { newValue in
-												amounts[currency.id] = newValue
-												updateInputs(basedOn: currency.id, with: newValue)
-											}
-										),
-										formatter: numberFormatter
-									)
-									.focused($focusedCurrencyId, equals: currency.id)
-									.id(currency.id)
-									.frame(height: 40)
-									.fixedSize(horizontal: true, vertical: false)
-								}
-								.frame(maxWidth: 150)
-								.fixedSize(horizontal: true, vertical: false)
-								.padding(.horizontal, 10)
-								.background(
-									RoundedRectangle(cornerRadius: 6)
-										.fill(focusedCurrencyId == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
-								)
-								.animation(.easeOut(duration: 0.1), value: focusedCurrencyId == currency.id)
-								.tint(Color.clear)
-								.minimumScaleFactor(0.75)
-							}
-							.id(currency.id)
-							// Make sure there are not "transparent" places like the Spacers that my tapGesture won't be registered
-							.contentShape(Rectangle())
-							// Tap Gesture to handle the click of an item, the openning of the keyboard, etc.
-							.simultaneousGesture(TapGesture().onEnded {
-								if editMode.isEditing {
-									if selection.contains(currency.id) {
-										selection.remove(currency.id)
-									} else {
-										selection.insert(currency.id)
-									}
-								} else {
-									focusedCurrencyId = currency.id
-								}
-							})
-							.swipeActions(edge: .trailing) {
-								Button(role: .destructive, action: {
-									currency.favourite = false
-								}) {
-									Label("Delete", systemImage: "trash")
-								}
-							}
-						}
-						.onMove(perform: moveItems)
-					} footer: {
-						Text("Last updated: \(lastUpdate)")
-					}
-				}
+                VStack {
+                    FavouritesView(
+                        favouriteCryptos: favouriteCryptos,
+                        favouriteFiats: favouriteFiats,
+                        displayMode: displayMode,
+                        editMode: $editMode,
+                        selection: $selection,
+                        amounts: $amounts,
+                        focusedCurrencyId: $focusedCurrencyId,
+                        imageSize: imageSize,
+                        numberFormatter: numberFormatter,
+                        onDelete: { currency in
+                            currency.favourite = false
+                        },
+                        onMoveMerged: moveItemsMerged,
+                        onMoveSeparated: moveItemsSeparated,
+                        updateInputs: updateInputs
+                    )
+                    
+                    Text("Last updated: \(lastUpdate)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
 				.scrollDismissesKeyboard(.interactively)
 				.toolbar {
 					ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        Menu {
+                            Button("Merged") {
+                                displayMode = .merged
+                            }
+                            Button("Separated") {
+                                displayMode = .separated
+                            }
+                        } label: {
+                            Image(systemName: "line.3.horizontal.decrease")
+                        }
+                        
 						Button(action: {
 							withAnimation {
 								editMode = editMode.isEditing ? .inactive : .active
@@ -233,7 +182,7 @@ struct OverviewView: View {
 		})
 	}
 
-	private func moveItems(from source: IndexSet, to destination: Int) {
+	private func moveItemsMerged(from source: IndexSet, to destination: Int) {
 		var reorderedCurrencies = combinedFavourites
 		reorderedCurrencies.move(fromOffsets: source, toOffset: destination)
 
@@ -246,6 +195,50 @@ struct OverviewView: View {
 			print("Failed to save context after reorder: \(error)")
 		}
 	}
+    
+    private func moveItemsSeparated(from source: IndexSet, to destination: Int, in listType: FavouritesView.CurrencyType) {
+        let listToReorder: [any Currency]
+        let otherList: [any Currency]
+        
+        if listType == .fiat {
+            listToReorder = favouriteFiats
+            otherList = favouriteCryptos
+        } else {
+            listToReorder = favouriteCryptos
+            otherList = favouriteFiats
+        }
+        
+        var reorderedSublist = listToReorder
+        reorderedSublist.move(fromOffsets: source, toOffset: destination)
+        
+        var newCombinedList: [any Currency] = []
+
+		// Get iterators so I can change the "global" sortOrder, and not only the source (IndexSet) that `onMove` gives me
+        var reorderedSublistIterator = reorderedSublist.makeIterator()
+        var otherListIterator = otherList.makeIterator()
+
+        for currency in combinedFavourites {
+            if (currency is FiatCurrency && listType == .fiat) || (currency is Cryptocurrency && listType == .crypto) {
+                if let next = reorderedSublistIterator.next() {
+                    newCombinedList.append(next)
+                }
+            } else {
+                if let next = otherListIterator.next() {
+                    newCombinedList.append(next)
+                }
+            }
+        }
+
+        for (index, currency) in newCombinedList.enumerated() {
+            currency.sortOrder = index
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save context after reorder: \(error)")
+        }
+    }
 
 	private func updateInputs(basedOn currencyId: String, with value: Double) {
         // Find the source currency in either list
