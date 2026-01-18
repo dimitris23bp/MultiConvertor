@@ -59,8 +59,7 @@ struct OverviewView: View {
     @State private var selection = Set<String>()
 	@State private var isShowingSheet = false
     @State private var lastUpdate: String = "NaN"
-	// No need for @FocusState, because it is handled inside the DoubleNumberTextField
-	@State private var focusedCurrencyId: String? = nil
+	@FocusState private var focusedCurrencyId: String?
 
 	let imageSize: CGFloat = 42
 	
@@ -116,20 +115,9 @@ struct OverviewView: View {
 											updateInputs(basedOn: currency.id, with: newValue)
 										}
 									),
-									formatter: numberFormatter,
-									isFocused: Binding(
-										get: { focusedCurrencyId == currency.id },
-										set: { newValue in
-											if newValue {
-												if focusedCurrencyId != currency.id {
-													focusedCurrencyId = currency.id
-												}
-											} else if focusedCurrencyId == currency.id {
-												focusedCurrencyId = nil
-											}
-										}
-									)
+									formatter: numberFormatter
 								)
+								.focused($focusedCurrencyId, equals: currency.id)
 								.id(currency.id)
 								.frame(height: 40)
 								.fixedSize(horizontal: true, vertical: false)

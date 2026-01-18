@@ -5,7 +5,6 @@ import UIKit
 struct DoubleNumberTextField: UIViewRepresentable {
 	@Binding var value: Double
 	let formatter: NumberFormatter
-	@Binding var isFocused: Bool
 
 	func makeUIView(context: Context) -> UITextField {
 		let textField = UITextField()
@@ -18,18 +17,6 @@ struct DoubleNumberTextField: UIViewRepresentable {
 
 	func updateUIView(_ uiView: UITextField, context: Context) {
 		context.coordinator.parent = self
-		// Defer the focus change to the next run loop to avoid modifying the view hierarchy during the update pass.
-		DispatchQueue.main.async {
-			if self.isFocused {
-				if !uiView.isFirstResponder {
-					uiView.becomeFirstResponder()
-				}
-			} else {
-				if uiView.isFirstResponder {
-					uiView.resignFirstResponder()
-				}
-			}
-		}
 
 		if !uiView.isFirstResponder {
 			let text = formatter.string(from: NSNumber(value: value))
@@ -50,7 +37,6 @@ struct DoubleNumberTextField: UIViewRepresentable {
 		}
 
 		func textFieldDidBeginEditing(_ textField: UITextField) {
-			parent.isFocused = true
 			didBeginEditing = true
 			DispatchQueue.main.async {
 				// Move cursor to the end of the text
@@ -61,7 +47,6 @@ struct DoubleNumberTextField: UIViewRepresentable {
 		}
 
 		func textFieldDidEndEditing(_ textField: UITextField) {
-			parent.isFocused = false
 			// When editing ends, commit the final value and format it.
 			let unformattedText = (textField.text ?? "").replacingOccurrences(of: parent.formatter.groupingSeparator, with: "")
 			let number = parent.formatter.number(from: unformattedText)
