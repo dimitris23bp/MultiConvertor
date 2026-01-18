@@ -77,26 +77,24 @@ struct OverviewView: View {
 	var body: some View {
 		NavigationSplitView {
 			ScrollViewReader { proxy in
-                VStack {
-                    FavouritesView(
-                        favouriteCryptos: favouriteCryptos,
-                        favouriteFiats: favouriteFiats,
-                        displayMode: displayMode,
-                        editMode: $editMode,
-                        selection: $selection,
-                        amounts: $amounts,
-                        focusedCurrencyId: $focusedCurrencyId,
-                        imageSize: imageSize,
-                        numberFormatter: numberFormatter,
-                        onDelete: { currency in
-                            currency.favourite = false
-                        },
-                        onMoveMerged: moveItemsMerged,
-                        onMoveSeparated: moveItemsSeparated,
-                        updateInputs: updateInputs,
-						lastUpdate: lastUpdate
-                    )
-                }
+                FavouritesView(
+                    favouriteCryptos: favouriteCryptos,
+                    favouriteFiats: favouriteFiats,
+                    displayMode: displayMode,
+                    editMode: $editMode,
+                    selection: $selection,
+                    amounts: $amounts,
+                    focusedCurrencyId: $focusedCurrencyId,
+                    imageSize: imageSize,
+                    numberFormatter: numberFormatter,
+                    onDelete: { currency in
+                        currency.favourite = false
+                    },
+                    onMoveMerged: moveItemsMerged,
+                    onMoveSeparated: moveItemsSeparated,
+                    updateInputs: updateInputs,
+                    lastUpdate: lastUpdate
+                )
 				.scrollDismissesKeyboard(.interactively)
 				.toolbar {
 					ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -104,12 +102,24 @@ struct OverviewView: View {
                             Button {
                                 displayMode = .merged
                             } label: {
-                                Label("Merged", systemImage: displayMode == .merged ? "checkmark" : "")
+                                Label {
+                                    Text("Merged")
+                                } icon: {
+                                    if displayMode == .merged {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
                             }
                             Button {
                                 displayMode = .separated
                             } label: {
-                                Label("Separated", systemImage: displayMode == .separated ? "checkmark" : "")
+                                Label {
+                                    Text("Separated")
+                                } icon: {
+                                    if displayMode == .separated {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
                             }
                         } label: {
                             Image(systemName: "line.3.horizontal.decrease")
