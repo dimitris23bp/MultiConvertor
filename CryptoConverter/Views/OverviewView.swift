@@ -73,142 +73,154 @@ struct OverviewView: View {
 
 	var body: some View {
 		NavigationSplitView {
-			List {
-				Section {
-					ForEach(combinedFavourites, id: \.id) { currency in
-						HStack {
-							if editMode.isEditing {
-								Button(action: {
+			ScrollViewReader { proxy in
+				List {
+					Section {
+						ForEach(combinedFavourites, id: \.id) { currency in
+							HStack {
+								if editMode.isEditing {
+									Button(action: {
+										if selection.contains(currency.id) {
+											selection.remove(currency.id)
+										} else {
+											selection.insert(currency.id)
+										}
+									}) {
+										Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
+									}
+								}
+
+								Image(uiImage: currency.icon ?? UIImage())
+									.resizable()
+									.scaledToFit()
+									.frame(width: imageSize, height: imageSize)
+
+								VStack(alignment: .leading) {
+									Text("\(currency.id)")
+										.minimumScaleFactor(0.75)
+										.lineLimit(1)
+									Text("\(currency.name)")
+										.minimumScaleFactor(0.75)
+										.lineLimit(1)
+								}
+								.padding()
+
+								Spacer()
+
+								ScrollView(.horizontal, showsIndicators: false) {
+									DoubleNumberTextField(
+										value: Binding(
+											get: { amounts[currency.id] ?? 0.0 },
+											set: { newValue in
+												amounts[currency.id] = newValue
+												updateInputs(basedOn: currency.id, with: newValue)
+											}
+										),
+										formatter: numberFormatter
+									)
+									.focused($focusedCurrencyId, equals: currency.id)
+									.id(currency.id)
+									.frame(height: 40)
+									.fixedSize(horizontal: true, vertical: false)
+								}
+								.frame(maxWidth: 150)
+								.fixedSize(horizontal: true, vertical: false)
+								.padding(.horizontal, 10)
+								.background(
+									RoundedRectangle(cornerRadius: 6)
+										.fill(focusedCurrencyId == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
+								)
+								.animation(.easeOut(duration: 0.1), value: focusedCurrencyId == currency.id)
+								.tint(Color.clear)
+								.minimumScaleFactor(0.75)
+							}
+							.id(currency.id)
+							// Make sure there are not "transparent" places like the Spacers that my tapGesture won't be registered
+							.contentShape(Rectangle())
+							// Tap Gesture to handle the click of an item, the openning of the keyboard, etc.
+							.simultaneousGesture(TapGesture().onEnded {
+								if editMode.isEditing {
 									if selection.contains(currency.id) {
 										selection.remove(currency.id)
 									} else {
 										selection.insert(currency.id)
 									}
-								}) {
-									Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
-								}
-							}
-
-							Image(uiImage: currency.icon ?? UIImage())
-								.resizable()
-								.scaledToFit()
-								.frame(width: imageSize, height: imageSize)
-
-							VStack(alignment: .leading) {
-								Text("\(currency.id)")
-									.minimumScaleFactor(0.75)
-									.lineLimit(1)
-								Text("\(currency.name)")
-									.minimumScaleFactor(0.75)
-									.lineLimit(1)
-							}
-							.padding()
-
-							Spacer()
-
-							ScrollView(.horizontal, showsIndicators: false) {
-								DoubleNumberTextField(
-									value: Binding(
-										get: { amounts[currency.id] ?? 0.0 },
-										set: { newValue in
-											amounts[currency.id] = newValue
-											updateInputs(basedOn: currency.id, with: newValue)
-										}
-									),
-									formatter: numberFormatter
-								)
-								.focused($focusedCurrencyId, equals: currency.id)
-								.id(currency.id)
-								.frame(height: 40)
-								.fixedSize(horizontal: true, vertical: false)
-							}
-							.frame(maxWidth: 150)
-							.fixedSize(horizontal: true, vertical: false)
-							.padding(.horizontal, 10)
-							.background(
-								RoundedRectangle(cornerRadius: 6)
-									.fill(focusedCurrencyId == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
-							)
-							.animation(.easeOut(duration: 0.1), value: focusedCurrencyId == currency.id)
-							.tint(Color.clear)
-							.minimumScaleFactor(0.75)
-						}
-						// Make sure there are not "transparent" places like the Spacers that my tapGesture won't be registered
-						.contentShape(Rectangle())
-						// Tap Gesture to handle the click of an item, the openning of the keyboard, etc.
-						.simultaneousGesture(TapGesture().onEnded {
-							if editMode.isEditing {
-								if selection.contains(currency.id) {
-									selection.remove(currency.id)
 								} else {
-									selection.insert(currency.id)
+									focusedCurrencyId = currency.id
 								}
-							} else {
-								focusedCurrencyId = currency.id
-							}
-						})
-						.swipeActions(edge: .trailing) {
-							Button(role: .destructive, action: {
-								currency.favourite = false
-							}) {
-								Label("Delete", systemImage: "trash")
+							})
+							.swipeActions(edge: .trailing) {
+								Button(role: .destructive, action: {
+									currency.favourite = false
+								}) {
+									Label("Delete", systemImage: "trash")
+								}
 							}
 						}
+						.onMove(perform: moveItems)
+					} footer: {
+						Text("Last updated: \(lastUpdate)")
 					}
-					.onMove(perform: moveItems)
-				} footer: {
-					Text("Last updated: \(lastUpdate)")
 				}
-			}
-			.scrollDismissesKeyboard(.interactively)
-			.toolbar {
-				ToolbarItemGroup(placement: .navigationBarTrailing) {
-					Button(action: {
-						withAnimation {
-							editMode = editMode.isEditing ? .inactive : .active
+				.scrollDismissesKeyboard(.interactively)
+				.toolbar {
+					ToolbarItemGroup(placement: .navigationBarTrailing) {
+						Button(action: {
+							withAnimation {
+								editMode = editMode.isEditing ? .inactive : .active
+							}
+						}) {
+							Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
 						}
-					}) {
-						Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
-					}
-					Button(action: {
-						isShowingSheet.toggle()
-					}) {
-						Image(systemName: "plus")
-					}
-					.sheet(isPresented: $isShowingSheet) {
-						AddListItems(imageSize: imageSize)
-					}
-					.onChange(of: isShowingSheet) { _, newValue in
-						if newValue {
-							// In order to remove the focused value too, when I press the plus button
-							focusedCurrencyId = nil
-							Task {
-								// To have a delay and make the change without the user noticing
-								try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
-								// Empty all the values from the TextFields
-								amounts = [:]
+						Button(action: {
+							isShowingSheet.toggle()
+						}) {
+							Image(systemName: "plus")
+						}
+						.sheet(isPresented: $isShowingSheet) {
+							AddListItems(imageSize: imageSize)
+						}
+						.onChange(of: isShowingSheet) { _, newValue in
+							if newValue {
+								// In order to remove the focused value too, when I press the plus button
+								focusedCurrencyId = nil
+								Task {
+									// To have a delay and make the change without the user noticing
+									try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+									// Empty all the values from the TextFields
+									amounts = [:]
+								}
 							}
 						}
 					}
-				}
-				// Bottom bar in edit mode
-				if editMode.isEditing {
-					ToolbarItemGroup(placement: .bottomBar) {
-						Spacer()
-						Button(role: .destructive) {
-							deleteSelectedItems()
-						} label: {
-							Text("Delete (\(selection.count)) Selected")
+					// Bottom bar in edit mode
+					if editMode.isEditing {
+						ToolbarItemGroup(placement: .bottomBar) {
+							Spacer()
+							Button(role: .destructive) {
+								deleteSelectedItems()
+							} label: {
+								Text("Delete (\(selection.count)) Selected")
+							}
+							.disabled(selection.isEmpty)
 						}
-						.disabled(selection.isEmpty)
 					}
 				}
-			}
-			.environment(\.editMode, $editMode)
+				.environment(\.editMode, $editMode)
 			.toolbar(editMode.isEditing ? .hidden : .visible, for: .tabBar)
-		} detail: {
-			Text("Select an item")
+			.onChange(of: focusedCurrencyId) { _, newId in
+				if let id = newId {
+					DispatchQueue.main.async {
+						withAnimation {
+							proxy.scrollTo(id, anchor: .center)
+						}
+					}
+				}
+			}
 		}
+	} detail: {
+		Text("Select an item")
+	}
 		.onAppear {
 			Task {
 				lastUpdate = await currencyService.getLastUpdate()
