@@ -148,7 +148,7 @@ struct OverviewView: View {
 			}
 			.scrollDismissesKeyboard(.interactively)
 			.toolbar {
-				ToolbarItem(placement: .navigationBarLeading) {
+				ToolbarItemGroup(placement: .navigationBarTrailing) {
 					Button(action: {
 						withAnimation {
 							editMode = editMode.isEditing ? .inactive : .active
@@ -156,8 +156,6 @@ struct OverviewView: View {
 					}) {
 						Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
 					}
-				}
-				ToolbarItem(placement: .navigationBarTrailing) {
 					Button(action: {
 						isShowingSheet.toggle()
 					}) {
@@ -179,8 +177,7 @@ struct OverviewView: View {
 						}
 					}
 				}
-			}
-			.toolbar {
+				// Bottom bar in edit mode
 				if editMode.isEditing {
 					ToolbarItemGroup(placement: .bottomBar) {
 						Spacer()

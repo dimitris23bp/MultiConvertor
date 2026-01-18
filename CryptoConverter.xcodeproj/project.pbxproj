@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */ = {isa = PBXBuildFile; fileRef = B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
+		B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */ = {isa = PBXBuildFile; fileRef = B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +34,7 @@
 		5BC7A0862EF9E50A0095F785 /* CryptoConverterIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GEMINI.md; sourceTree = "<group>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
+		B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "logo-from-composer.icon"; sourceTree = "<group>"; };
 		B7FC087B2EA559E600984CAD /* Currency Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Currency Converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -90,6 +92,7 @@
 				5BC7A07A2EF9E4380095F785 /* CryptoConverterUnitTests */,
 				5BC7A0862EF9E50A0095F785 /* CryptoConverterIntegrationTests.xctest */,
 				5BC7A0872EF9E50A0095F785 /* CryptoConverterIntegrationTests */,
+				B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -229,6 +232,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */,
 				B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */,
 				B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */,
 			);
@@ -488,7 +492,7 @@
 		B7EFC4662E8758FA003B9373 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "logo-from-composer";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CryptoConverter/CryptoConverter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -496,6 +500,7 @@
 				DEVELOPMENT_TEAM = MLKMNABL36;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -521,7 +526,7 @@
 		B7EFC4672E8758FA003B9373 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "logo-from-composer";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CryptoConverter/CryptoConverter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -529,6 +534,7 @@
 				DEVELOPMENT_TEAM = MLKMNABL36;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
