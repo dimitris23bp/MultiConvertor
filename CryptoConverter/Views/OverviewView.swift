@@ -93,22 +93,23 @@ struct OverviewView: View {
                         },
                         onMoveMerged: moveItemsMerged,
                         onMoveSeparated: moveItemsSeparated,
-                        updateInputs: updateInputs
+                        updateInputs: updateInputs,
+						lastUpdate: lastUpdate
                     )
-                    
-                    Text("Last updated: \(lastUpdate)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
 				.scrollDismissesKeyboard(.interactively)
 				.toolbar {
 					ToolbarItemGroup(placement: .navigationBarTrailing) {
                         Menu {
-                            Button("Merged") {
+                            Button {
                                 displayMode = .merged
+                            } label: {
+                                Label("Merged", systemImage: displayMode == .merged ? "checkmark" : "")
                             }
-                            Button("Separated") {
+                            Button {
                                 displayMode = .separated
+                            } label: {
+                                Label("Separated", systemImage: displayMode == .separated ? "checkmark" : "")
                             }
                         } label: {
                             Image(systemName: "line.3.horizontal.decrease")

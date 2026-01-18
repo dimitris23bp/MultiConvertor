@@ -18,6 +18,7 @@ struct FavouritesView: View {
     var onMoveMerged: (IndexSet, Int) -> Void
     var onMoveSeparated: (IndexSet, Int, CurrencyType) -> Void
     var updateInputs: (String, Double) -> Void
+	var lastUpdate: String
 
     private var combinedFavourites: [any Currency] {
         let all = (favouriteCryptos as [any Currency]) + (favouriteFiats as [any Currency])
@@ -32,24 +33,35 @@ struct FavouritesView: View {
                         currencyRow(for: currency)
                     }
                     .onMove(perform: onMoveMerged)
-                }
+
+				} footer: {
+					Text("Last updated: \(lastUpdate)")
+				}
             } else {
-                Section(header: Text("Fiat Currencies")) {
+                Section {
                     ForEach(favouriteFiats, id: \.id) { currency in
                         currencyRow(for: currency)
                     }
                     .onMove(perform: { source, destination in
                         onMoveSeparated(source, destination, .fiat)
                     })
-                }
-                Section(header: Text("Crypto Currencies")) {
+				} header: {
+					Text("Fiat Currencies")
+				}
+
+                Section {
                     ForEach(favouriteCryptos, id: \.id) { currency in
                         currencyRow(for: currency)
                     }
                     .onMove(perform: { source, destination in
                         onMoveSeparated(source, destination, .crypto)
                     })
-                }
+				} header: {
+					Text("Crypto Currencies")
+
+				} footer: {
+					Text("Last updated: \(lastUpdate)")
+				}
             }
         }
     }

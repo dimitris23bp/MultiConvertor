@@ -2,6 +2,8 @@
 
 ## Short-term
 
+- Rename the Views to something more clear
+
 ### Frontend
 
 - If name gets small, then remove it
