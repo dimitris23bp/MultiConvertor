@@ -121,7 +121,9 @@ struct OverviewView: View {
 										get: { focusedCurrencyId == currency.id },
 										set: { newValue in
 											if newValue {
-												focusedCurrencyId = currency.id
+												if focusedCurrencyId != currency.id {
+													focusedCurrencyId = currency.id
+												}
 											} else if focusedCurrencyId == currency.id {
 												focusedCurrencyId = nil
 											}
@@ -146,7 +148,7 @@ struct OverviewView: View {
 						// Make sure there are not "transparent" places like the Spacers that my tapGesture won't be registered
 						.contentShape(Rectangle())
 						// Tap Gesture to handle the click of an item, the openning of the keyboard, etc.
-						.onTapGesture {
+						.simultaneousGesture(TapGesture().onEnded {
 							if editMode.isEditing {
 								if selection.contains(currency.id) {
 									selection.remove(currency.id)
@@ -156,7 +158,7 @@ struct OverviewView: View {
 							} else {
 								focusedCurrencyId = currency.id
 							}
-						}
+						})
 						.swipeActions(edge: .trailing) {
 							Button(role: .destructive, action: {
 								currency.favourite = false
