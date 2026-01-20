@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
+struct MainTabView: View {
 	@Environment(\.scenePhase) private var scenePhase
 	@Environment(\.modelContext) private var modelContext
 	
@@ -117,6 +117,6 @@ struct ContentView: View {
 
 
 #Preview {
-	ContentView()
+	MainTabView()
 		.modelContainer(Previews.preview)
 }

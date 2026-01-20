@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct ListCategory<T>: View where T: Currency, T: PersistentModel {
+struct AddCurrencyItemView<T>: View where T: Currency, T: PersistentModel {
     
     var currencies: [T]
     var dynamicPredicate: Predicate<T>
@@ -52,7 +52,7 @@ struct ListCategory<T>: View where T: Currency, T: PersistentModel {
 #Preview {
     let currencies = [Previews.previewBtc, Previews.previewEth]
     
-    ListCategory(
+    AddCurrencyItemView(
         currencies: currencies,
         dynamicPredicate: #Predicate<Cryptocurrency> { _ in true },
         imageSize: 48,

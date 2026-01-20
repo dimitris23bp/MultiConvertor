@@ -77,7 +77,7 @@ struct OverviewView: View {
 	var body: some View {
 		NavigationSplitView {
 			ScrollViewReader { proxy in
-                FavouritesView(
+                FavouritesListView(
                     favouriteCryptos: favouriteCryptos,
                     favouriteFiats: favouriteFiats,
                     displayMode: displayMode,
@@ -138,7 +138,7 @@ struct OverviewView: View {
 							Image(systemName: "plus")
 						}
 						.sheet(isPresented: $isShowingSheet) {
-							AddListItems(imageSize: imageSize)
+							AddCurrenciesView(imageSize: imageSize)
 						}
 						.onChange(of: isShowingSheet) { _, newValue in
 							if newValue {
@@ -207,7 +207,7 @@ struct OverviewView: View {
 		}
 	}
     
-    private func moveItemsSeparated(from source: IndexSet, to destination: Int, in listType: FavouritesView.CurrencyType) {
+    private func moveItemsSeparated(from source: IndexSet, to destination: Int, in listType: FavouritesListView.CurrencyType) {
         let listToReorder: [any Currency]
         let otherList: [any Currency]
         

@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct AddListItems: View {
+struct AddCurrenciesView: View {
     @Environment(\.dismiss) private var dismiss
 	@Environment(\.modelContext) private var modelContext
 
@@ -44,9 +44,9 @@ struct AddListItems: View {
             VStack {
                 List {
 					if selectedTab == .crypto {
-                        ListCategory(currencies: cryptocurrencies, dynamicPredicate: dynamicPredicateForCrypto, imageSize: imageSize, buttonPressed: buttonPressed(with:))
+                        AddCurrencyItemView(currencies: cryptocurrencies, dynamicPredicate: dynamicPredicateForCrypto, imageSize: imageSize, buttonPressed: buttonPressed(with:))
 					} else {
-                        ListCategory(currencies: fiatCurrencies, dynamicPredicate: dynamicPredicateForFiat, imageSize: imageSize, buttonPressed: buttonPressed(with:))
+                        AddCurrencyItemView(currencies: fiatCurrencies, dynamicPredicate: dynamicPredicateForFiat, imageSize: imageSize, buttonPressed: buttonPressed(with:))
 					}
                 }
             }
@@ -94,6 +94,6 @@ enum CurrencyTab {
 }
 
 #Preview {
-    AddListItems(imageSize: 48)
+    AddCurrenciesView(imageSize: 48)
         .modelContainer(Previews.preview)
 }

@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct FavouritesView: View {
+struct FavouritesListView: View {
     enum CurrencyType { case fiat, crypto }
 
     var favouriteCryptos: [Cryptocurrency]
