@@ -64,16 +64,6 @@ struct OverviewView: View {
     @State private var displayMode: DisplayMode = .merged
 	@FocusState private var focusedCurrencyId: String?
 
-	let imageSize: CGFloat = 42
-	
-	private var numberFormatter: NumberFormatter {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.locale = Locale.current
-		formatter.maximumFractionDigits = 8
-		return formatter
-	}
-
 	var body: some View {
 		NavigationSplitView {
 			ScrollViewReader { proxy in
@@ -85,8 +75,6 @@ struct OverviewView: View {
                     selection: $selection,
                     amounts: $amounts,
                     focusedCurrencyId: $focusedCurrencyId,
-                    imageSize: imageSize,
-                    numberFormatter: numberFormatter,
                     onDelete: { currency in
                         currency.favourite = false
                     },
@@ -138,7 +126,7 @@ struct OverviewView: View {
 							Image(systemName: "plus")
 						}
 						.sheet(isPresented: $isShowingSheet) {
-							AddCurrenciesView(imageSize: imageSize)
+							AddCurrenciesView()
 						}
 						.onChange(of: isShowingSheet) { _, newValue in
 							if newValue {

@@ -11,14 +11,20 @@ struct FavouritesListView: View {
     @Binding var selection: Set<String>
     @Binding var amounts: [String: Double]
     var focusedCurrencyId: FocusState<String?>.Binding
-    let imageSize: CGFloat
-    let numberFormatter: NumberFormatter
-    
+
     var onDelete: (any Currency) -> Void
     var onMoveMerged: (IndexSet, Int) -> Void
     var onMoveSeparated: (IndexSet, Int, CurrencyType) -> Void
     var updateInputs: (String, Double) -> Void
 	var lastUpdate: String
+
+	private var numberFormatter: NumberFormatter {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		formatter.locale = Locale.current
+		formatter.maximumFractionDigits = 8
+		return formatter
+	}
 
     private var combinedFavourites: [any Currency] {
         let all = (favouriteCryptos as [any Currency]) + (favouriteFiats as [any Currency])
@@ -128,15 +134,7 @@ struct FavouritesListView: View {
         .id(currency.id)
         .contentShape(Rectangle())
         .simultaneousGesture(TapGesture().onEnded {
-            if editMode.isEditing {
-                if selection.contains(currency.id) {
-                    selection.remove(currency.id)
-                } else {
-                    selection.insert(currency.id)
-                }
-            } else {
-                focusedCurrencyId.wrappedValue = currency.id
-            }
+			handleCurrencyTap(for: currency)
         })
         .swipeActions(edge: .trailing) {
             Button(role: .destructive, action: {
@@ -146,4 +144,18 @@ struct FavouritesListView: View {
             }
         }
     }
+
+	private func handleCurrencyTap(
+		for currency: any Currency,
+	) {
+		if editMode.isEditing {
+			if selection.contains(currency.id) {
+				selection.remove(currency.id)
+			} else {
+				selection.insert(currency.id)
+			}
+		} else {
+			focusedCurrencyId.wrappedValue = currency.id
+		}
+	}
 }

@@ -5,7 +5,6 @@ struct AddCurrencyItemView<T>: View where T: Currency, T: PersistentModel {
     
     var currencies: [T]
     var dynamicPredicate: Predicate<T>
-    var imageSize: CGFloat
     var buttonPressed: (T) -> Void
         
     var body: some View {
@@ -55,7 +54,6 @@ struct AddCurrencyItemView<T>: View where T: Currency, T: PersistentModel {
     AddCurrencyItemView(
         currencies: currencies,
         dynamicPredicate: #Predicate<Cryptocurrency> { _ in true },
-        imageSize: 48,
         buttonPressed: { _ in }
     )
 }

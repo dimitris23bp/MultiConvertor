@@ -17,8 +17,6 @@ struct AddCurrenciesView: View {
 	@State private var searchText: String = ""
 	@State private var selectedTab: CurrencyTab = .crypto
 	
-	let imageSize: CGFloat
-
 	private var dynamicPredicateForCrypto: Predicate<Cryptocurrency> {
 		#Predicate<Cryptocurrency> { crypto in
 			if !searchText.isEmpty {
@@ -44,9 +42,9 @@ struct AddCurrenciesView: View {
             VStack {
                 List {
 					if selectedTab == .crypto {
-                        AddCurrencyItemView(currencies: cryptocurrencies, dynamicPredicate: dynamicPredicateForCrypto, imageSize: imageSize, buttonPressed: buttonPressed(with:))
+                        AddCurrencyItemView(currencies: cryptocurrencies, dynamicPredicate: dynamicPredicateForCrypto, buttonPressed: buttonPressed(with:))
 					} else {
-                        AddCurrencyItemView(currencies: fiatCurrencies, dynamicPredicate: dynamicPredicateForFiat, imageSize: imageSize, buttonPressed: buttonPressed(with:))
+                        AddCurrencyItemView(currencies: fiatCurrencies, dynamicPredicate: dynamicPredicateForFiat, buttonPressed: buttonPressed(with:))
 					}
                 }
             }
@@ -94,6 +92,6 @@ enum CurrencyTab {
 }
 
 #Preview {
-    AddCurrenciesView(imageSize: 48)
+    AddCurrenciesView()
         .modelContainer(Previews.preview)
 }
