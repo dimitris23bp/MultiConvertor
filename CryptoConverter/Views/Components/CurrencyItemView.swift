@@ -8,7 +8,7 @@ struct CurrencyItemView: View {
 	@Binding var amount: Double
 	var updateInputs: (String, Double) -> Void
 	let numberFormatter: NumberFormatter
-	@FocusState var isFocused: Bool
+	var isFocused: Bool
 	var onTap: (any Currency) -> Void
 	var onDelete: (any Currency) -> Void
 
@@ -45,16 +45,10 @@ struct CurrencyItemView: View {
 
 			ScrollView(.horizontal, showsIndicators: false) {
 				DoubleNumberTextField(
-					value: Binding(
-						get: { amount },
-						set: { newValue in
-							amount = newValue
-							updateInputs(currency.id, newValue)
-						}
-					),
+					value: $amount,
 					formatter: numberFormatter
 				)
-				.focused($isFocused)
+				.focused(isFocused)
 				.id(currency.id)
 				.frame(height: 40)
 				.fixedSize(horizontal: true, vertical: false)

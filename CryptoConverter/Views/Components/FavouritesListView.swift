@@ -71,7 +71,27 @@ struct FavouritesListView: View {
             }
         }
     }
-    
+
+	private func currencyItemView(for currency: any Currency) -> some View {
+		CurrencyItemView(
+			currency: currency,
+			editMode: $editMode,
+			selection: $selection,
+			amount: Binding(
+				get: { amounts[currency.id] ?? 0.0 },
+				set: { newValue in
+					amounts[currency.id] = newValue
+					updateInputs(currency.id, newValue)
+				}
+			),
+			updateInputs: updateInputs,
+			numberFormatter: numberFormatter,
+			isFocused: focusedCurrencyId.wrappedValue == currency.id,
+			onTap: handleCurrencyTap,
+			onDelete: onDelete)
+
+	}
+
     @ViewBuilder
     private func currencyRow(for currency: any Currency) -> some View {
         HStack {
