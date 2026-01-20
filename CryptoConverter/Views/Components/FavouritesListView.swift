@@ -11,7 +11,6 @@ struct FavouritesListView: View {
     @Binding var selection: Set<String>
     @Binding var amounts: [String: Double]
     var onFocusChange: (String?, Bool) -> Void
-    var scrollProxy: ScrollViewProxy?
 
     var onDelete: (any Currency) -> Void
     var onMoveMerged: (IndexSet, Int) -> Void
@@ -90,7 +89,6 @@ struct FavouritesListView: View {
 			onFocusChange: { isFocused in
 				onFocusChange(currency.id, isFocused)
 			},
-			scrollProxy: scrollProxy,
 			onTap: handleCurrencyTap,
 			onDelete: onDelete)
 

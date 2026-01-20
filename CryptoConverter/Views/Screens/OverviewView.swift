@@ -61,8 +61,8 @@ struct OverviewView: View {
     @State private var selection = Set<String>()
 	@State private var isShowingSheet = false
     @State private var lastUpdate: String = "NaN"
-    @State private var displayMode: DisplayMode = .merged
-	@FocusState private var focusedCurrencyId: String?
+	@State private var displayMode: DisplayMode = .merged
+	@State private var focusedCurrencyId: String?
 
 	var body: some View {
 		NavigationSplitView {
@@ -75,13 +75,15 @@ struct OverviewView: View {
                     selection: $selection,
                     amounts: $amounts,
                     onFocusChange: { currencyId, isFocused in
+						print("On focus change")
                         if isFocused {
+							print("Change focus")
                             focusedCurrencyId = currencyId
                         } else if focusedCurrencyId == currencyId {
+							print("Change focus")
                             focusedCurrencyId = nil
                         }
                     },
-                    scrollProxy: proxy,
                     onDelete: { currency in
                         currency.favourite = false
                     },
@@ -139,6 +141,7 @@ struct OverviewView: View {
 							if newValue {
 								// In order to remove the focused value too, when I press the plus button
 								focusedCurrencyId = nil
+								print("Focus is removed")
 								Task {
 									// To have a delay and make the change without the user noticing
 									try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
@@ -164,7 +167,9 @@ struct OverviewView: View {
 				.environment(\.editMode, $editMode)
 			.toolbar(editMode.isEditing ? .hidden : .visible, for: .tabBar)
 			.onChange(of: focusedCurrencyId) { _, newId in
+				print("New scrolling")
 				if let id = newId {
+					print("Inside new scrolling")
 					DispatchQueue.main.async {
 						withAnimation {
 							proxy.scrollTo(id, anchor: .center)

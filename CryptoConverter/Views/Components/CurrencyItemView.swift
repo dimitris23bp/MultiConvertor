@@ -10,7 +10,6 @@ struct CurrencyItemView: View {
 	let numberFormatter: NumberFormatter
 	@FocusState private var isFocused: Bool
 	var onFocusChange: (Bool) -> Void
-	var scrollProxy: ScrollViewProxy?
 
 	var onTap: (any Currency) -> Void
 	var onDelete: (any Currency) -> Void
@@ -54,13 +53,6 @@ struct CurrencyItemView: View {
 				.focused($isFocused)
 				.onChange(of: isFocused) { _, newValue in
 					onFocusChange(newValue)
-					if newValue, let scrollProxy = scrollProxy {
-						DispatchQueue.main.async {
-							withAnimation {
-								scrollProxy.scrollTo(currency.id, anchor: .center)
-							}
-						}
-					}
 				}
 				.id("textField_" + currency.id)
 				.frame(height: 40)
