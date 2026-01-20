@@ -74,7 +74,14 @@ struct OverviewView: View {
                     editMode: $editMode,
                     selection: $selection,
                     amounts: $amounts,
-                    focusedCurrencyId: $focusedCurrencyId,
+                    onFocusChange: { currencyId, isFocused in
+                        if isFocused {
+                            focusedCurrencyId = currencyId
+                        } else if focusedCurrencyId == currencyId {
+                            focusedCurrencyId = nil
+                        }
+                    },
+                    scrollProxy: proxy,
                     onDelete: { currency in
                         currency.favourite = false
                     },

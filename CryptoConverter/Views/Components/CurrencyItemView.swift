@@ -8,8 +8,9 @@ struct CurrencyItemView: View {
 	@Binding var amount: Double
 	var updateInputs: (String, Double) -> Void
 	let numberFormatter: NumberFormatter
-//	@FocusState var isFocused: Bool
-	var focusedCurrencyId: FocusState<String?>.Binding
+	@FocusState private var isFocused: Bool
+	var onFocusChange: (Bool) -> Void
+	var scrollProxy: ScrollViewProxy?
 
 	var onTap: (any Currency) -> Void
 	var onDelete: (any Currency) -> Void
@@ -50,9 +51,18 @@ struct CurrencyItemView: View {
 					value: $amount,
 					formatter: numberFormatter
 				)
-//				.focused($isFocused)
-				.focused(focusedCurrencyId, equals: currency.id)
-				.id(currency.id)
+				.focused($isFocused)
+				.onChange(of: isFocused) { _, newValue in
+					onFocusChange(newValue)
+					if newValue, let scrollProxy = scrollProxy {
+						DispatchQueue.main.async {
+							withAnimation {
+								scrollProxy.scrollTo(currency.id, anchor: .center)
+							}
+						}
+					}
+				}
+				.id("textField_" + currency.id)
 				.frame(height: 40)
 				.fixedSize(horizontal: true, vertical: false)
 			}
@@ -61,17 +71,21 @@ struct CurrencyItemView: View {
 			.padding(.horizontal, 10)
 			.background(
 				RoundedRectangle(cornerRadius: 6)
-					.fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
+					.fill(isFocused ? Color.secondary.opacity(0.2) : Color.clear)
 			)
-			.animation(.easeOut(duration: 0.1), value: focusedCurrencyId.wrappedValue == currency.id)
+			.animation(.easeOut(duration: 0.1), value: isFocused)
 			.tint(Color.clear)
 			.minimumScaleFactor(0.75)
 		}
 		.id(currency.id)
 		.contentShape(Rectangle())
-		.simultaneousGesture(TapGesture().onEnded {
-			onTap(currency)
-		})
+		.onTapGesture {
+			if editMode.isEditing {
+				onTap(currency)
+			} else {
+				isFocused = true
+			}
+		}
 		.swipeActions(edge: .trailing) {
 			Button(role: .destructive, action: {
 				onDelete(currency)

@@ -10,7 +10,8 @@ struct FavouritesListView: View {
     @Binding var editMode: EditMode
     @Binding var selection: Set<String>
     @Binding var amounts: [String: Double]
-    var focusedCurrencyId: FocusState<String?>.Binding
+    var onFocusChange: (String?, Bool) -> Void
+    var scrollProxy: ScrollViewProxy?
 
     var onDelete: (any Currency) -> Void
     var onMoveMerged: (IndexSet, Int) -> Void
@@ -86,7 +87,10 @@ struct FavouritesListView: View {
 			),
 			updateInputs: updateInputs,
 			numberFormatter: numberFormatter,
-			focusedCurrencyId: focusedCurrencyId,
+			onFocusChange: { isFocused in
+				onFocusChange(currency.id, isFocused)
+			},
+			scrollProxy: scrollProxy,
 			onTap: handleCurrencyTap,
 			onDelete: onDelete)
 
@@ -95,14 +99,10 @@ struct FavouritesListView: View {
 	private func handleCurrencyTap(
 		for currency: any Currency,
 	) {
-		if editMode.isEditing {
-			if selection.contains(currency.id) {
-				selection.remove(currency.id)
-			} else {
-				selection.insert(currency.id)
-			}
+		if selection.contains(currency.id) {
+			selection.remove(currency.id)
 		} else {
-			focusedCurrencyId.wrappedValue = currency.id
+			selection.insert(currency.id)
 		}
 	}
 }
