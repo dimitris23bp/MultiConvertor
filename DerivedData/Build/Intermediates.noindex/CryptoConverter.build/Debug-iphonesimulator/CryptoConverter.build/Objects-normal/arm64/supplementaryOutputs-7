@@ -1,0 +1,23 @@
+{
+  "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Views/Components/CurrencyItemView.swift" : {
+    "const-values" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyItemView.swiftconstvalues",
+    "dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyItemView.d",
+    "diagnostics" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyItemView.dia",
+    "object" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyItemView.o",
+    "swift-dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyItemView.swiftdeps"
+  },
+  "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Views/Components/DoubleNumberTextField.swift" : {
+    "const-values" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/DoubleNumberTextField.swiftconstvalues",
+    "dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/DoubleNumberTextField.d",
+    "diagnostics" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/DoubleNumberTextField.dia",
+    "object" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/DoubleNumberTextField.o",
+    "swift-dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/DoubleNumberTextField.swiftdeps"
+  },
+  "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Views/Components/FavouritesListView.swift" : {
+    "const-values" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/FavouritesListView.swiftconstvalues",
+    "dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/FavouritesListView.d",
+    "diagnostics" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/FavouritesListView.dia",
+    "object" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/FavouritesListView.o",
+    "swift-dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/FavouritesListView.swiftdeps"
+  }
+}
