@@ -62,7 +62,7 @@ struct OverviewView: View {
 	@State private var isShowingSheet = false
     @State private var lastUpdate: String = "NaN"
 	@State private var displayMode: DisplayMode = .merged
-	@State private var focusedCurrencyId: String?
+	@FocusState private var focusedCurrencyId: String?
 
 	var body: some View {
 		NavigationSplitView {
@@ -74,16 +74,7 @@ struct OverviewView: View {
                     editMode: $editMode,
                     selection: $selection,
                     amounts: $amounts,
-                    onFocusChange: { currencyId, isFocused in
-						print("On focus change")
-                        if isFocused {
-							print("Change focus")
-                            focusedCurrencyId = currencyId
-                        } else if focusedCurrencyId == currencyId {
-							print("Change focus")
-                            focusedCurrencyId = nil
-                        }
-                    },
+                    focusedCurrencyId: $focusedCurrencyId,
                     onDelete: { currency in
                         currency.favourite = false
                     },

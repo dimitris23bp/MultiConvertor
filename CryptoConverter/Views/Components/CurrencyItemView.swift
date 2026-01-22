@@ -8,8 +8,7 @@ struct CurrencyItemView: View {
 	@Binding var amount: Double
 	var updateInputs: (String, Double) -> Void
 	let numberFormatter: NumberFormatter
-	@FocusState private var isFocused: Bool
-	var onFocusChange: (Bool) -> Void
+	var focusedCurrencyId: FocusState<String?>.Binding
 
 	var onTap: (any Currency) -> Void
 	var onDelete: (any Currency) -> Void
@@ -50,11 +49,8 @@ struct CurrencyItemView: View {
 					value: $amount,
 					formatter: numberFormatter
 				)
-				.focused($isFocused)
-				.onChange(of: isFocused) { _, newValue in
-					onFocusChange(newValue)
-				}
-				.id("textField_" + currency.id)
+				.focused(focusedCurrencyId, equals: currency.id)
+				.id(currency.id)
 				.frame(height: 40)
 				.fixedSize(horizontal: true, vertical: false)
 			}
@@ -63,21 +59,17 @@ struct CurrencyItemView: View {
 			.padding(.horizontal, 10)
 			.background(
 				RoundedRectangle(cornerRadius: 6)
-					.fill(isFocused ? Color.secondary.opacity(0.2) : Color.clear)
+					.fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
 			)
-			.animation(.easeOut(duration: 0.1), value: isFocused)
+			.animation(.easeOut(duration: 0.1), value: focusedCurrencyId.wrappedValue == currency.id)
 			.tint(Color.clear)
 			.minimumScaleFactor(0.75)
 		}
 		.id(currency.id)
 		.contentShape(Rectangle())
-		.onTapGesture {
-			if editMode.isEditing {
-				onTap(currency)
-			} else {
-				isFocused = true
-			}
-		}
+		.simultaneousGesture(TapGesture().onEnded {
+			onTap(currency)
+		})
 		.swipeActions(edge: .trailing) {
 			Button(role: .destructive, action: {
 				onDelete(currency)
