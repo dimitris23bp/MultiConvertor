@@ -39,28 +39,14 @@ struct OverviewView: View {
         let all = (cryptocurrencies as [any Currency]) + (fiatCurrencies as [any Currency])
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
-    
-    private var currencyService: CurrencyService {
-		print("Beginning of service setup")
-        let repoCrypto = CryptoRepository(modelContext: modelContext)
-        let repoFiat = FiatRepository(modelContext: modelContext)
-        let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
-        
-        let cloudKitService = CloudKitService()
-        
-        let cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
-        let fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
-		print("End of service setup")
-        return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
-    }
 
 	@ObservedObject var scheduler: TickerUpdateScheduler
-
+	var lastUpdate: String
+	
 	@State private var amounts: [String: Double] = [:]
 	@State private var editMode: EditMode = .inactive
     @State private var selection = Set<String>()
 	@State private var isShowingSheet = false
-    @State private var lastUpdate: String = "NaN"
 	@State private var displayMode: DisplayMode = .merged
 	@FocusState private var focusedCurrencyId: String?
 
@@ -172,17 +158,11 @@ struct OverviewView: View {
 	} detail: {
 		Text("Select an item")
 	}
-		.onAppear {
-			Task {
-				lastUpdate = await currencyService.getLastUpdate()
-			}
+	.onChange(of: scenePhase, { _, newValue in
+		if newValue != .active {
+			focusedCurrencyId = nil
 		}
-		.onChange(of: scenePhase, { _, newValue in
-			if newValue != .active {
-				focusedCurrencyId = nil
-			}
-		})
-	}
+	})}
 
 	private func moveItemsMerged(from source: IndexSet, to destination: Int) {
 		var reorderedCurrencies = combinedFavourites
@@ -294,6 +274,6 @@ struct OverviewView: View {
 
 
 #Preview {
-	OverviewView(scheduler: TickerUpdateScheduler())
+	OverviewView(scheduler: TickerUpdateScheduler(), lastUpdate: "Preview Update")
 		.modelContainer(Previews.preview)
 }
