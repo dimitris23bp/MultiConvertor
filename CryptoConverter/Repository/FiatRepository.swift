@@ -44,7 +44,8 @@ final class FiatRepository {
             let fiat = FiatCurrency(dto: dto)
             print("Fetching fiat in remaining with ID: \(fiat.id)")
             if !ids.contains(fiat.id) {
-                                if fiat.iconData != nil {
+				// TODO: Does this not work? Why are the double in ContentModel?
+				if fiat.iconData != nil {
                     print("Inserting fiat in remaining with ID: \(fiat.id)")
                     backgroundContext.insert(fiat)
                 }

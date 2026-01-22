@@ -8,26 +8,26 @@ protocol CryptocurrencyServiceProtocol: Sendable {
 actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     
     nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
-    private let cryptoRepository: CryptoRepository
+    private let repository: AllRepository
     private let cloudkitService: CloudKitServiceProtocol
     
-    init(repository: CryptoRepository, cloudKitService: CloudKitServiceProtocol) {
-        self.cryptoRepository = repository
+    init(repository: AllRepository, cloudKitService: CloudKitServiceProtocol) {
+        self.repository = repository
         self.cloudkitService = cloudKitService
     }
 
     /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
     /// - Parameter minCount: Minimum number of records considered "seeded".
     func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
-        let current = await cryptoRepository.fetchAllCryptoIDs()
+		let current = await repository.fetchAllIDs(withType: Cryptocurrency.self)
         // If I have 3 or more, return
         guard current.count < minCount else { return }
 
         print("Fetching initial cryptocurrencies")
         let cryptocurrencyDTOs = try await cloudkitService.fetchCryptocurrenciesFromCK(amount: 50)
         
-        try await cryptoRepository.saveCryptos(dtos: cryptocurrencyDTOs)
-        
+		try await repository.save(currencies: cryptocurrencyDTOs, withType: CryptocurrencyDTO.self)
+
         print("Initial cryptocurrencies are saved")
         
         // Remaining data will be saved asynchronously to not wait for them in the first install of the app
@@ -37,14 +37,14 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     private func ensureRemainingData() async {
         print("Adding remaining data")
         
-        let ids = await cryptoRepository.fetchAllCryptoIDs()
+		let ids = await repository.fetchAllIDs(withType: Cryptocurrency.self)
 
         let cloudkitServiceSelf = self.cloudkitService
         
         // Perform work in a separate Task that isn't bound to the MainActor
-        Task.detached(priority: .utility) { [cryptoRepository] in
+        Task.detached(priority: .utility) { [repository] in
             let allCryptoDTOs = await cloudkitServiceSelf.fetchAllCryptocurrenciesFromCK()
-            try? await cryptoRepository.addCryptosIfDontExist(ids: ids, dtos: allCryptoDTOs)
+			try? await repository.addIfDontExist(withType: CryptocurrencyDTO.self, ids: ids, currencies: allCryptoDTOs)
         }
         
         print("Remaining cryptos are saved")
@@ -53,7 +53,8 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     func updateAmountOfCryptos() async {
         let incomingCryptos = await cloudkitService.fetchAllCryptocurrenciesFromCK()
 
-        await cryptoRepository.updateAmounts(incomingCryptos: incomingCryptos)
+		// TODO: Remove the try?
+		try? await repository.updateAmounts(withType: CryptocurrencyDTO.self, currencies: incomingCryptos)
    }
 
 	func getLastUpdate() async -> String {

@@ -43,8 +43,8 @@ struct MainTabView: View {
 
 		let cloudKitService = CloudKitService()
 
-		let cryptoService = CryptocurrencyService(repository: repoCrypto, cloudKitService: cloudKitService)
-		let fiatService = FiatCurrencyService(fiatRepository: repoFiat, cloudkitService: cloudKitService)
+		let cryptoService = CryptocurrencyService(repository: repoAll, cloudKitService: cloudKitService)
+		let fiatService = FiatCurrencyService(repository: repoAll, cloudkitService: cloudKitService)
 		return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
 	}
 
