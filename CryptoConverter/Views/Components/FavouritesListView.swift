@@ -36,7 +36,7 @@ struct FavouritesListView: View {
             if displayMode == .merged {
                 Section {
                     ForEach(combinedFavourites, id: \.id) { currency in
-                        currencyRow(for: currency)
+						currencyItemView(for: currency)
                     }
                     .onMove(perform: onMoveMerged)
 
@@ -46,7 +46,7 @@ struct FavouritesListView: View {
             } else {
                 Section {
                     ForEach(favouriteFiats, id: \.id) { currency in
-                        currencyRow(for: currency)
+						currencyItemView(for: currency)
                     }
                     .onMove(perform: { source, destination in
                         onMoveSeparated(source, destination, .fiat)
@@ -57,7 +57,7 @@ struct FavouritesListView: View {
 
                 Section {
                     ForEach(favouriteCryptos, id: \.id) { currency in
-                        currencyRow(for: currency)
+						currencyItemView(for: currency)
                     }
                     .onMove(perform: { source, destination in
                         onMoveSeparated(source, destination, .crypto)
@@ -71,79 +71,26 @@ struct FavouritesListView: View {
             }
         }
     }
-    
-    @ViewBuilder
-    private func currencyRow(for currency: any Currency) -> some View {
-        HStack {
-            if editMode.isEditing {
-                Button(action: {
-                    if selection.contains(currency.id) {
-                        selection.remove(currency.id)
-                    } else {
-                        selection.insert(currency.id)
-                    }
-                }) {
-                    Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
-                }
-            }
 
-            Image(uiImage: currency.icon ?? UIImage())
-                .resizable()
-                .scaledToFit()
-                .frame(width: imageSize, height: imageSize)
+	private func currencyItemView(for currency: any Currency) -> some View {
+		CurrencyItemView(
+			currency: currency,
+			editMode: $editMode,
+			selection: $selection,
+			amount: Binding(
+				get: { amounts[currency.id] ?? 0.0 },
+				set: { newValue in
+					amounts[currency.id] = newValue
+					updateInputs(currency.id, newValue)
+				}
+			),
+			updateInputs: updateInputs,
+			numberFormatter: numberFormatter,
+			focusedCurrencyId: focusedCurrencyId,
+			onTap: handleCurrencyTap,
+			onDelete: onDelete)
 
-            VStack(alignment: .leading) {
-                Text("\(currency.id)")
-                    .minimumScaleFactor(0.75)
-                    .lineLimit(1)
-                Text("\(currency.name)")
-                    .minimumScaleFactor(0.75)
-                    .lineLimit(1)
-            }
-            .padding()
-
-            Spacer()
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                DoubleNumberTextField(
-                    value: Binding(
-                        get: { amounts[currency.id] ?? 0.0 },
-                        set: { newValue in
-                            amounts[currency.id] = newValue
-                            updateInputs(currency.id, newValue)
-                        }
-                    ),
-                    formatter: numberFormatter
-                )
-                .focused(focusedCurrencyId, equals: currency.id)
-                .id(currency.id)
-                .frame(height: 40)
-                .fixedSize(horizontal: true, vertical: false)
-            }
-            .frame(maxWidth: 150)
-            .fixedSize(horizontal: true, vertical: false)
-            .padding(.horizontal, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
-            )
-            .animation(.easeOut(duration: 0.1), value: focusedCurrencyId.wrappedValue == currency.id)
-            .tint(Color.clear)
-            .minimumScaleFactor(0.75)
-        }
-        .id(currency.id)
-        .contentShape(Rectangle())
-        .simultaneousGesture(TapGesture().onEnded {
-			handleCurrencyTap(for: currency)
-        })
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive, action: {
-                onDelete(currency)
-            }) {
-                Label("Delete", systemImage: "trash")
-            }
-        }
-    }
+	}
 
 	private func handleCurrencyTap(
 		for currency: any Currency,

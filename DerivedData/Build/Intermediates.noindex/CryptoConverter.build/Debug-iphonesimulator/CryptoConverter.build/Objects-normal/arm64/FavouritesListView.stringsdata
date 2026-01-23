@@ -1,0 +1,40 @@
+{
+  "source": "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Views/Components/FavouritesListView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Last updated: %@",
+        "location": {
+          "startingColumn": 11,
+          "startingLine": 44
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fiat Currencies",
+        "location": {
+          "startingColumn": 11,
+          "startingLine": 55
+        }
+      },
+      {
+        "comment": "",
+        "key": "Crypto Currencies",
+        "location": {
+          "startingColumn": 11,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "Last updated: %@",
+        "location": {
+          "startingColumn": 11,
+          "startingLine": 69
+        }
+      }
+    ]
+  },
+  "version": 1
+}

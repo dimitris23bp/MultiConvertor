@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>colors</key>
+	<array/>
+	<key>images</key>
+	<array>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameBtc</string>
+			<key>relativePath</key>
+			<string>./btc.imageset</string>
+			<key>swiftSymbol</key>
+			<string>btc</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameEth</string>
+			<key>relativePath</key>
+			<string>./eth.imageset</string>
+			<key>swiftSymbol</key>
+			<string>eth</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameLitecoin</string>
+			<key>relativePath</key>
+			<string>./litecoin.imageset</string>
+			<key>swiftSymbol</key>
+			<string>litecoin</string>
+		</dict>
+		<dict>
+			<key>catalogPath</key>
+			<string>/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Assets.xcassets</string>
+			<key>objcSymbol</key>
+			<string>ACImageNameLogoApp</string>
+			<key>relativePath</key>
+			<string>./logo-from-composer/Assets/logo app.imageset</string>
+			<key>swiftSymbol</key>
+			<string>logoApp</string>
+		</dict>
+	</array>
+	<key>symbols</key>
+	<array/>
+</dict>
+</plist>

@@ -1,0 +1,40 @@
+{
+  "source": "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Views/Screens/AddCurrenciesView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Currency Type",
+        "location": {
+          "startingColumn": 13,
+          "startingLine": 55
+        }
+      },
+      {
+        "comment": "",
+        "key": "Crypto",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 56
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fiat",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 57
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 64
+        }
+      }
+    ]
+  },
+  "version": 1
+}

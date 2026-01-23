@@ -1,0 +1,23 @@
+{
+  "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Extensions/CurrencyExtension.swift" : {
+    "const-values" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyExtension.swiftconstvalues",
+    "dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyExtension.d",
+    "diagnostics" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyExtension.dia",
+    "object" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyExtension.o",
+    "swift-dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CurrencyExtension.swiftdeps"
+  },
+  "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Extensions/StringExtension.swift" : {
+    "const-values" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/StringExtension.swiftconstvalues",
+    "dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/StringExtension.d",
+    "diagnostics" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/StringExtension.dia",
+    "object" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/StringExtension.o",
+    "swift-dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/StringExtension.swiftdeps"
+  },
+  "/Users/dimitris/Documents/CryptoConverter/CryptoConverter/Models/DTOs/CryptocurrencyDTO.swift" : {
+    "const-values" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CryptocurrencyDTO.swiftconstvalues",
+    "dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CryptocurrencyDTO.d",
+    "diagnostics" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CryptocurrencyDTO.dia",
+    "object" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CryptocurrencyDTO.o",
+    "swift-dependencies" : "/Users/dimitris/Documents/CryptoConverter/DerivedData/Build/Intermediates.noindex/CryptoConverter.build/Debug-iphonesimulator/CryptoConverter.build/Objects-normal/arm64/CryptocurrencyDTO.swiftdeps"
+  }
+}
