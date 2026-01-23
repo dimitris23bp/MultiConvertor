@@ -66,7 +66,14 @@ final class AllRepository {
        )
     }
     
-    func addInitialFavourites(currencies: [Currency]) async throws {
+    func addInitialFavourites() async throws {
+		let cryptoFetchDescriptor = FetchDescriptor<Cryptocurrency>()
+		let cryptocurrencies = (try? modelContext.fetch(cryptoFetchDescriptor)) ?? []
+		let fiatFetchDescriptor = FetchDescriptor<FiatCurrency>()
+		let fiatCurrencies = (try? modelContext.fetch(fiatFetchDescriptor)) ?? []
+
+		let currencies = (cryptocurrencies as [any Currency]) + (fiatCurrencies as [any Currency])
+
         for currency in currencies {
             if currency.id == "BTC" || currency.id == "ETH" || currency.id == "USD" || currency.id == "EUR" {
                 currency.sortOrder = currencies.getHighestOrder() + 1

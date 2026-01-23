@@ -34,9 +34,9 @@ actor CurrencyService: CurrencyServiceProtocol {
         return await cryptoService.getLastUpdate()
     }
     
-    func addInitialFavourites(currencies: [Currency]) async {
+    func addInitialFavourites() async {
         do {
-            try await currencyRepository.addInitialFavourites(currencies: currencies)
+            try await currencyRepository.addInitialFavourites()
         } catch {
             print("Cannot add successfully all favourites.")
         }

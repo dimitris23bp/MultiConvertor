@@ -24,7 +24,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "7E6A3889-9D1D-4ECD-A45B-8F1B80D74BD0"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             condition = "crypto.id == &quot;PENGU&quot;"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -52,6 +52,40 @@
             endingLineNumber = "20"
             landmarkName = "saveCryptos(dtos:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F164A60E-7398-4241-9388-ABD0E7EF4C49"
+            shouldBeEnabled = "Yes"
+            condition = "crypto.id == &quot;WBETH&quot;"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoConverter/Repository/CryptoRepository.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "addCryptosIfDontExist(ids:dtos:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1C173D42-DDAC-44E2-8B13-57523D250A3B"
+            shouldBeEnabled = "No"
+            condition = "id == &quot;WBETH&quot;"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoConverter/Models/Cryptocurrency.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "icon"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

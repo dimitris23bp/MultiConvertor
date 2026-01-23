@@ -5,36 +5,11 @@ struct MainTabView: View {
 	@Environment(\.scenePhase) private var scenePhase
 	@Environment(\.modelContext) private var modelContext
 	
-	@Query(sort: \Cryptocurrency.sortOrder, animation: .default) private var cryptocurrencies: [Cryptocurrency]
-
-	@Query(
-		filter: #Predicate<Cryptocurrency> { $0.favourite },
-		sort: \.sortOrder,
-		animation: .default
-	) private var favouriteCryptos: [Cryptocurrency]
-
-	@Query(sort: \FiatCurrency.popularity, animation: .default) private var fiatCurrencies: [FiatCurrency]
-
-	@Query(
-		filter: #Predicate<FiatCurrency> { $0.favourite },
-		sort: \.sortOrder,
-		animation: .default
-	) private var favouriteFiats: [FiatCurrency]
-
-	private var combinedFavourites: [any Currency] {
-		let all = (favouriteCryptos as [any Currency]) + (favouriteFiats as [any Currency])
-		return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
-	}
-
-	private var allCurrencies: [any Currency] {
-		let all = (cryptocurrencies as [any Currency]) + (fiatCurrencies as [any Currency])
-		return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
-	}
-
 	let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
 	@StateObject private var scheduler = TickerUpdateScheduler()
 	@State private var lastUpdate = "NaN"
+	@State private var favouritesInitialized = false
 
 	private var currencyService: CurrencyService {
 		let repoCrypto = CryptoRepository(modelContext: modelContext)
@@ -50,7 +25,7 @@ struct MainTabView: View {
 
     var body: some View {
 		Group {
-			if combinedFavourites.count < 1 {
+			if !favouritesInitialized {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
 						Image("btc")
@@ -87,18 +62,22 @@ struct MainTabView: View {
 		.onAppear {
 			Task {
 				print("Task is called.")
-
-				// Check immediately on appear
-				if cryptocurrencies.count < 3 || isPreview {
+				let fetchDescriptor = FetchDescriptor<Cryptocurrency>()
+				// Check immediately on appear if I have at least 3 cryptos, or if it's preview
+				if let result = try? modelContext.fetch(fetchDescriptor), result.count < 3 || isPreview {
 					scheduler.updateLastExecution()
 					try? await currencyService.ensureInitialDataIfNeeded()
-					await currencyService.addInitialFavourites(currencies: allCurrencies)
+					await currencyService.addInitialFavourites()
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
 					scheduler.updateLastExecution()
 					await currencyService.updateAmounts()
 					print("Update has happened")
 				}
+
+				// No matter what happened above, the favourites are in place and the main page can finally load
+				favouritesInitialized = true
+
 				scheduler.start { [service = currencyService] in
 					print("Inside the scheduler start. Going to update amounts")
 					await service.updateAmounts()
