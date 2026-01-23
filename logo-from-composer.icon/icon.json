@@ -2,7 +2,7 @@
   "fill-specializations" : [
     {
       "value" : {
-        "solid" : "display-p3:0.91211,0.78601,0.72699,1.00000"
+        "solid" : "srgb:0.83742,0.83744,0.83743,1.00000"
       }
     },
     {
@@ -14,15 +14,77 @@
   ],
   "groups" : [
     {
+      "hidden" : true,
       "layers" : [
         {
-          "blend-mode" : "normal",
-          "glass" : true,
-          "hidden" : false,
-          "image-name" : "logo app .png",
-          "name" : "logo app ",
+          "image-name" : "Asset 21.svg",
+          "name" : "Asset 21",
           "position" : {
-            "scale" : 1.5,
+            "scale" : 0.2,
+            "translation-in-points" : [
+              356.49420357988026,
+              -28.995593253197683
+            ]
+          }
+        },
+        {
+          "image-name" : "Asset 20.svg",
+          "name" : "Asset 20",
+          "position" : {
+            "scale" : 0.2,
+            "translation-in-points" : [
+              -27.475618633609884,
+              -15.589614334430735
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "glass-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : true
+            }
+          ],
+          "image-name" : "Asset 23.svg",
+          "name" : "Asset 23",
+          "opacity-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : 0.8
+            }
+          ],
+          "position" : {
+            "scale" : 0.25,
+            "translation-in-points" : [
+              -11.965819482327447,
+              -14.874185159933972
+            ]
+          }
+        },
+        {
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "normal"
+            }
+          ],
+          "hidden" : false,
+          "image-name" : "Asset 22.svg",
+          "name" : "Asset 22",
+          "position" : {
+            "scale" : 0.25,
             "translation-in-points" : [
               0,
               0
