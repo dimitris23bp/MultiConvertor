@@ -35,11 +35,6 @@ struct OverviewView: View {
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
 
-    private var allCurrencies: [any Currency] {
-        let all = (cryptocurrencies as [any Currency]) + (fiatCurrencies as [any Currency])
-        return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
-    }
-
 	@ObservedObject var scheduler: TickerUpdateScheduler
 	var lastUpdate: String
 	
@@ -54,8 +49,6 @@ struct OverviewView: View {
 		NavigationSplitView {
 			ScrollViewReader { proxy in
                 FavouritesListView(
-                    favouriteCryptos: favouriteCryptos,
-                    favouriteFiats: favouriteFiats,
                     displayMode: displayMode,
                     editMode: $editMode,
                     selection: $selection,

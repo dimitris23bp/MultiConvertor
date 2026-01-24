@@ -3,9 +3,18 @@ import SwiftData
 
 struct FavouritesListView: View {
     enum CurrencyType { case fiat, crypto }
+	@Query(
+		filter: #Predicate<Cryptocurrency> { $0.favourite },
+		sort: \.sortOrder,
+		animation: .default
+	) private var favouriteCryptos: [Cryptocurrency]
 
-    var favouriteCryptos: [Cryptocurrency]
-    var favouriteFiats: [FiatCurrency]
+	@Query(
+		filter: #Predicate<FiatCurrency> { $0.favourite },
+		sort: \.sortOrder,
+		animation: .default
+	) private var favouriteFiats: [FiatCurrency]
+
     var displayMode: DisplayMode
     @Binding var editMode: EditMode
     @Binding var selection: Set<String>
