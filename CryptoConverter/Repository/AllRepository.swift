@@ -1,4 +1,5 @@
 import SwiftData
+import OSLog
 
 @MainActor
 final class AllRepository {
@@ -40,9 +41,33 @@ final class AllRepository {
     }
     
     func save<T: CurrencyDTO>(currencies: [T], withType type: T.Type) async throws {
+        // Determine the persistent model type and fetch existing IDs
+        let persistentModelType = getPersistentModelType(for: type)
+        let existingIDs: Set<String>
+        
+        if persistentModelType == Cryptocurrency.self {
+            existingIDs = fetchAllIDs(withType: Cryptocurrency.self)
+        } else if persistentModelType == FiatCurrency.self {
+            existingIDs = fetchAllIDs(withType: FiatCurrency.self)
+        } else {
+            existingIDs = []
+        }
+
+        // Filter out duplicates and log warnings immediately
+        var nonDuplicateCurrencies = [T]()
+
+        for currency in currencies {
+            if existingIDs.contains(currency.id) {
+                Log.repository.warning("Currency with ID '\\(currency.id)' already exists and will not be saved")
+            } else {
+                nonDuplicateCurrencies.append(currency)
+            }
+        }
+
+        // Save only non-duplicate items
         try await executeTypedAction(
             withType: type,
-            currencies: currencies,
+            currencies: nonDuplicateCurrencies,
             cryptoAction: { try await cryptoRepo.saveCryptos(dtos: $0) },
             fiatAction: { try await fiatRepo.saveFiats(dtos: $0) }
         )
@@ -103,6 +128,18 @@ final class AllRepository {
             return Set(results.map(\.id))
         } else {
             return []
+        }
+    }
+
+    // Helper method to get the PersistentModel type from DTO type
+	private func getPersistentModelType<T: CurrencyDTO>(for dtoType: T.Type) -> Any.Type {
+        switch dtoType {
+        case is CryptocurrencyDTO.Type:
+			return Cryptocurrency.self
+        case is FiatCurrencyDTO.Type:
+			return FiatCurrency.self
+        default:
+            fatalError("Unsupported DTO type: \\(dtoType)")
         }
     }
 
