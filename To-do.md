@@ -35,3 +35,5 @@
 
 ### Backend
 
+- Fix the error: BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
+By doing that, I can fetch data from cloudkit automatically, with a subscription, without the need for manual fetching with a timer.
