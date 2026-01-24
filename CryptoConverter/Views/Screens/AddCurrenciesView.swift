@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct AddCurrenciesView: View {
     @Environment(\.dismiss) private var dismiss
@@ -74,6 +75,7 @@ struct AddCurrenciesView: View {
             let highestOrder = allCurrencies.getHighestOrder()
             currency.sortOrder = highestOrder + 1
             currency.favourite = true
+			Log.ui.info("Currency \(currency.name) is a favourite")
         } else {
             currency.sortOrder = nil
             currency.favourite = false

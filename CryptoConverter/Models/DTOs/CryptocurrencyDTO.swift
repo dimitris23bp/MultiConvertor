@@ -8,6 +8,4 @@ struct CryptocurrencyDTO: CurrencyDTO, Sendable {
     let value: Double
     let marketCap: Double
     let iconData: Data?
-    let favourite: Bool
-    let sortOrder: Int?
 }

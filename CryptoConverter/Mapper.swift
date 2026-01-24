@@ -21,8 +21,6 @@ final class Mapper: Sendable {
             value: value,
             marketCap: marketCap,
             iconData: logoData,
-            favourite: false,
-            sortOrder: nil
         )
     }
     
@@ -41,9 +39,7 @@ final class Mapper: Sendable {
             name: name,
             value: value,
             iconData: flagData,
-            favourite: false,
             popularity: popularity,
-            sortOrder: nil
         )
     }
 }
