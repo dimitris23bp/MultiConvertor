@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct FavouritesListView: View {
     enum CurrencyType { case fiat, crypto }
@@ -26,6 +27,17 @@ struct FavouritesListView: View {
     var onMoveSeparated: (IndexSet, Int, CurrencyType) -> Void
     var updateInputs: (String, Double) -> Void
 	var lastUpdate: String
+
+	private func logFavouritesChange() {
+		let cryptoInfo = favouriteCryptos.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
+		let fiatInfo = favouriteFiats.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
+
+		Log.ui.log("Favourite cryptos changed: \(favouriteCryptos.count) items - \(cryptoInfo)")
+		Log.ui.log("Favourite fiats changed: \(favouriteFiats.count) items - \(fiatInfo)")
+
+		let combinedInfo = combinedFavourites.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
+		Log.ui.log("Combined favourites: \(combinedFavourites.count) items - \(combinedInfo)")
+	}
 
 	private var numberFormatter: NumberFormatter {
 		let formatter = NumberFormatter()
@@ -78,6 +90,12 @@ struct FavouritesListView: View {
 					Text("Last updated: \(lastUpdate)")
 				}
             }
+        }
+        .onChange(of: favouriteCryptos) { _, _ in
+            logFavouritesChange()
+        }
+        .onChange(of: favouriteFiats) { _, _ in
+            logFavouritesChange()
         }
     }
 
