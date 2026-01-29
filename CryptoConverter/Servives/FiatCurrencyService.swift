@@ -7,7 +7,6 @@ protocol FiatCurrencyServiceProtocol: Sendable {
 
 actor FiatCurrencyService : FiatCurrencyServiceProtocol {
     
-    nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
     private let repository: AllRepository
     private let cloudkitService: CloudKitServiceProtocol
     

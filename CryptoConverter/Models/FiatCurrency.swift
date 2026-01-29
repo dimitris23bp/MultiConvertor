@@ -15,13 +15,11 @@ class FiatCurrency : Currency {
     var sortOrder: Int?
     
     var icon: UIImage? {
-        if let data = iconData, let uiImage = UIImage(data: data) {
-            return uiImage
-        }
-        return nil
+        guard let iconData = iconData else { return nil }
+        return UIImage(data: iconData)
     }
         
-    init(id: String, name: String, value: Double, popularity: Int, iconData: Data?,) {
+    init(id: String, name: String, value: Double, popularity: Int, iconData: Data?) {
         self.id = id
         self.name = name
         self.value = value
@@ -31,21 +29,5 @@ class FiatCurrency : Currency {
 
     convenience init(dto: FiatCurrencyDTO) {
         self.init(id: dto.id, name: dto.name, value: dto.value, popularity: dto.popularity, iconData: dto.iconData)
-    }
-    
-    convenience init?(record: CKRecord) {
-        // Map CloudKit keys to your properties
-        // Use "as?" to safely cast types
-        guard let id = record["id"] as? String,
-              let name = record["name"] as? String,
-              let value = record["value"] as? Double,
-              let popularity = record["order"] as? Int,
-              let flagData = record["flag"] as? Data
-        else {
-            return nil
-        }
-        
-        
-        self.init(id: id, name: name, value: value, popularity: popularity, iconData: flagData)
     }
 }

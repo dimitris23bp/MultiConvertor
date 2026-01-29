@@ -26,10 +26,8 @@ class Cryptocurrency: Currency {
     var sortOrder: Int?
     
     var icon: UIImage? {
-        if let data = iconData, let uiImage = UIImage(data: data) {
-            return uiImage
-        }
-        return nil
+        guard let iconData = iconData else { return nil }
+        return UIImage(data: iconData)
     }
         
     init(id: String, name: String, value: Double, marketCap: Double, iconData: Data?) {
@@ -42,20 +40,5 @@ class Cryptocurrency: Currency {
 
     convenience init(dto: CryptocurrencyDTO) {
         self.init(id: dto.id, name: dto.name, value: dto.value, marketCap: dto.marketCap, iconData: dto.iconData)
-    }
-    
-    convenience init?(record: CKRecord) {
-        // Map CloudKit keys to your properties
-        // Use "as?" to safely cast types
-        guard let id = record["id"] as? String,
-              let name = record["name"] as? String,
-              let value = record["value"] as? Double,
-              let marketCap = record["marketCap"] as? Double,
-              let logoData = record["logo"] as? Data
-        else {
-            return nil
-        }
-        
-        self.init(id: id, name: name, value: value, marketCap: marketCap, iconData: logoData)
     }
 }

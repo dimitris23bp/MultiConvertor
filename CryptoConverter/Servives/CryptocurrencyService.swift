@@ -7,7 +7,6 @@ protocol CryptocurrencyServiceProtocol: Sendable {
 
 actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     
-    nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
     private let repository: AllRepository
     private let cloudkitService: CloudKitServiceProtocol
     

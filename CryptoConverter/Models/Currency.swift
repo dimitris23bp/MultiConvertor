@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import CloudKit
 
 @MainActor
 protocol Currency: AnyObject {

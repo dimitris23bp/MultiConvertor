@@ -10,7 +10,7 @@ protocol CloudKitServiceProtocol: Sendable {
 
 actor CloudKitService : CloudKitServiceProtocol {
     
-    nonisolated let publicDatabase = CKContainer.default().publicCloudDatabase
+    nonisolated let publicDatabase = CKContainer(identifier: "iCloud.com.myorganization.Converter").publicCloudDatabase
 
     func fetchAllFiatCurrenciesFromCK() async -> [FiatCurrencyDTO] {
         do {
