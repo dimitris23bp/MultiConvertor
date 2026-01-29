@@ -20,9 +20,9 @@ final class FiatRepository {
 
     func saveFiats(dtos: [FiatCurrencyDTO]) async throws {
         for dto in dtos {
+			print("Fetching fiat with ID: \(dto.id)")
             let fiat = FiatCurrency(dto: dto)
-            print("Fetching fiat with ID: \(fiat.id)")
-                            if fiat.iconData != nil {
+			if fiat.iconData != nil {
                 print("Inserting fiat with ID: \(fiat.id)")
                 modelContext.insert(fiat)
             }

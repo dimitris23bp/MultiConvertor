@@ -13,8 +13,8 @@ final class CryptoRepository {
 
     func saveCryptos(dtos: [CryptocurrencyDTO]) async throws {
         for dto in dtos {
+			print("Fetching crypto with ID: \(dto.id)")
             let crypto = Cryptocurrency(dto: dto)
-            print("Fetching crypto with ID: \(crypto.id)")
             if crypto.iconData != nil {
                 print("Inserting crypto with ID: \(crypto.id)")
                 modelContext.insert(crypto)

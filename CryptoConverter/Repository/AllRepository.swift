@@ -41,6 +41,7 @@ final class AllRepository {
     }
     
     func save<T: CurrencyDTO>(currencies: [T], withType type: T.Type) async throws {
+		Log.repository.info("Inside save with type: \(type)")
         // Determine the persistent model type and fetch existing IDs
         let persistentModelType = getPersistentModelType(for: type)
         let existingIDs: Set<String>
@@ -74,6 +75,7 @@ final class AllRepository {
     }
 
     func addIfDontExist<T: CurrencyDTO>(withType type: T.Type, ids: Set<String>, currencies: [T]) async throws {
+		Log.repository.info("Inside addIfDontExist with type: \(type)")
         try await executeTypedAction(
             withType: type,
             currencies: currencies,
@@ -83,6 +85,7 @@ final class AllRepository {
     }
     
     func updateAmounts<T: CurrencyDTO>(withType type: T.Type, currencies: [T]) async throws {
+		Log.repository.info("Inside updateAmounts with type: \(type)")
        try await executeTypedAction(
         withType: type,
         currencies: currencies,
@@ -92,6 +95,7 @@ final class AllRepository {
     }
     
     func addInitialFavourites() async throws {
+		Log.repository.info("Inside addInitialFavourites")
 		let cryptoFetchDescriptor = FetchDescriptor<Cryptocurrency>()
 		let cryptocurrencies = (try? modelContext.fetch(cryptoFetchDescriptor)) ?? []
 		let fiatFetchDescriptor = FetchDescriptor<FiatCurrency>()
@@ -111,6 +115,8 @@ final class AllRepository {
     }
     
     func fetchAll<T: PersistentModel>(fromType type: T.Type) -> [T] {
+		Log.repository.info("Inside fetchAll with type: \(type)")
+
         let descriptor = FetchDescriptor<T>()
         
         do {
@@ -122,6 +128,8 @@ final class AllRepository {
     }
     
     func fetchAllIDs<T: PersistentModel & Identifiable>(withType type: T.Type) -> Set<String> where T.ID == String {
+		Log.repository.info("Inside fetchAllIDs with type: \(type)")
+
         let descriptor = FetchDescriptor<T>()
         
         if let results = try? modelContext.fetch(descriptor) {
