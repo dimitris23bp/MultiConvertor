@@ -46,52 +46,59 @@ struct OverviewView: View {
 	@FocusState private var focusedCurrencyId: String?
 
 	var body: some View {
-		NavigationSplitView {
+		NavigationStack {
 			ScrollViewReader { proxy in
-                FavouritesListView(
-                    displayMode: displayMode,
-                    editMode: $editMode,
-                    selection: $selection,
-                    amounts: $amounts,
-                    focusedCurrencyId: $focusedCurrencyId,
-                    onDelete: { currency in
-                        currency.favourite = false
-                    },
-                    onMoveMerged: moveItemsMerged,
-                    onMoveSeparated: moveItemsSeparated,
-                    updateInputs: updateInputs,
-                    lastUpdate: lastUpdate
-                )
+				FavouritesListView(
+					displayMode: displayMode,
+					editMode: $editMode,
+					selection: $selection,
+					amounts: $amounts,
+					focusedCurrencyId: $focusedCurrencyId,
+					onDelete: { currency in
+						currency.favourite = false
+					},
+					onMoveMerged: moveItemsMerged,
+					onMoveSeparated: moveItemsSeparated,
+					updateInputs: updateInputs,
+					lastUpdate: lastUpdate
+				)
 				.scrollDismissesKeyboard(.interactively)
 				.toolbar {
+					// Title in the principal position
+//					 ToolbarItem(placement: .principal) {
+//						 Text("Favourites")
+//							 .font(.largeTitle) // Optional: Style the title as you prefer
+//							 .fontWeight(.bold)
+//					 }
 					ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        Menu {
-                            Button {
-                                displayMode = .merged
-                            } label: {
-                                Label {
-                                    Text("Merged")
-                                } icon: {
-                                    if displayMode == .merged {
-                                        Image(systemName: "checkmark")
-                                    }
-                                }
-                            }
-                            Button {
-                                displayMode = .separated
-                            } label: {
-                                Label {
-                                    Text("Separated")
-                                } icon: {
-                                    if displayMode == .separated {
-                                        Image(systemName: "checkmark")
-                                    }
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "line.3.horizontal.decrease")
-                        }
-                        
+						Menu {
+							// This button needs to leave and be placed as a setting in the SettingsView
+							Button {
+								displayMode = .merged
+							} label: {
+								Label {
+									Text("Merged")
+								} icon: {
+									if displayMode == .merged {
+										Image(systemName: "checkmark")
+									}
+								}
+							}
+							Button {
+								displayMode = .separated
+							} label: {
+								Label {
+									Text("Separated")
+								} icon: {
+									if displayMode == .separated {
+										Image(systemName: "checkmark")
+									}
+								}
+							}
+						} label: {
+							Image(systemName: "slider.horizontal.3")
+						}
+
 						Button(action: {
 							withAnimation {
 								editMode = editMode.isEditing ? .inactive : .active
@@ -135,27 +142,26 @@ struct OverviewView: View {
 					}
 				}
 				.environment(\.editMode, $editMode)
-			.toolbar(editMode.isEditing ? .hidden : .visible, for: .tabBar)
-			.onChange(of: focusedCurrencyId) { _, newId in
-				print("New scrolling")
-				if let id = newId {
-					print("Inside new scrolling")
-					DispatchQueue.main.async {
-						withAnimation {
-							proxy.scrollTo(id, anchor: .center)
+				.toolbar(editMode.isEditing ? .hidden : .visible, for: .tabBar)
+				.onChange(of: focusedCurrencyId) { _, newId in
+					print("New scrolling")
+					if let id = newId {
+						print("Inside new scrolling")
+						DispatchQueue.main.async {
+							withAnimation {
+								proxy.scrollTo(id, anchor: .center)
+							}
 						}
 					}
 				}
+				.padding(.top, -5)
 			}
-		}
-	} detail: {
-		Text("Select an item")
+		}.onChange(of: scenePhase, { _, newValue in
+			if newValue != .active {
+				focusedCurrencyId = nil
+			}
+		})
 	}
-	.onChange(of: scenePhase, { _, newValue in
-		if newValue != .active {
-			focusedCurrencyId = nil
-		}
-	})}
 
 	private func moveItemsMerged(from source: IndexSet, to destination: Int) {
 		var reorderedCurrencies = combinedFavourites

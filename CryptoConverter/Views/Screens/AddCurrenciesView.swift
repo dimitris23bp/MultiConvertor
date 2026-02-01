@@ -62,9 +62,11 @@ struct AddCurrenciesView: View {
 				}
 				
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+					Button(action: {
+						dismiss()
+					}) {
+						Image(systemName: "xmark")
+					}
                 }
             }
         }
