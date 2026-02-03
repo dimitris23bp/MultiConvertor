@@ -37,3 +37,6 @@
 
 - Fix the error: BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
 By doing that, I can fetch data from cloudkit automatically, with a subscription, without the need for manual fetching with a timer.
+- When the user has a lot of time to enter the app, it goes back to the loading screen for some reason. Shouldn't the data stay in the ModelContext?
+Maybe I use wrongly the updateAmounts? IDK, but I should find out
+- Fix the lagging when I press a button for the first time after installation.
