@@ -15,7 +15,7 @@ struct MainTabView: View {
 
 	// Check if I have at least 3 cryptos, or if it's preview
 	private var isLoading: Bool {
-		cryptocurrencies.count < 3 || !isPreview
+		cryptocurrencies.count < 3
 	}
 
 	let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
@@ -75,7 +75,7 @@ struct MainTabView: View {
 		.onAppear {
 			Task {
 				print("Task is called.")
-				if isLoading {
+				if isLoading || isPreview {
 					scheduler.updateLastExecution()
 					try? await currencyService.ensureInitialDataIfNeeded()
 					await currencyService.addInitialFavourites()
