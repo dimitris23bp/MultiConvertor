@@ -4,7 +4,20 @@ import SwiftData
 struct MainTabView: View {
 	@Environment(\.scenePhase) private var scenePhase
 	@Environment(\.modelContext) private var modelContext
-	
+
+	static var fetchDescriptor: FetchDescriptor<Cryptocurrency> {
+		var descriptor = FetchDescriptor<Cryptocurrency>()
+		descriptor.fetchLimit = 3
+		return descriptor
+	}
+
+	@Query(fetchDescriptor) private var cryptocurrencies: [Cryptocurrency]
+
+	// Check if I have at least 3 cryptos, or if it's preview
+	private var isLoading: Bool {
+		cryptocurrencies.count < 3 || !isPreview
+	}
+
 	let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
 	@StateObject private var scheduler = TickerUpdateScheduler()
@@ -25,7 +38,7 @@ struct MainTabView: View {
 
     var body: some View {
 		Group {
-			if !favouritesInitialized {
+			if isLoading {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
 						Image("btc")
@@ -62,9 +75,7 @@ struct MainTabView: View {
 		.onAppear {
 			Task {
 				print("Task is called.")
-				let fetchDescriptor = FetchDescriptor<Cryptocurrency>()
-				// Check immediately on appear if I have at least 3 cryptos, or if it's preview
-				if let result = try? modelContext.fetch(fetchDescriptor), result.count < 3 || isPreview {
+				if isLoading {
 					scheduler.updateLastExecution()
 					try? await currencyService.ensureInitialDataIfNeeded()
 					await currencyService.addInitialFavourites()
