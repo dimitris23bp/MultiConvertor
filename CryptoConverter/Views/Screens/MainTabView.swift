@@ -38,7 +38,7 @@ struct MainTabView: View {
 
     var body: some View {
 		Group {
-			if isLoading {
+			if isLoading && !favouritesInitialized {
 				ContentUnavailableView {
 					VStack(spacing: 8) {
 						Image("btc")
@@ -79,8 +79,10 @@ struct MainTabView: View {
 					scheduler.updateLastExecution()
 					try? await currencyService.ensureInitialDataIfNeeded()
 					await currencyService.addInitialFavourites()
+					favouritesInitialized = true // Favourites have been added
 					print("Initial data has happened")
 				} else if scheduler.checkIfNeeded() {
+					favouritesInitialized = true // No need add favourites again
 					scheduler.updateLastExecution()
 					await currencyService.updateAmounts()
 					print("Update has happened")
