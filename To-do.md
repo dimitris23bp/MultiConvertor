@@ -39,4 +39,10 @@
 By doing that, I can fetch data from cloudkit automatically, with a subscription, without the need for manual fetching with a timer.
 - When the user has a lot of time to enter the app, it goes back to the loading screen for some reason. Shouldn't the data stay in the ModelContext?
 Maybe I use wrongly the updateAmounts? IDK, but I should find out
-- Fix the lagging when I press a button for the first time after installation.
+- Add data in many small batches, not in two big ones
+- Put the last fetch (for crypto and fiat) in settings somehow
+- Put the merged/separated in settings, not as button in the topbar
+- Make sure I fetch all the data, all the time. If the user quits before I load all the data, then the data will never get fetched again, since this happens only in the first launch. 
+- Find what the colour themes work
+- FInd how Maria can use the gifs 
+
