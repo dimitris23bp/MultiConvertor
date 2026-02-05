@@ -27,10 +27,6 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
 
 		try await repository.save(currencies: fiatDTOs, withType: FiatCurrencyDTO.self)
         print("Initial fiatCurrencies are saved")
-
-		// TODO: This shouldn't be here. Logically doesn't make sense and it's hard to track it down
-        // Remaining data will be saved asynchronously to not wait for them in the first install of the app
-        await ensureRemainingData()
     }
     
     func updateAmountOfFiats() async {
@@ -38,9 +34,9 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
 		try? await repository.updateAmounts(withType: FiatCurrencyDTO.self, currencies: incomingFiats)
    }
     
-    private func ensureRemainingData() async {
+    func ensureRemainingData() async {
         print("Adding remaining data")
-        
+
 		let ids = await repository.fetchAllIDs(withType: FiatCurrency.self)
 
         let cloudkitServiceSelf = self.cloudkitService

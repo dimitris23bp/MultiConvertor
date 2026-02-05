@@ -88,6 +88,10 @@ struct MainTabView: View {
 					print("Update has happened")
 				}
 
+				// When the initial update is done (if needed), make sure the remaining data exist
+				// If not, add them
+				await currencyService.ensureRemainingData()
+
 				// No matter what happened above, the favourites are in place and the main page can finally load
 				favouritesInitialized = true
 

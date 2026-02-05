@@ -21,7 +21,14 @@ actor CurrencyService: CurrencyServiceProtocol {
         
         _ = try await [fiatData, cryptoData]
     }
-    
+
+	func ensureRemainingData() async {
+		async let fiatData: () = fiatService.ensureRemainingData()
+		async let cryptoData: () = cryptoService.ensureRemainingData()
+		
+		_ = await [fiatData, cryptoData]
+	}
+
     func updateAmounts() async {
         async let updateFiatData: () = fiatService.updateAmountOfFiats()
         async let updateCryptoData: () = cryptoService.updateAmountOfCryptos()

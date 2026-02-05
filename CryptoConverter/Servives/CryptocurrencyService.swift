@@ -28,12 +28,10 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
 		try await repository.save(currencies: cryptocurrencyDTOs, withType: CryptocurrencyDTO.self)
 
 		print("Initial cryptocurrencies are saved")
-
-		// Remaining data will be saved asynchronously to not wait for them in the first install of the app
-		await ensureRemainingData()
 	}
 
-    private func ensureRemainingData() async {
+	// TODO: Can I skip entirely this function? I may not need to do it, and just keep this little logic in the CurrencyService or in the Repo
+    func ensureRemainingData() async {
         print("Adding remaining data")
         
 		let ids = await repository.fetchAllIDs(withType: Cryptocurrency.self)
