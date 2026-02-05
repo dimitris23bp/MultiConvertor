@@ -20,12 +20,9 @@ final class FiatRepository {
 
     func saveFiats(dtos: [FiatCurrencyDTO]) async throws {
         for dto in dtos {
-			print("Fetching fiat with ID: \(dto.id)")
             let fiat = FiatCurrency(dto: dto)
-			if fiat.iconData != nil {
-                print("Inserting fiat with ID: \(fiat.id)")
-                modelContext.insert(fiat)
-            }
+			print("Inserting fiat with ID: \(fiat.id)")
+			modelContext.insert(fiat)
         }
         
         try modelContext.save()
@@ -42,13 +39,9 @@ final class FiatRepository {
         
         for dto in dtos {
             let fiat = FiatCurrency(dto: dto)
-            print("Fetching fiat in remaining with ID: \(fiat.id)")
             if !ids.contains(fiat.id) {
-				// TODO: Does this not work? Why are the double in ContentModel?
-				if fiat.iconData != nil {
-                    print("Inserting fiat in remaining with ID: \(fiat.id)")
-                    backgroundContext.insert(fiat)
-                }
+				print("Inserting fiat in remaining with ID: \(fiat.id)")
+				backgroundContext.insert(fiat)
             }
         }
         try backgroundContext.save()
