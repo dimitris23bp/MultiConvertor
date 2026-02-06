@@ -10,7 +10,14 @@ import SwiftData
 
 @main
 struct CryptoConverterApp: App {
+    
     var sharedModelContainer: ModelContainer = {
+        
+        let schema = Schema([
+            Cryptocurrency.self, 
+            FiatCurrency.self, 
+            AppSettings.self
+        ])
         
         let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 		let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isPreview, cloudKitDatabase: .none)

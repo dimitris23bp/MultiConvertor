@@ -1,6 +1,10 @@
 import SwiftUI
+import Foundation
 
 struct SettingsView: View {
+	@Environment(\.modelContext) private var modelContext
+	@State private var settingsService: AppSettingsService?
+
 	var body: some View {
 		NavigationStack {
 			List {
@@ -22,8 +26,30 @@ struct SettingsView: View {
 				} header: {
 					Text("Additional Info")
 				}
+
+				Section {
+					if let settingsService = settingsService {
+						Picker("Display Mode", selection: Binding(
+							get: { settingsService.settings.displayMode },
+							set: { newValue in
+								settingsService.settings.displayMode = newValue
+								settingsService.save()
+							}
+						)) {
+							Text("Merged").tag(DisplayMode.merged)
+							Text("Separated").tag(DisplayMode.separated)
+						}
+					}
+				} header: {
+					Text("Display Settings")
+				}
 			}
 			.navigationTitle("Settings")
+		}
+		.onAppear {
+			if settingsService == nil {
+				settingsService = AppSettingsService(modelContext: modelContext)
+			}
 		}
 	}
 }

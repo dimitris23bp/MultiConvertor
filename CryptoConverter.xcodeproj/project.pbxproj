@@ -10,6 +10,7 @@
 		B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */ = {isa = PBXBuildFile; fileRef = B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
 		B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */ = {isa = PBXBuildFile; fileRef = B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */; };
+		B7FE762D2F36197100B8C3B7 /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B7FE762C2F36197100B8C3B7 /* AGENTS.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
 		B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "logo-from-composer.icon"; sourceTree = "<group>"; };
 		B7FC087B2EA559E600984CAD /* Currency Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Currency Converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7FE762C2F36197100B8C3B7 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,6 +86,7 @@
 		B7EFC44F2E8758F9003B9373 = {
 			isa = PBXGroup;
 			children = (
+				B7FE762C2F36197100B8C3B7 /* AGENTS.md */,
 				B7432F8C2E9BDC9D00DE2F10 /* GEMINI.md */,
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
@@ -232,6 +235,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7FE762D2F36197100B8C3B7 /* AGENTS.md in Resources */,
 				B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */,
 				B7432F8D2E9BDC9D00DE2F10 /* GEMINI.md in Resources */,
 				B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */,

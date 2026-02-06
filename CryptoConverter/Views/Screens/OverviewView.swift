@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Foundation
 
 struct InputValues {
 	// Store the trimmed value 1.23456789 will be "1.234567"
@@ -13,6 +14,12 @@ struct OverviewView: View {
 	@Environment(\.modelContext) private var modelContext
     
     let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+    
+    @Query private var appSettings: [AppSettings]
+    
+    private var displayMode: DisplayMode {
+        appSettings.first?.displayMode ?? .merged
+    }
 
 	@Query(sort: \Cryptocurrency.sortOrder, animation: .default) private var cryptocurrencies: [Cryptocurrency]
 
@@ -42,7 +49,6 @@ struct OverviewView: View {
 	@State private var editMode: EditMode = .inactive
     @State private var selection = Set<String>()
 	@State private var isShowingSheet = false
-	@State private var displayMode: DisplayMode = .merged
 	@FocusState private var focusedCurrencyId: String?
 
 	var body: some View {
@@ -71,33 +77,6 @@ struct OverviewView: View {
 //							 .fontWeight(.bold)
 //					 }
 					ToolbarItemGroup(placement: .navigationBarTrailing) {
-						Menu {
-							// This button needs to leave and be placed as a setting in the SettingsView
-							Button {
-								displayMode = .merged
-							} label: {
-								Label {
-									Text("Merged")
-								} icon: {
-									if displayMode == .merged {
-										Image(systemName: "checkmark")
-									}
-								}
-							}
-							Button {
-								displayMode = .separated
-							} label: {
-								Label {
-									Text("Separated")
-								} icon: {
-									if displayMode == .separated {
-										Image(systemName: "checkmark")
-									}
-								}
-							}
-						} label: {
-							Image(systemName: "slider.horizontal.3")
-						}
 
 						Button(action: {
 							withAnimation {

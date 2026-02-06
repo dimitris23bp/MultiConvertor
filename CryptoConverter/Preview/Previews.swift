@@ -2,7 +2,7 @@ import SwiftData
 import Foundation
 import SwiftUI
 
-let schema: Schema = Schema([Cryptocurrency.self, FiatCurrency.self])
+let schema: Schema = Schema([Cryptocurrency.self, FiatCurrency.self, AppSettings.self])
 
 struct Previews {
     
@@ -75,6 +75,9 @@ struct Previews {
 
         container.mainContext.insert(previewEur)
         container.mainContext.insert(previewUsd)
+        
+        // Add default app settings
+        container.mainContext.insert(AppSettings())
         
 		return container
 	}()
