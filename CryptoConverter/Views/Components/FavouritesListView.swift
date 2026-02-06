@@ -91,6 +91,8 @@ struct FavouritesListView: View {
 				}
             }
         }
+		.scrollContentBackground(.hidden)
+		.background(Color("MainColor"))
         .onChange(of: favouriteCryptos) { _, _ in
             logFavouritesChange()
         }

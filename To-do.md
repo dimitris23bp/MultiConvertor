@@ -42,7 +42,6 @@ Maybe I use wrongly the updateAmounts? IDK, but I should find out
 - Add data in many small batches, not in two big ones
 - Put the last fetch (for crypto and fiat) in settings somehow
 - Put the merged/separated in settings, not as button in the topbar
-- Make sure I fetch all the data, all the time. If the user quits before I load all the data, then the data will never get fetched again, since this happens only in the first launch. 
 - Find what the colour themes work
 - FInd how Maria can use the gifs 
 

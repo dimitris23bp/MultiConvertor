@@ -65,6 +65,7 @@ struct CurrencyItemView: View {
 			.tint(Color.clear)
 			.minimumScaleFactor(0.75)
 		}
+		.listRowBackground(Color("MainColor"))
 		.id(currency.id)
 		.contentShape(Rectangle())
 		.simultaneousGesture(TapGesture().onEnded {
