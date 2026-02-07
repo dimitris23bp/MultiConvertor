@@ -25,7 +25,7 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
 		print("Fetching initial cryptocurrencies")
 		let cryptocurrencyDTOs = try await cloudkitService.fetchCryptocurrenciesFromCK(amount: 50)
 
-		try await repository.save(currencies: cryptocurrencyDTOs, withType: CryptocurrencyDTO.self)
+		await repository.save(currencies: cryptocurrencyDTOs, withType: CryptocurrencyDTO.self)
 
 		print("Initial cryptocurrencies are saved")
 	}
@@ -41,7 +41,7 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
         // Perform work in a separate Task that isn't bound to the MainActor
         Task.detached(priority: .utility) { [repository] in
             let allCryptoDTOs = await cloudkitServiceSelf.fetchAllCryptocurrenciesFromCK()
-			try? await repository.addIfDontExist(withType: CryptocurrencyDTO.self, ids: ids, currencies: allCryptoDTOs)
+			await repository.addIfDontExist(withType: CryptocurrencyDTO.self, ids: ids, currencies: allCryptoDTOs)
         }
         
         print("Remaining cryptos are saved")
@@ -50,8 +50,7 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
     func updateAmountOfCryptos() async {
         let incomingCryptos = await cloudkitService.fetchAllCryptocurrenciesFromCK()
 
-		// TODO: Remove the try?
-		try? await repository.updateAmounts(withType: CryptocurrencyDTO.self, currencies: incomingCryptos)
+		await repository.updateAmounts(withType: CryptocurrencyDTO.self, currencies: incomingCryptos)
    }
 
 	func getLastUpdate() async -> String {

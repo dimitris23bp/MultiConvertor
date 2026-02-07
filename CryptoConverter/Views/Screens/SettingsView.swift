@@ -8,25 +8,10 @@ struct SettingsView: View {
 	var body: some View {
 		NavigationStack {
 			List {
-//				Section {
-//					NavigationLink(destination: Text("Membership features coming soon!")) {
-//						Text("Upgrade to Pro")
-//					}
-//				} header: {
-//					Text("Membership")
-//				}
 
-				Section {
-					NavigationLink(destination: PrivacyPolicyView()) {
-						Text("Privacy Policy")
-					}
-//					NavigationLink(destination: Text("Support features coming soon!")) {
-//						Text("Contact Support")
-//					}
-				} header: {
-					Text("Additional Info")
-				}
+				// TODO: Update Information needs to be somewhere in here
 
+				// Display Settings
 				Section {
 					if let settingsService = settingsService {
 						Picker("Display Mode", selection: Binding(
@@ -43,6 +28,16 @@ struct SettingsView: View {
 				} header: {
 					Text("Display Settings")
 				}
+
+				// Additional Info
+				Section {
+					NavigationLink(destination: PrivacyPolicyView()) {
+						Text("Privacy Policy")
+					}
+				} header: {
+					Text("Additional Info")
+				}
+
 			}
 			.navigationTitle("Settings")
 		}

@@ -25,13 +25,13 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
         print("Fetching initial fiat currencies")
         let fiatDTOs = try await cloudkitService.fetchFiatCurrenciesFromCK(amount: 20)
 
-		try await repository.save(currencies: fiatDTOs, withType: FiatCurrencyDTO.self)
+		await repository.save(currencies: fiatDTOs, withType: FiatCurrencyDTO.self)
         print("Initial fiatCurrencies are saved")
     }
     
     func updateAmountOfFiats() async {
         let incomingFiats = await cloudkitService.fetchAllFiatCurrenciesFromCK()
-		try? await repository.updateAmounts(withType: FiatCurrencyDTO.self, currencies: incomingFiats)
+		await repository.updateAmounts(withType: FiatCurrencyDTO.self, currencies: incomingFiats)
    }
     
     func ensureRemainingData() async {
@@ -44,7 +44,7 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
         // Perform work in a separate Task that isn't bound to the MainActor
         Task.detached(priority: .utility) { [repository] in
             let allFiatDTOs = await cloudkitServiceSelf.fetchAllFiatCurrenciesFromCK()
-			try? await repository.addIfDontExist(withType: FiatCurrencyDTO.self, ids: ids, currencies: allFiatDTOs)
+			await repository.addIfDontExist(withType: FiatCurrencyDTO.self, ids: ids, currencies: allFiatDTOs)
         }
         
         print("Remaining fiats are saved")

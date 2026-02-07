@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
 		B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */ = {isa = PBXBuildFile; fileRef = B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */; };
-		B7FE762D2F36197100B8C3B7 /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B7FE762C2F36197100B8C3B7 /* AGENTS.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -232,7 +231,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7FE762D2F36197100B8C3B7 /* AGENTS.md in Resources */,
 				B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */,
 				B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */,
 			);
