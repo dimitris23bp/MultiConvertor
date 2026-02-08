@@ -2,7 +2,7 @@ import SwiftData
 import Foundation
 import SwiftUI
 
-let schema: Schema = Schema([Cryptocurrency.self, FiatCurrency.self, AppSettings.self])
+let schema: Schema = Schema([Cryptocurrency.self, FiatCurrency.self])
 
 struct Previews {
     
@@ -65,20 +65,28 @@ struct Previews {
         currency.favourite = true
         return currency
     }
-    
+
+	static var previewSettings: AppSettings {
+		let appSettings = AppSettings()
+		return appSettings
+	}
+
     // The sample preview db
     static let preview: ModelContainer = {
-        let container = try! ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-		container.mainContext.insert(previewBtc)
-		container.mainContext.insert(previewEth)
-        container.mainContext.insert(previewDot)
+        do {
+            let container = try ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+			container.mainContext.insert(previewBtc)
+			container.mainContext.insert(previewEth)
+            container.mainContext.insert(previewDot)
 
-        container.mainContext.insert(previewEur)
-        container.mainContext.insert(previewUsd)
-        
-        // Add default app settings
-        container.mainContext.insert(AppSettings())
-        
-		return container
+            container.mainContext.insert(previewEur)
+            container.mainContext.insert(previewUsd)
+            
+            // Note: AppSettings not included in preview schema to avoid SwiftData issues
+            
+			return container
+        } catch {
+            fatalError("Failed to create preview container: \(error)")
+        }
 	}()
 }
