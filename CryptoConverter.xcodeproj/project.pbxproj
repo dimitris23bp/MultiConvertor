@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B75F2F802F39076800775802 /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B75F2F7F2F39076800775802 /* AGENTS.md */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
 		B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */ = {isa = PBXBuildFile; fileRef = B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */; };
 /* End PBXBuildFile section */
@@ -31,10 +32,10 @@
 /* Begin PBXFileReference section */
 		5BC7A0792EF9E4380095F785 /* CryptoConverterUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC7A0862EF9E50A0095F785 /* CryptoConverterIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B75F2F7F2F39076800775802 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
 		B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "logo-from-composer.icon"; sourceTree = "<group>"; };
 		B7FC087B2EA559E600984CAD /* Currency Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Currency Converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B7FE762C2F36197100B8C3B7 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -83,7 +84,7 @@
 		B7EFC44F2E8758F9003B9373 = {
 			isa = PBXGroup;
 			children = (
-				B7FE762C2F36197100B8C3B7 /* AGENTS.md */,
+				B75F2F7F2F39076800775802 /* AGENTS.md */,
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
 				B7FC087B2EA559E600984CAD /* Currency Converter.app */,
@@ -232,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */,
+				B75F2F802F39076800775802 /* AGENTS.md in Resources */,
 				B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
