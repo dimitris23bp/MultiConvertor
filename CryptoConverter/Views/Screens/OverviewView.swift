@@ -18,10 +18,7 @@ struct OverviewView: View {
     @Query private var appSettings: [AppSettings]
     
     private var displayMode: DisplayMode {
-        if isPreview {
-            return .merged // Default for previews
-        }
-        return appSettings.first?.displayMode ?? .merged
+        appSettings.first?.displayMode ?? .merged
     }
 
 	@Query(sort: \Cryptocurrency.sortOrder, animation: .default) private var cryptocurrencies: [Cryptocurrency]
