@@ -1,7 +1,12 @@
 import SwiftUI
 
 struct MarkdownView: View {
-	let content: String
+	@State private var content: String = "Loading..."
+	let fileName: String
+
+	var displayName: String {
+		return fileName.replacingOccurrences(of: "_", with: " ")
+	}
 
 	var body: some View {
 		ScrollView {
@@ -42,5 +47,21 @@ struct MarkdownView: View {
 			}
 			.padding()
 		}
+		.onAppear {
+			loadFile()
+		}
 	}
+
+	private func loadFile() {
+		if let url = Bundle.main.url(forResource: fileName, withExtension: "md") {
+			do {
+				content = try String(contentsOf: url, encoding: .utf8)
+			} catch {
+				content = "Error loading \(displayName): \(error.localizedDescription)"
+			}
+		} else {
+			content = "\(displayName) file not found in Bundle."
+		}
+	}
+
 }

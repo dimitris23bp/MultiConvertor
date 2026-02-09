@@ -31,7 +31,11 @@ struct SettingsView: View {
 
 				// Additional Info
 				Section {
-					NavigationLink(destination: PrivacyPolicyView()) {
+					NavigationLink(destination: MarkdownView(fileName: "File", )) {
+						Text("Technical Information")
+					}
+
+					NavigationLink(destination: MarkdownView(fileName: "Privacy_Policy")) {
 						Text("Privacy Policy")
 					}
 				} header: {
@@ -48,30 +52,6 @@ struct SettingsView: View {
 		}
 	}
 }
-
-struct PrivacyPolicyView: View {
-	@State private var policyContent: String = "Loading..."
-
-	var body: some View {
-		MarkdownView(content: policyContent)
-			.onAppear {
-				loadPolicy()
-			}
-	}
-	
-	private func loadPolicy() {
-		if let url = Bundle.main.url(forResource: "Privacy_Policy", withExtension: "md") {
-			do {
-				policyContent = try String(contentsOf: url, encoding: .utf8)
-			} catch {
-				policyContent = "Error loading Privacy Policy: \(error.localizedDescription)"
-			}
-		} else {
-			policyContent = "Privacy Policy file not found in Bundle."
-		}
-	}
-}
-
 
 #Preview {
 	SettingsView()
