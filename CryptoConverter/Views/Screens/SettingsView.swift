@@ -31,7 +31,7 @@ struct SettingsView: View {
 
 				// Additional Info
 				Section {
-					NavigationLink(destination: MarkdownView(fileName: "File", )) {
+					NavigationLink(destination: MarkdownView(fileName: "Technical_Information")) {
 						Text("Technical Information")
 					}
 
