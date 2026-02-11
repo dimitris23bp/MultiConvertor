@@ -5,11 +5,17 @@ struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
 	@State private var settingsService: AppSettingsService?
 
+	// TODO: Soon to be used from the service
+	private func getCurrentDate() -> String {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .medium
+		formatter.timeStyle = .short
+		return formatter.string(from: Date())
+	}
+
 	var body: some View {
 		NavigationStack {
 			List {
-
-				// TODO: Update Information needs to be somewhere in here
 
 				// Display Settings
 				Section {
@@ -40,6 +46,18 @@ struct SettingsView: View {
 					}
 				} header: {
 					Text("Additional Info")
+				}
+
+				// Update Information Footer
+				Section {
+					EmptyView() // Empty section just to hold the footer
+				} footer: {
+					VStack(alignment: .leading, spacing: 4) {
+						Text("Cryptocurrencies updated: \(getCurrentDate())")
+						Text("Fiat currencies updated: \(getCurrentDate())")
+					}
+					.font(.footnote)
+					.foregroundColor(.secondary)
 				}
 
 			}

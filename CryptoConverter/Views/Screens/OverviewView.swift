@@ -43,7 +43,6 @@ struct OverviewView: View {
     }
 
 	@ObservedObject var scheduler: TickerUpdateScheduler
-	var lastUpdate: String
 	
 	@State private var amounts: [String: Double] = [:]
 	@State private var editMode: EditMode = .inactive
@@ -65,8 +64,7 @@ struct OverviewView: View {
 					},
 					onMoveMerged: moveItemsMerged,
 					onMoveSeparated: moveItemsSeparated,
-					updateInputs: updateInputs,
-					lastUpdate: lastUpdate
+					updateInputs: updateInputs
 				)
 				.scrollDismissesKeyboard(.interactively)
 				.toolbar {
@@ -252,6 +250,6 @@ struct OverviewView: View {
 
 
 #Preview {
-	OverviewView(scheduler: TickerUpdateScheduler(), lastUpdate: "Preview Update")
+	OverviewView(scheduler: TickerUpdateScheduler())
 		.modelContainer(Previews.preview)
 }

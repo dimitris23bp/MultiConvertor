@@ -32,14 +32,34 @@ This document contains important information about the CryptoConverter project t
 - Important bug fixes
 - Any changes that affect the overall project understanding
 
+## Development Best Practices
+**IMPORTANT**: After every code change, you MUST compile the project to verify there are no compilation errors.
+
+For compilation instructions, refer to: https://github.com/banghuazhao/Swift-iOS-CLI-Build-Cheat-Sheet/blob/main/xcodebuild.md
+
+This ensures:
+- All imports are correct
+- Type references are valid
+- SwiftData schema changes are properly handled
+- No syntax errors are introduced
+- The project builds successfully before testing
+
+## Compilation Quick Reference
+```bash
+# Clean and build for iOS
+cd /path/to/CryptoConverter
+xcodebuild -scheme CryptoConverter -destination 'generic/platform=iOS' clean build
+
+# Build for specific simulator
+xcodebuild -scheme CryptoConverter -destination 'platform=iOS Simulator,name=iPhone 15' build
+
+# Check for specific errors
+xcodebuild -scheme CryptoConverter build 2>&1 | grep -A 5 -B 5 "error:"
+```
+
 ## Special Instructions
 **Important**: The user's name is Batman and should be addressed as such when requested or when appropriate in conversations about the project.
 
-## Recent Changes (as of last update)
-- Disabled private database in iCloud
-- Updated logging functionality
-- Made app work with assets
-- Simplified code related to favorites handling after CloudKit DTO processing
 
 ## Last Updated
 This document should be reviewed and updated regularly to maintain accuracy with the current state of the project.

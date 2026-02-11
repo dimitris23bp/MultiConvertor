@@ -21,7 +21,6 @@ struct MainTabView: View {
 	let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
 	@StateObject private var scheduler = TickerUpdateScheduler()
-	@State private var lastUpdate = "NaN"
 	@State private var favouritesInitialized = false
 
 	private var currencyService: CurrencyService {
@@ -53,7 +52,7 @@ struct MainTabView: View {
 				}
 			} else {
 				TabView {
-					OverviewView(scheduler: scheduler, lastUpdate: lastUpdate)
+					OverviewView(scheduler: scheduler)
 						.tabItem {
 							Label("Overview", systemImage: "house")
 						}
@@ -62,13 +61,6 @@ struct MainTabView: View {
 						.tabItem {
 							Label("Settings", systemImage: "gear")
 						}
-				}
-				.onAppear {
-					Task {
-						print("Calling getLastUpdate with value: \(lastUpdate)")
-						lastUpdate = await currencyService.getLastUpdate()
-						print("Retrieved getLastUpdate with value: \(lastUpdate)")
-					}
 				}
 			}
 		}

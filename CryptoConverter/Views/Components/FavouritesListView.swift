@@ -26,7 +26,6 @@ struct FavouritesListView: View {
     var onMoveMerged: (IndexSet, Int) -> Void
     var onMoveSeparated: (IndexSet, Int, CurrencyType) -> Void
     var updateInputs: (String, Double) -> Void
-	var lastUpdate: String
 
 	private func logFavouritesChange() {
 		let cryptoInfo = favouriteCryptos.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
@@ -52,54 +51,48 @@ struct FavouritesListView: View {
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
     }
 
-    var body: some View {
-        List {
-            if displayMode == .merged {
-                Section {
-                    ForEach(combinedFavourites, id: \.id) { currency in
+	var body: some View {
+		List {
+			if displayMode == .merged {
+				Section {
+					ForEach(combinedFavourites, id: \.id) { currency in
 						currencyItemView(for: currency)
-                    }
-                    .onMove(perform: onMoveMerged)
-
-				} footer: {
-					Text("Last updated: \(lastUpdate)")
+					}
+					.onMove(perform: onMoveMerged)
 				}
-            } else {
-                Section {
-                    ForEach(favouriteFiats, id: \.id) { currency in
+			} else {
+				Section {
+					ForEach(favouriteFiats, id: \.id) { currency in
 						currencyItemView(for: currency)
-                    }
-                    .onMove(perform: { source, destination in
-                        onMoveSeparated(source, destination, .fiat)
-                    })
+					}
+					.onMove(perform: { source, destination in
+						onMoveSeparated(source, destination, .fiat)
+					})
 				} header: {
 					Text("Fiat Currencies")
 				}
 
-                Section {
-                    ForEach(favouriteCryptos, id: \.id) { currency in
+				Section {
+					ForEach(favouriteCryptos, id: \.id) { currency in
 						currencyItemView(for: currency)
-                    }
-                    .onMove(perform: { source, destination in
-                        onMoveSeparated(source, destination, .crypto)
-                    })
+					}
+					.onMove(perform: { source, destination in
+						onMoveSeparated(source, destination, .crypto)
+					})
 				} header: {
 					Text("Crypto Currencies")
-
-				} footer: {
-					Text("Last updated: \(lastUpdate)")
 				}
-            }
-        }
+			}
+		}
 		.scrollContentBackground(.hidden)
 		.background(Color("MainColor"))
-        .onChange(of: favouriteCryptos) { _, _ in
-            logFavouritesChange()
-        }
-        .onChange(of: favouriteFiats) { _, _ in
-            logFavouritesChange()
-        }
-    }
+		.onChange(of: favouriteCryptos) { _, _ in
+			logFavouritesChange()
+		}
+		.onChange(of: favouriteFiats) { _, _ in
+			logFavouritesChange()
+		}
+	}
 
 	private func currencyItemView(for currency: any Currency) -> some View {
 		CurrencyItemView(
