@@ -16,6 +16,8 @@ struct FavouritesListView: View {
 		animation: .default
 	) private var favouriteFiats: [FiatCurrency]
 
+	@Query private var appSettings: [AppSettings]
+
     var displayMode: DisplayMode
     @Binding var editMode: EditMode
     @Binding var selection: Set<String>
@@ -36,14 +38,6 @@ struct FavouritesListView: View {
 
 		let combinedInfo = combinedFavourites.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
 		Log.ui.log("Combined favourites: \(combinedFavourites.count) items - \(combinedInfo)")
-	}
-
-	private var numberFormatter: NumberFormatter {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.locale = Locale.current
-		formatter.maximumFractionDigits = 8
-		return formatter
 	}
 
     private var combinedFavourites: [any Currency] {
@@ -94,6 +88,14 @@ struct FavouritesListView: View {
 		}
 	}
 
+	private func getAmountOfDecimals(for currency: any Currency) -> Int {
+		if currency is Cryptocurrency {
+			return appSettings.first?.cryptoDecimals ?? 8
+		} else {
+			return appSettings.first?.fiatDecimals ?? 8
+		}
+	}
+
 	private func currencyItemView(for currency: any Currency) -> some View {
 		CurrencyItemView(
 			currency: currency,
@@ -107,7 +109,7 @@ struct FavouritesListView: View {
 				}
 			),
 			updateInputs: updateInputs,
-			numberFormatter: numberFormatter,
+			decimals: getAmountOfDecimals(for: currency),
 			focusedCurrencyId: focusedCurrencyId,
 			onTap: handleCurrencyTap,
 			onDelete: onDelete)

@@ -2,12 +2,6 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-struct InputValues {
-	// Store the trimmed value 1.23456789 will be "1.234567"
-	var amountString: String
-	// Stores the real value, to be precise in calculations
-	var amountDouble: Double
-}
 
 struct OverviewView: View {
 	@Environment(\.scenePhase) private var scenePhase

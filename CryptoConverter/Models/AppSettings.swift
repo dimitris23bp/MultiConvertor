@@ -12,7 +12,7 @@ final class AppSettings {
         set { displayModeRaw = newValue.rawValue }
     }
 
-	init(displayMode: DisplayMode = .merged, cryptoDecimals: Int = 7, fiatDecimals: Int = 7) {
+	init(displayMode: DisplayMode = .merged, cryptoDecimals: Int = 7, fiatDecimals: Int = 2) {
         self.displayModeRaw = displayMode.rawValue
 		self.cryptoDecimals = cryptoDecimals
 		self.fiatDecimals = fiatDecimals

@@ -7,7 +7,16 @@ struct CurrencyItemView: View {
 	@Binding var selection: Set<String>
 	@Binding var amount: Double
 	var updateInputs: (String, Double) -> Void
-	let numberFormatter: NumberFormatter
+	var decimals: Int
+
+	private var numberFormatter: NumberFormatter {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		formatter.locale = Locale.current
+		formatter.maximumFractionDigits = decimals
+		return formatter
+	}
+
 	var focusedCurrencyId: FocusState<String?>.Binding
 
 	var onTap: (any Currency) -> Void
