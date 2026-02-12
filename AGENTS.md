@@ -62,6 +62,8 @@ xcodebuild -scheme CryptoConverter build 2>&1 | grep -A 5 -B 5 "error:"
 ## Special Instructions
 **Important**: The user's name is Batman and should be addressed as such when requested or when appropriate in conversations about the project.
 
+**Git Usage Policy**: Do NOT use Git commands (commit, push, pull, etc.) unless explicitly instructed by the user. All code changes should be made and shown to the user for review before any Git operations are performed.
+
 
 ## Last Updated
 This document should be reviewed and updated regularly to maintain accuracy with the current state of the project.
