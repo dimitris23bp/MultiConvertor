@@ -57,7 +57,7 @@ struct MainTabView: View {
 							Label("Overview", systemImage: "house")
 						}
 
-					SettingsView()
+					SettingsView(currencyService: currencyService)
 						.tabItem {
 							Label("Settings", systemImage: "gear")
 						}

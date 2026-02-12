@@ -46,16 +46,18 @@ This ensures:
 
 ## Compilation Quick Reference
 ```bash
-# Clean and build for iOS
+# Clean and build for iOS (USE THIS FOR VERIFICATION)
 cd /path/to/CryptoConverter
 xcodebuild -scheme CryptoConverter -destination 'generic/platform=iOS' clean build
 
-# Build for specific simulator
+# Build for specific simulator (ONLY when actually testing on simulator)
 xcodebuild -scheme CryptoConverter -destination 'platform=iOS Simulator,name=iPhone 15' build
 
 # Check for specific errors
 xcodebuild -scheme CryptoConverter build 2>&1 | grep -A 5 -B 5 "error:"
 ```
+
+**BUILD POLICY**: Only use `generic/platform=iOS` for compilation verification. Avoid simulator builds unless explicitly testing on simulator to prevent timeout issues.
 
 ## Special Instructions
 **Important**: The user's name is Batman and should be addressed as such when requested or when appropriate in conversations about the project.

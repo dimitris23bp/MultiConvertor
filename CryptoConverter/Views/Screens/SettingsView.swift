@@ -4,6 +4,9 @@ import Foundation
 struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
 	@State private var settingsService: AppSettingsService?
+	@State private var cryptoLastUpdate: String = "Loading..."
+	
+	let currencyService: CurrencyService?
 
 	// TODO: Soon to be used from the service
 	private func getCurrentDate() -> String {
@@ -53,7 +56,7 @@ struct SettingsView: View {
 					EmptyView() // Empty section just to hold the footer
 				} footer: {
 					VStack(alignment: .leading, spacing: 4) {
-						Text("Cryptocurrencies updated: \(getCurrentDate())")
+						Text("Cryptocurrencies updated: \(cryptoLastUpdate)")
 						Text("Fiat currencies updated: \(getCurrentDate())")
 					}
 					.font(.footnote)
@@ -67,10 +70,17 @@ struct SettingsView: View {
 			if settingsService == nil {
 				settingsService = AppSettingsService(modelContext: modelContext)
 			}
+
+			// Load real cryptocurrency last update
+			if let currencyService = currencyService {
+				Task {
+					cryptoLastUpdate = await currencyService.getLastUpdate()
+				}
+			}
 		}
 	}
 }
 
 #Preview {
-	SettingsView()
+	SettingsView(currencyService: nil)
 }
