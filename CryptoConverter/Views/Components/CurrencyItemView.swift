@@ -40,6 +40,7 @@ struct CurrencyItemView: View {
 				.resizable()
 				.scaledToFit()
 				.frame(width: imageSize, height: imageSize)
+				.animation(nil, value: UUID())
 
 			VStack(alignment: .leading) {
 				Text("\(currency.id)")
