@@ -43,9 +43,13 @@ struct AddCurrenciesView: View {
             VStack {
                 List {
 					if selectedTab == .crypto {
-                        AddCurrencyItemView(currencies: cryptocurrencies, dynamicPredicate: dynamicPredicateForCrypto, buttonPressed: buttonPressed(with:))
+						ForEach((try! cryptocurrencies.filter(dynamicPredicateForCrypto))) { currency in
+							AddCurrencyItemView(currency: currency, buttonPressed: buttonPressed(with:))
+						}
 					} else {
-                        AddCurrencyItemView(currencies: fiatCurrencies, dynamicPredicate: dynamicPredicateForFiat, buttonPressed: buttonPressed(with:))
+						ForEach((try! fiatCurrencies.filter(dynamicPredicateForFiat))) { currency in
+							AddCurrencyItemView(currency: currency, buttonPressed: buttonPressed(with:))
+						}
 					}
                 }
 				.scrollContentBackground(.hidden)

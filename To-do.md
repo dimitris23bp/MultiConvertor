@@ -9,12 +9,15 @@
 - Change initial BTC logo with a gif or something else that is not just Bitcoin
 - Remove a category in the separated if there are no items on that list
 - When no items are present, the system displays an empty content view
+- When I have selected something to be removed, then I go out of the menu of editing and then I go back to the menu. I do not want the items to continue to be selected. 
+- Make the last update date of the fiat currencies to work. 
 
 ### Backend
 
 - Add unit tests
 	- For services
 	- For SwiftUI
+- Don't update the fiat currencies every day but only once per day. 
 
 ## Long-term
 

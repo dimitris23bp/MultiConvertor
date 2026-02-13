@@ -32,7 +32,7 @@ struct CurrencyItemView: View {
 						selection.insert(currency.id)
 					}
 				}) {
-					Image(systemName: selection.contains(currency.id) ? "checkmark.square.fill" : "square")
+					Image(systemName: selection.contains(currency.id) ? "checkmark.circle.fill" : "circle")
 				}
 			}
 
