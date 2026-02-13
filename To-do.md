@@ -6,14 +6,12 @@
 
 ### Frontend
 
-- If name gets small, then remove it
-- If symbol gets small, then remove it
 - Change initial BTC logo with a gif or something else that is not just Bitcoin
+- Remove a category in the separated if there are no items on that list
+- When no items are present, the system displays an empty content view
 
 ### Backend
 
-- Make logger work
-    - Add more logs
 - Add unit tests
 	- For services
 	- For SwiftUI
@@ -37,11 +35,5 @@
 
 - Fix the error: BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
 By doing that, I can fetch data from cloudkit automatically, with a subscription, without the need for manual fetching with a timer.
-- When the user has a lot of time to enter the app, it goes back to the loading screen for some reason. Shouldn't the data stay in the ModelContext?
-Maybe I use wrongly the updateAmounts? IDK, but I should find out
 - Add data in many small batches, not in two big ones
-- Put the last fetch (for crypto and fiat) in settings somehow
-- Put the merged/separated in settings, not as button in the topbar
 - Find what the colour themes work
-- FInd how Maria can use the gifs 
-
