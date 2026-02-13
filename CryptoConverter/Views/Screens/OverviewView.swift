@@ -62,12 +62,6 @@ struct OverviewView: View {
 				)
 				.scrollDismissesKeyboard(.interactively)
 				.toolbar {
-					// Title in the principal position
-//					 ToolbarItem(placement: .principal) {
-//						 Text("Favourites")
-//							 .font(.largeTitle) // Optional: Style the title as you prefer
-//							 .fontWeight(.bold)
-//					 }
 					ToolbarItemGroup(placement: .navigationBarTrailing) {
 
 						Button(action: {

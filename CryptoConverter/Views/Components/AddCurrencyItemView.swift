@@ -36,12 +36,14 @@ struct AddCurrencyItemView<T>: View where T: Currency, T: PersistentModel {
                 Button {
                     buttonPressed(currency)
                 } label: {
-					Image(systemName: currency.favourite ? "star.fill" : "star.slash")
-							.foregroundColor(currency.favourite ? .yellow : .gray)
+					Image(systemName: currency.favourite ? "star.fill" : "star")
+							.foregroundColor(currency.favourite ? .accentColor : .gray)
 							.symbolEffect(.bounce, value: currency.favourite)
                 }
                 .padding()
             }
+			.listRowBackground(Color("MainColor"))
+
         }
     }
 }

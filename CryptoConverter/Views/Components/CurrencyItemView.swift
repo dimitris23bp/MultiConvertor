@@ -54,26 +54,29 @@ struct CurrencyItemView: View {
 
 			Spacer()
 
-			ScrollView(.horizontal, showsIndicators: false) {
-				DoubleNumberTextField(
-					value: $amount,
-					formatter: numberFormatter
-				)
-				.focused(focusedCurrencyId, equals: currency.id)
-				.id(currency.id)
-				.frame(height: 40)
+			if !editMode.isEditing {
+				ScrollView(.horizontal, showsIndicators: false) {
+					DoubleNumberTextField(
+						value: $amount,
+						formatter: numberFormatter
+					)
+					.focused(focusedCurrencyId, equals: currency.id)
+					.id(currency.id)
+					.frame(height: 40)
+					.fixedSize(horizontal: true, vertical: false)
+				}
+				.frame(maxWidth: 150)
 				.fixedSize(horizontal: true, vertical: false)
+				.padding(.horizontal, 10)
+				.background(
+					RoundedRectangle(cornerRadius: 6)
+						.fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
+				)
+				.animation(.easeOut(duration: 0.5), value: focusedCurrencyId.wrappedValue == currency.id)
+				.transition(.opacity.combined(with: .scale))
+				.tint(Color.clear)
+				.minimumScaleFactor(0.75)
 			}
-			.frame(maxWidth: 150)
-			.fixedSize(horizontal: true, vertical: false)
-			.padding(.horizontal, 10)
-			.background(
-				RoundedRectangle(cornerRadius: 6)
-					.fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
-			)
-			.animation(.easeOut(duration: 0.1), value: focusedCurrencyId.wrappedValue == currency.id)
-			.tint(Color.clear)
-			.minimumScaleFactor(0.75)
 		}
 		.listRowBackground(Color("MainColor"))
 		.id(currency.id)

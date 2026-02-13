@@ -48,6 +48,8 @@ struct AddCurrenciesView: View {
                         AddCurrencyItemView(currencies: fiatCurrencies, dynamicPredicate: dynamicPredicateForFiat, buttonPressed: buttonPressed(with:))
 					}
                 }
+				.scrollContentBackground(.hidden)
+				.background(Color("MainColor"))
             }
 			.searchable(text: $searchText)
 			.animation(.default, value: searchText)
@@ -58,7 +60,6 @@ struct AddCurrenciesView: View {
 						Text("Fiat").tag(CurrencyTab.fiat)
 					}
                     .pickerStyle(.segmented)
-//					.frame(maxWidth: 200)
 				}
 				
                 ToolbarItem(placement: .navigationBarTrailing) {
