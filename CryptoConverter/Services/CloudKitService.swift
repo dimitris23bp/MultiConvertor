@@ -5,7 +5,7 @@ protocol CloudKitServiceProtocol: Sendable {
     func fetchAllFiatCurrenciesFromCK() async -> [FiatCurrencyDTO]
     func fetchCryptocurrenciesFromCK(amount: Int) async throws -> [CryptocurrencyDTO]
     func fetchFiatCurrenciesFromCK(amount: Int) async throws -> [FiatCurrencyDTO]
-	func getLastUpdate() async -> Date?
+	func getLastUpdate(of type: String) async -> Date?
 }
 
 actor CloudKitService : CloudKitServiceProtocol {
@@ -82,8 +82,8 @@ actor CloudKitService : CloudKitServiceProtocol {
         }
     }
     
-    func getLastUpdate() async -> Date? {
-		let query = CKQuery(recordType: "Cryptocurrency", predicate: NSPredicate(value: true))
+	func getLastUpdate(of type: String) async -> Date? {
+		let query = CKQuery(recordType: type, predicate: NSPredicate(value: true))
 		query.sortDescriptors = [NSSortDescriptor(key: "modificationDate", ascending: false)]
 
 		do {

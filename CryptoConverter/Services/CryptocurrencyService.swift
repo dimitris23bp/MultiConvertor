@@ -54,7 +54,7 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
    }
 
 	func getLastUpdate() async -> String {
-        if let lastUpdate = await cloudkitService.getLastUpdate() {
+		if let lastUpdate = await cloudkitService.getLastUpdate(of: "Cryptocurrency") {
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             formatter.timeStyle = .medium

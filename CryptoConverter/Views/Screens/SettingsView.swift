@@ -5,16 +5,9 @@ struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
 	@State private var settingsService: AppSettingsService?
 	@State private var cryptoLastUpdate: String = "Loading..."
-	
-	let currencyService: CurrencyService?
+	@State private var fiatLastUpdate: String = "Loading..."
 
-	// TODO: Soon to be used from the service
-	private func getCurrentDate() -> String {
-		let formatter = DateFormatter()
-		formatter.dateStyle = .medium
-		formatter.timeStyle = .short
-		return formatter.string(from: Date())
-	}
+	let currencyService: CurrencyService?
 
 	var body: some View {
 		NavigationStack {
@@ -72,10 +65,6 @@ struct SettingsView: View {
 
 				// Additional Info
 				Section {
-					NavigationLink(destination: MarkdownView(fileName: "Technical_Information")) {
-						Text("Technical Information")
-					}
-
 					NavigationLink(destination: MarkdownView(fileName: "Privacy_Policy")) {
 						Text("Privacy Policy")
 					}
@@ -89,7 +78,7 @@ struct SettingsView: View {
 				} footer: {
 					VStack(alignment: .leading, spacing: 4) {
 						Text("Cryptocurrencies updated: \(cryptoLastUpdate)")
-						Text("Fiat currencies updated: \(getCurrentDate())")
+						Text("Fiat currencies updated: \(fiatLastUpdate)")
 					}
 					.font(.footnote)
 					.foregroundColor(.secondary)
@@ -106,7 +95,8 @@ struct SettingsView: View {
 			// Load real cryptocurrency last update
 			if let currencyService = currencyService {
 				Task {
-					cryptoLastUpdate = await currencyService.getLastUpdate()
+					cryptoLastUpdate = await currencyService.getLastUpdate(of: "Cryptocurrency")
+					fiatLastUpdate = await currencyService.getLastUpdate(of: "FiatCurrency")
 				}
 			}
 		}

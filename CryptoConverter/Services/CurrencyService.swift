@@ -1,7 +1,7 @@
 protocol CurrencyServiceProtocol: Sendable {
     func ensureInitialDataIfNeeded(minCount: Int) async throws
     func updateAmounts() async
-    func getLastUpdate() async -> String
+	func getLastUpdate(of type: String) async -> String
 }
 
 actor CurrencyService: CurrencyServiceProtocol {
@@ -37,8 +37,12 @@ actor CurrencyService: CurrencyServiceProtocol {
     }
     
     // This could be from either crypto of fiat. Since they are updated at the same time, I don't have to get a specific one.
-    func getLastUpdate() async -> String {
-        return await cryptoService.getLastUpdate()
+	func getLastUpdate(of type: String) async -> String {
+		if type == "Cryptocurrency" {
+			return await cryptoService.getLastUpdate()
+		} else {
+			return await fiatService.getLastUpdate()
+		}
     }
     
     func addInitialFavourites() async {

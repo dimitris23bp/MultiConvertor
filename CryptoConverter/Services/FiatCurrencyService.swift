@@ -6,47 +6,58 @@ protocol FiatCurrencyServiceProtocol: Sendable {
 }
 
 actor FiatCurrencyService : FiatCurrencyServiceProtocol {
-    
-    private let repository: AllRepository
-    private let cloudkitService: CloudKitServiceProtocol
-    
-    init(repository: AllRepository, cloudkitService: CloudKitServiceProtocol) {
-        self.repository = repository
-        self.cloudkitService = cloudkitService
-    }
-    
-    /// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
-    /// - Parameter minCount: Minimum number of records considered "seeded".
-    func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
-		let current = await repository.fetchAllIDs(withType: FiatCurrency.self)
-        // If I have 3 or more, return
-        guard current.count < minCount else { return }
 
-        print("Fetching initial fiat currencies")
-        let fiatDTOs = try await cloudkitService.fetchFiatCurrenciesFromCK(amount: 20)
+	private let repository: AllRepository
+	private let cloudkitService: CloudKitServiceProtocol
+
+	init(repository: AllRepository, cloudkitService: CloudKitServiceProtocol) {
+		self.repository = repository
+		self.cloudkitService = cloudkitService
+	}
+
+	/// Ensures initial data exists by inserting from the remote API when the store is nearly empty.
+	/// - Parameter minCount: Minimum number of records considered "seeded".
+	func ensureInitialDataIfNeeded(minCount: Int = 3) async throws {
+		let current = await repository.fetchAllIDs(withType: FiatCurrency.self)
+		// If I have 3 or more, return
+		guard current.count < minCount else { return }
+
+		print("Fetching initial fiat currencies")
+		let fiatDTOs = try await cloudkitService.fetchFiatCurrenciesFromCK(amount: 20)
 
 		await repository.save(currencies: fiatDTOs, withType: FiatCurrencyDTO.self)
-        print("Initial fiatCurrencies are saved")
-    }
-    
-    func updateAmountOfFiats() async {
-        let incomingFiats = await cloudkitService.fetchAllFiatCurrenciesFromCK()
+		print("Initial fiatCurrencies are saved")
+	}
+
+	func updateAmountOfFiats() async {
+		let incomingFiats = await cloudkitService.fetchAllFiatCurrenciesFromCK()
 		await repository.updateAmounts(withType: FiatCurrencyDTO.self, currencies: incomingFiats)
-   }
-    
-    func ensureRemainingData() async {
-        print("Adding remaining data")
+	}
+
+	func ensureRemainingData() async {
+		print("Adding remaining data")
 
 		let ids = await repository.fetchAllIDs(withType: FiatCurrency.self)
 
-        let cloudkitServiceSelf = self.cloudkitService
-        
-        // Perform work in a separate Task that isn't bound to the MainActor
-        Task.detached(priority: .utility) { [repository] in
-            let allFiatDTOs = await cloudkitServiceSelf.fetchAllFiatCurrenciesFromCK()
+		let cloudkitServiceSelf = self.cloudkitService
+
+		// Perform work in a separate Task that isn't bound to the MainActor
+		Task.detached(priority: .utility) { [repository] in
+			let allFiatDTOs = await cloudkitServiceSelf.fetchAllFiatCurrenciesFromCK()
 			await repository.addIfDontExist(withType: FiatCurrencyDTO.self, ids: ids, currencies: allFiatDTOs)
-        }
-        
-        print("Remaining fiats are saved")
-    }
+		}
+
+		print("Remaining fiats are saved")
+	}
+
+	func getLastUpdate() async -> String {
+		if let lastUpdate = await cloudkitService.getLastUpdate(of: "FiatCurrency") {
+			let formatter = DateFormatter()
+			formatter.dateStyle = .medium
+			formatter.timeStyle = .medium
+			return formatter.string(from: lastUpdate)
+		} else {
+			return "NaN"
+		}
+	}
 }
