@@ -78,6 +78,7 @@ struct CurrencyItemView: View {
 				.minimumScaleFactor(0.75)
 			}
 		}
+		.listRowSeparator(.hidden)
 		.listRowBackground(Color("MainColor"))
 		.id(currency.id)
 		.contentShape(Rectangle())

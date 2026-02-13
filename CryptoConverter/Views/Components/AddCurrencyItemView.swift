@@ -42,6 +42,7 @@ struct AddCurrencyItemView<T>: View where T: Currency, T: PersistentModel {
                 }
                 .padding()
             }
+			.listRowSeparator(.hidden)
 			.listRowBackground(Color("MainColor"))
 
         }
