@@ -66,7 +66,12 @@ struct OverviewView: View {
 
 						Button(action: {
 							withAnimation {
-								editMode = editMode.isEditing ? .inactive : .active
+								if editMode == .active {
+									editMode = .inactive
+									selection.removeAll()
+								} else {
+									editMode = .active
+								}
 							}
 						}) {
 							Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
