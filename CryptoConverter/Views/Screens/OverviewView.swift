@@ -76,6 +76,8 @@ struct OverviewView: View {
 						}) {
 							Image(systemName: editMode.isEditing ? "pencil.slash" : "pencil")
 						}
+						.disabled(combinedFavourites.isEmpty)
+						
 						Button(action: {
 							isShowingSheet.toggle()
 						}) {
@@ -248,7 +250,6 @@ struct OverviewView: View {
 	}
     
 }
-
 
 #Preview {
 	OverviewView(scheduler: TickerUpdateScheduler())
