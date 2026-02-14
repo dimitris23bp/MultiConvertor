@@ -29,10 +29,9 @@
 - Add certain information about each crypto when they press on them
 - Better keyboard for the numbers (and add + - * / and options like this)
 - Create a widget that show the value of a currency based on the main currency (USD by default?)
+- Fed data from cloud kit automatically without a timer. 
+- Add data in many small batches, not in two big ones
+- Find colour themes 
 
 ### Backend
 
-- Fix the error: BUG IN CLIENT OF CLOUDKIT: CloudKit push notifications require the 'remote-notification' background mode in your info plist.
-By doing that, I can fetch data from cloudkit automatically, with a subscription, without the need for manual fetching with a timer.
-- Add data in many small batches, not in two big ones
-- Find what the colour themes work
