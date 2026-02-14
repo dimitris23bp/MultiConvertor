@@ -48,33 +48,45 @@ struct FavouritesListView: View {
 	var body: some View {
 		List {
 			if displayMode == .merged {
-				Section {
-					ForEach(combinedFavourites, id: \.id) { currency in
-						currencyItemView(for: currency)
+				if !combinedFavourites.isEmpty {
+					Section {
+						ForEach(combinedFavourites, id: \.id) { currency in
+							currencyItemView(for: currency)
+						}
+						.onMove(perform: onMoveMerged)
 					}
-					.onMove(perform: onMoveMerged)
+				} else {
+					NoCurrenciesView()
 				}
 			} else {
-				Section {
-					ForEach(favouriteFiats, id: \.id) { currency in
-						currencyItemView(for: currency)
+				if !favouriteFiats.isEmpty {
+					Section {
+						ForEach(favouriteFiats, id: \.id) { currency in
+							currencyItemView(for: currency)
+						}
+						.onMove(perform: { source, destination in
+							onMoveSeparated(source, destination, .fiat)
+						})
+					} header: {
+						Text("Fiat Currencies")
 					}
-					.onMove(perform: { source, destination in
-						onMoveSeparated(source, destination, .fiat)
-					})
-				} header: {
-					Text("Fiat Currencies")
 				}
 
-				Section {
-					ForEach(favouriteCryptos, id: \.id) { currency in
-						currencyItemView(for: currency)
+				if !favouriteCryptos.isEmpty {
+					Section {
+						ForEach(favouriteCryptos, id: \.id) { currency in
+							currencyItemView(for: currency)
+						}
+						.onMove(perform: { source, destination in
+							onMoveSeparated(source, destination, .crypto)
+						})
+					} header: {
+						Text("Crypto Currencies")
 					}
-					.onMove(perform: { source, destination in
-						onMoveSeparated(source, destination, .crypto)
-					})
-				} header: {
-					Text("Crypto Currencies")
+				}
+
+				if combinedFavourites.isEmpty {
+					NoCurrenciesView()
 				}
 			}
 		}

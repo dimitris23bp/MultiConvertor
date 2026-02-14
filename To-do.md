@@ -2,15 +2,11 @@
 
 ## Short-term
 
-- Rename the Views to something more clear
-
 ### Frontend
 
 - Change initial BTC logo with a gif or something else that is not just Bitcoin
-- Remove a category in the separated if there are no items on that list
-- When no items are present, the system displays an empty content view
-- When I have selected something to be removed, then I go out of the menu of editing and then I go back to the menu. I do not want the items to continue to be selected. 
-- Make the last update date of the fiat currencies to work. 
+- Add a loading footer or something like that when the currencies are not fully loaded yet. 
+- When a user presses a new text field and they delete a character, everything should be deleted. 
 
 ### Backend
 
