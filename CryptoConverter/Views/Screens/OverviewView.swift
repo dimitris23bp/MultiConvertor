@@ -81,14 +81,22 @@ struct OverviewView: View {
 						}
 						.onChange(of: isShowingSheet) { _, newValue in
 							if newValue {
+								print("Focus is removed")
+
 								// In order to remove the focused value too, when I press the plus button
 								focusedCurrencyId = nil
-								print("Focus is removed")
 								Task {
 									// To have a delay and make the change without the user noticing
 									try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+									
 									// Empty all the values from the TextFields
 									amounts = [:]
+
+									// Remove all fields from the checkboxes
+									selection.removeAll()
+
+									// Remove editting mode
+									editMode = .inactive
 								}
 							}
 						}
