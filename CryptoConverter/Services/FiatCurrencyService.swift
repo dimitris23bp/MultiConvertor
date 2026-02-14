@@ -23,7 +23,7 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
 		guard current.count < minCount else { return }
 
 		print("Fetching initial fiat currencies")
-		let fiatDTOs = try await cloudkitService.fetchFiatCurrenciesFromCK(amount: 20)
+		let fiatDTOs = try await cloudkitService.fetchFiatCurrenciesFromCK(amount: initialFiatSize)
 
 		await repository.save(currencies: fiatDTOs, withType: FiatCurrencyDTO.self)
 		print("Initial fiatCurrencies are saved")

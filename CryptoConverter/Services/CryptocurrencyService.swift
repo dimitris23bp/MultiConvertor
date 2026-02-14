@@ -23,7 +23,7 @@ actor CryptocurrencyService: CryptocurrencyServiceProtocol {
 		guard current.count < minCount else { return }
 
 		print("Fetching initial cryptocurrencies")
-		let cryptocurrencyDTOs = try await cloudkitService.fetchCryptocurrenciesFromCK(amount: 50)
+		let cryptocurrencyDTOs = try await cloudkitService.fetchCryptocurrenciesFromCK(amount: initialCryptosSize)
 
 		await repository.save(currencies: cryptocurrencyDTOs, withType: CryptocurrencyDTO.self)
 

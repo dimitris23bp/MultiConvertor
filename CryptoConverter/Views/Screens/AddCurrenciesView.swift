@@ -9,7 +9,9 @@ struct AddCurrenciesView: View {
 	@Query(sort: \Cryptocurrency.marketCap, order: .reverse, animation: .default) private var cryptocurrencies: [Cryptocurrency]
 
     @Query(sort: \FiatCurrency.popularity, order: .forward, animation: .default) private var fiatCurrencies: [FiatCurrency]
-    
+
+	private var isLoading: Bool { cryptocurrencies.count == initialCryptosSize || fiatCurrencies.count == initialFiatSize }
+
     private var allCurrencies: [any Currency] {
         let all = (cryptocurrencies as [any Currency]) + (fiatCurrencies as [any Currency])
         return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
