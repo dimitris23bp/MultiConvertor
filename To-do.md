@@ -6,7 +6,6 @@
 
 - Change initial BTC logo with a gif or something else that is not just Bitcoin
 - Add a loading footer or something like that when the currencies are not fully loaded yet. 
-- When a user presses a new text field and they delete a character, everything should be deleted. 
 
 ### Backend
 
