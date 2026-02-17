@@ -1,5 +1,7 @@
 import SwiftUI
 import SwiftData
+import DotLottie
+import DotLottiePlayer
 
 struct MainTabView: View {
 	@Environment(\.scenePhase) private var scenePhase
@@ -39,15 +41,14 @@ struct MainTabView: View {
 		Group {
 			if isLoading && !favouritesInitialized {
 				ContentUnavailableView {
-					VStack(spacing: 8) {
-						Image("btc")
-							.resizable()
-							.scaledToFit()
-							.frame(width: 96, height: 96)
-						Text("Wait for data to be fetched.")
-
-						ProgressView()
-							.progressViewStyle(CircularProgressViewStyle())
+					VStack {
+						DotLottieAnimation(
+							fileName: "popping",
+							config: AnimationConfig(autoplay: true, loop: true)
+						).view()
+							.frame(width: 400, height: 500)
+						Text("Wait for data to be fetched")
+						Spacer()
 					}
 				}
 			} else {
@@ -110,7 +111,14 @@ struct MainTabView: View {
 
     }
 }
-
+struct AnimationView: View {
+	var body: some View {
+		DotLottieAnimation(
+			fileName: "popping",
+			config: AnimationConfig(autoplay: true, loop: true)
+		).view()
+	}
+}
 
 #Preview {
 	MainTabView()

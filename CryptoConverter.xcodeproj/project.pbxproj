@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7336DE22F44FEDB00D5C678 /* DotLottie in Frameworks */ = {isa = PBXBuildFile; productRef = B7336DE12F44FEDB00D5C678 /* DotLottie */; };
+		B7336DE82F450AE400D5C678 /* popping.lottie in Resources */ = {isa = PBXBuildFile; fileRef = B7336DE72F450AE400D5C678 /* popping.lottie */; };
 		B75F2F802F39076800775802 /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B75F2F7F2F39076800775802 /* AGENTS.md */; };
 		B75F2F882F3A95B800775802 /* Technical_Information.md in Resources */ = {isa = PBXBuildFile; fileRef = B75F2F872F3A95B800775802 /* Technical_Information.md */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
@@ -33,6 +35,7 @@
 /* Begin PBXFileReference section */
 		5BC7A0792EF9E4380095F785 /* CryptoConverterUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC7A0862EF9E50A0095F785 /* CryptoConverterIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoConverterIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7336DE72F450AE400D5C678 /* popping.lottie */ = {isa = PBXFileReference; lastKnownFileType = file; path = popping.lottie; sourceTree = "<group>"; };
 		B75F2F7F2F39076800775802 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		B75F2F872F3A95B800775802 /* Technical_Information.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Technical_Information.md; sourceTree = "<group>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
@@ -77,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7336DE22F44FEDB00D5C678 /* DotLottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +100,7 @@
 				5BC7A0862EF9E50A0095F785 /* CryptoConverterIntegrationTests.xctest */,
 				5BC7A0872EF9E50A0095F785 /* CryptoConverterIntegrationTests */,
 				B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */,
+				B7336DE72F450AE400D5C678 /* popping.lottie */,
 			);
 			sourceTree = "<group>";
 		};
@@ -165,6 +170,7 @@
 			);
 			name = CryptoConverter;
 			packageProductDependencies = (
+				B7336DE12F44FEDB00D5C678 /* DotLottie */,
 			);
 			productName = CryptoConverter;
 			productReference = B7FC087B2EA559E600984CAD /* Currency Converter.app */;
@@ -203,6 +209,7 @@
 			mainGroup = B7EFC44F2E8758F9003B9373;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				B7336DE02F44FEDB00D5C678 /* XCRemoteSwiftPackageReference "dotlottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B7EFC44F2E8758F9003B9373;
@@ -235,6 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7336DE82F450AE400D5C678 /* popping.lottie in Resources */,
 				B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */,
 				B75F2F882F3A95B800775802 /* Technical_Information.md in Resources */,
 				B75F2F802F39076800775802 /* AGENTS.md in Resources */,
@@ -603,6 +611,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B7336DE02F44FEDB00D5C678 /* XCRemoteSwiftPackageReference "dotlottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LottieFiles/dotlottie-ios";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B7336DE12F44FEDB00D5C678 /* DotLottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B7336DE02F44FEDB00D5C678 /* XCRemoteSwiftPackageReference "dotlottie-ios" */;
+			productName = DotLottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B7EFC4502E8758F9003B9373 /* Project object */;
 }
