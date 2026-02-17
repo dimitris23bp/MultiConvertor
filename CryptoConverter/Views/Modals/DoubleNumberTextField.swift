@@ -55,6 +55,13 @@ struct DoubleNumberTextField: UIViewRepresentable {
 		}
 
 		func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+            // If this is a backspace during the first keypress after begin editing, clear the entire text
+            if didBeginEditing && string.isEmpty && range.length > 0 {
+                didBeginEditing = false
+                textField.text = "0"
+                parent.value = 0
+                return false
+            }
 			// If first typing after focus and the string is a digit, replace all text with this digit only
 			if didBeginEditing && !string.isEmpty && string.rangeOfCharacter(from: CharacterSet.decimalDigits) != nil {
 				didBeginEditing = false
@@ -66,10 +73,6 @@ struct DoubleNumberTextField: UIViewRepresentable {
 				}
 				// Set text to the newly typed digit only
 				textField.text = string
-				// Move cursor to the end
-				if let newPosition = textField.position(from: textField.beginningOfDocument, offset: string.count) {
-					textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
-				}
 				return false
 			}
 
@@ -168,7 +171,8 @@ struct DoubleNumberTextField: UIViewRepresentable {
 				textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
 			}
 
-			return false // We handled the change manually
+			return false // I handled the change manually
 		}
 	}
 }
+
