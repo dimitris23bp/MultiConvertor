@@ -40,30 +40,48 @@ struct DoubleNumberTextField: UIViewRepresentable {
 			didBeginEditing = true
 			DispatchQueue.main.async {
 				// Move cursor to the end of the text
-				if let newPosition = textField.position(from: textField.endOfDocument, offset: 0) {
-					textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
+				if let newPosition = textField.position(
+					from: textField.endOfDocument,
+					offset: 0
+				) {
+					textField.selectedTextRange = textField.textRange(
+						from: newPosition,
+						to: newPosition
+					)
 				}
 			}
 		}
 
 		func textFieldDidEndEditing(_ textField: UITextField) {
 			// When editing ends, commit the final value and format it.
-			let unformattedText = (textField.text ?? "").replacingOccurrences(of: parent.formatter.groupingSeparator, with: "")
+			let unformattedText = (textField.text ?? "").replacingOccurrences(
+				of: parent.formatter.groupingSeparator,
+				with: ""
+			)
 			let number = parent.formatter.number(from: unformattedText)
 			parent.value = number?.doubleValue ?? 0.0
-			textField.text = parent.formatter.string(from: NSNumber(value: parent.value))
+			textField.text = parent.formatter.string(
+				from: NSNumber(value: parent.value)
+			)
 		}
 
-		func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-            // If this is a backspace during the first keypress after begin editing, clear the entire text
-            if didBeginEditing && string.isEmpty && range.length > 0 {
-                didBeginEditing = false
-                textField.text = "0"
-                parent.value = 0
-                return false
-            }
+		func textField(
+			_ textField: UITextField,
+			shouldChangeCharactersIn range: NSRange,
+			replacementString string: String
+		) -> Bool {
+			// If this is a backspace during the first keypress after begin editing, clear the entire text
+			if didBeginEditing && string.isEmpty && range.length > 0 {
+				didBeginEditing = false
+				textField.text = "0"
+				parent.value = 0
+				return false
+			}
 			// If first typing after focus and the string is a digit, replace all text with this digit only
-			if didBeginEditing && !string.isEmpty && string.rangeOfCharacter(from: CharacterSet.decimalDigits) != nil {
+			if didBeginEditing && !string.isEmpty
+				&& string.rangeOfCharacter(from: CharacterSet.decimalDigits)
+					!= nil
+			{
 				didBeginEditing = false
 				// Update parent's value
 				if let number = parent.formatter.number(from: string) {
@@ -78,8 +96,13 @@ struct DoubleNumberTextField: UIViewRepresentable {
 
 			// 1. Get original state
 			let originalText = textField.text ?? ""
-			guard let selectedRange = textField.selectedTextRange else { return false }
-			let cursorOffset = textField.offset(from: textField.beginningOfDocument, to: selectedRange.start)
+			guard let selectedRange = textField.selectedTextRange else {
+				return false
+			}
+			let cursorOffset = textField.offset(
+				from: textField.beginningOfDocument,
+				to: selectedRange.start
+			)
 
 			// Ignore typing of grouping separators
 			if string == parent.formatter.groupingSeparator {
@@ -87,13 +110,18 @@ struct DoubleNumberTextField: UIViewRepresentable {
 			}
 
 			let decimalSeparator = parent.formatter.decimalSeparator ?? "."
-			let newText = (originalText as NSString).replacingCharacters(in: range, with: string)
+			let newText = (originalText as NSString).replacingCharacters(
+				in: range,
+				with: string
+			)
 
 			// Enforce fraction digit limit
 			let components = newText.components(separatedBy: decimalSeparator)
 			if components.count > 1 {
 				let fractionalPart = components[1]
-				if fractionalPart.count > parent.formatter.maximumFractionDigits && !string.isEmpty {
+				if fractionalPart.count > parent.formatter.maximumFractionDigits
+					&& !string.isEmpty
+				{
 					return false
 				}
 			}
@@ -101,18 +129,24 @@ struct DoubleNumberTextField: UIViewRepresentable {
 			// Determine if the edit is happening in the fractional part of the number.
 			var isEditingFractionalPart = false
 			if let decimalRange = originalText.range(of: decimalSeparator) {
-				let decimalPosition = originalText.distance(from: originalText.startIndex, to: decimalRange.lowerBound)
+				let decimalPosition = originalText.distance(
+					from: originalText.startIndex,
+					to: decimalRange.lowerBound
+				)
 				if range.location > decimalPosition {
 					isEditingFractionalPart = true
 				}
 			}
 			// Also true if the user is adding the decimal separator itself
 			if string == decimalSeparator {
-				if originalText.contains(string) { return false } // Don't allow multiple separators
+				if originalText.contains(string) { return false }  // Don't allow multiple separators
 				isEditingFractionalPart = true
 			}
 
-			let unformattedText = newText.replacingOccurrences(of: parent.formatter.groupingSeparator, with: "")
+			let unformattedText = newText.replacingOccurrences(
+				of: parent.formatter.groupingSeparator,
+				with: ""
+			)
 
 			// 2. Update the parent's value
 			if let number = parent.formatter.number(from: unformattedText) {
@@ -127,23 +161,32 @@ struct DoubleNumberTextField: UIViewRepresentable {
 			// 3. Set the text in the field
 			let textToSet: String
 			if isEditingFractionalPart {
-				let components = unformattedText.components(separatedBy: decimalSeparator)
+				let components = unformattedText.components(
+					separatedBy: decimalSeparator
+				)
 				let integerPartString = components.first ?? ""
 
 				// Format the integer part to get grouping separators
-				let integerNumber = parent.formatter.number(from: integerPartString) ?? 0
-				let formattedIntegerPart = parent.formatter.string(from: integerNumber) ?? integerPartString
+				let integerNumber =
+					parent.formatter.number(from: integerPartString) ?? 0
+				let formattedIntegerPart =
+					parent.formatter.string(from: integerNumber)
+					?? integerPartString
 
 				if components.count > 1 {
 					let fractionalPartString = components[1]
-					textToSet = formattedIntegerPart + decimalSeparator + fractionalPartString
+					textToSet =
+						formattedIntegerPart + decimalSeparator
+						+ fractionalPartString
 				} else {
 					// This happens when the user types the decimal separator for the first time
 					textToSet = formattedIntegerPart + decimalSeparator
 				}
 			} else {
 				// For the integer part, re-format from the number to get grouping separators.
-				textToSet = parent.formatter.string(from: NSNumber(value: parent.value)) ?? ""
+				textToSet =
+					parent.formatter.string(from: NSNumber(value: parent.value))
+					?? ""
 			}
 
 			textField.text = textToSet
@@ -151,7 +194,11 @@ struct DoubleNumberTextField: UIViewRepresentable {
 			// 4. Calculate and set the new cursor position
 			let addedChars = string.count - range.length
 			// The cursor position in the unformatted string
-			let logicalCursorOffset = cursorOffset - (originalText.prefix(cursorOffset).filter { String($0) == parent.formatter.groupingSeparator }.count) + addedChars
+			let logicalCursorOffset =
+				cursorOffset
+				- (originalText.prefix(cursorOffset).filter {
+					String($0) == parent.formatter.groupingSeparator
+				}.count) + addedChars
 
 			var physicalCursorOffset = 0
 			var logicalCharsCounted = 0
@@ -167,12 +214,17 @@ struct DoubleNumberTextField: UIViewRepresentable {
 				}
 			}
 
-			if let newPosition = textField.position(from: textField.beginningOfDocument, offset: physicalCursorOffset) {
-				textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
+			if let newPosition = textField.position(
+				from: textField.beginningOfDocument,
+				offset: physicalCursorOffset
+			) {
+				textField.selectedTextRange = textField.textRange(
+					from: newPosition,
+					to: newPosition
+				)
 			}
 
-			return false // I handled the change manually
+			return false  // I handled the change manually
 		}
 	}
 }
-

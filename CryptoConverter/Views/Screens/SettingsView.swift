@@ -1,5 +1,5 @@
-import SwiftUI
 import Foundation
+import SwiftUI
 
 struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
@@ -16,26 +16,36 @@ struct SettingsView: View {
 				// Display Settings
 				Section {
 					if let settingsService = settingsService {
-						Picker("Display Mode", selection: Binding(
-							get: { settingsService.settings.displayMode },
-							set: { newValue in
-								// TODO: It would be better to access only the settings, not the whole service in here
-								settingsService.settings.displayMode = newValue
-								settingsService.save()
-							}
-						)) {
+						Picker(
+							"Display Mode",
+							selection: Binding(
+								get: { settingsService.settings.displayMode },
+								set: { newValue in
+									// TODO: It would be better to access only the settings, not the whole service in here
+									settingsService.settings.displayMode =
+										newValue
+									settingsService.save()
+								}
+							)
+						) {
 							Text("Merged").tag(DisplayMode.merged)
 							Text("Separated").tag(DisplayMode.separated)
 						}
 						.pickerStyle(.segmented)
 
-						Picker("Crypto Decimals", selection: Binding(
-							get: { settingsService.settings.cryptoDecimals },
-							set: { newValue in
-								settingsService.settings.cryptoDecimals = newValue
-								settingsService.save()
-							}
-						)) {
+						Picker(
+							"Crypto Decimals",
+							selection: Binding(
+								get: {
+									settingsService.settings.cryptoDecimals
+								},
+								set: { newValue in
+									settingsService.settings.cryptoDecimals =
+										newValue
+									settingsService.save()
+								}
+							)
+						) {
 							Text("0,01").tag(2)
 							Text("0,001").tag(3)
 							Text("0,0001").tag(4)
@@ -44,13 +54,17 @@ struct SettingsView: View {
 							Text("0,0000001").tag(7)
 						}
 
-						Picker("Fiat Decimals", selection: Binding(
-							get: { settingsService.settings.fiatDecimals },
-							set: { newValue in
-								settingsService.settings.fiatDecimals = newValue
-								settingsService.save()
-							}
-						)) {
+						Picker(
+							"Fiat Decimals",
+							selection: Binding(
+								get: { settingsService.settings.fiatDecimals },
+								set: { newValue in
+									settingsService.settings.fiatDecimals =
+										newValue
+									settingsService.save()
+								}
+							)
+						) {
 							Text("0,01").tag(2)
 							Text("0,001").tag(3)
 							Text("0,0001").tag(4)
@@ -65,7 +79,9 @@ struct SettingsView: View {
 
 				// Additional Info
 				Section {
-					NavigationLink(destination: MarkdownView(fileName: "Privacy_Policy")) {
+					NavigationLink(
+						destination: MarkdownView(fileName: "Privacy_Policy")
+					) {
 						Text("Privacy Policy")
 					}
 				} header: {
@@ -74,7 +90,7 @@ struct SettingsView: View {
 
 				// Update Information Footer
 				Section {
-					EmptyView() // Empty section just to hold the footer
+					EmptyView()  // Empty section just to hold the footer
 				} footer: {
 					VStack(alignment: .leading, spacing: 4) {
 						Text("Cryptocurrencies updated: \(cryptoLastUpdate)")
@@ -95,8 +111,12 @@ struct SettingsView: View {
 			// Load real cryptocurrency last update
 			if let currencyService = currencyService {
 				Task {
-					cryptoLastUpdate = await currencyService.getLastUpdate(of: "Cryptocurrency")
-					fiatLastUpdate = await currencyService.getLastUpdate(of: "FiatCurrency")
+					cryptoLastUpdate = await currencyService.getLastUpdate(
+						of: "Cryptocurrency"
+					)
+					fiatLastUpdate = await currencyService.getLastUpdate(
+						of: "FiatCurrency"
+					)
 				}
 			}
 		}

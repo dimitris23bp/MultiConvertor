@@ -1,11 +1,11 @@
 import CloudKit
 
 protocol FiatCurrencyServiceProtocol: Sendable {
-    func ensureInitialDataIfNeeded(minCount: Int) async throws
-    func updateAmountOfFiats() async
+	func ensureInitialDataIfNeeded(minCount: Int) async throws
+	func updateAmountOfFiats() async
 }
 
-actor FiatCurrencyService : FiatCurrencyServiceProtocol {
+actor FiatCurrencyService: FiatCurrencyServiceProtocol {
 
 	private let repository: AllRepository
 	private let cloudkitService: CloudKitServiceProtocol
@@ -23,15 +23,23 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
 		guard current.count < minCount else { return }
 
 		print("Fetching initial fiat currencies")
-		let fiatDTOs = try await cloudkitService.fetchFiatCurrenciesFromCK(amount: initialFiatSize)
+		let fiatDTOs = try await cloudkitService.fetchFiatCurrenciesFromCK(
+			amount: initialFiatSize
+		)
 
-		await repository.save(currencies: fiatDTOs, withType: FiatCurrencyDTO.self)
+		await repository.save(
+			currencies: fiatDTOs,
+			withType: FiatCurrencyDTO.self
+		)
 		print("Initial fiatCurrencies are saved")
 	}
 
 	func updateAmountOfFiats() async {
 		let incomingFiats = await cloudkitService.fetchAllFiatCurrenciesFromCK()
-		await repository.updateAmounts(withType: FiatCurrencyDTO.self, currencies: incomingFiats)
+		await repository.updateAmounts(
+			withType: FiatCurrencyDTO.self,
+			currencies: incomingFiats
+		)
 	}
 
 	func ensureRemainingData() async {
@@ -43,15 +51,22 @@ actor FiatCurrencyService : FiatCurrencyServiceProtocol {
 
 		// Perform work in a separate Task that isn't bound to the MainActor
 		Task.detached(priority: .utility) { [repository] in
-			let allFiatDTOs = await cloudkitServiceSelf.fetchAllFiatCurrenciesFromCK()
-			await repository.addIfDontExist(withType: FiatCurrencyDTO.self, ids: ids, currencies: allFiatDTOs)
+			let allFiatDTOs =
+				await cloudkitServiceSelf.fetchAllFiatCurrenciesFromCK()
+			await repository.addIfDontExist(
+				withType: FiatCurrencyDTO.self,
+				ids: ids,
+				currencies: allFiatDTOs
+			)
 		}
 
 		print("Remaining fiats are saved")
 	}
 
 	func getLastUpdate() async -> String {
-		if let lastUpdate = await cloudkitService.getLastUpdate(of: "FiatCurrency") {
+		if let lastUpdate = await cloudkitService.getLastUpdate(
+			of: "FiatCurrency"
+		) {
 			let formatter = DateFormatter()
 			formatter.dateStyle = .medium
 			formatter.timeStyle = .medium

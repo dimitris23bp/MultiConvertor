@@ -37,7 +37,7 @@ struct MainTabView: View {
 		return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
 	}
 
-    var body: some View {
+	var body: some View {
 		Group {
 			if isLoading && !favouritesInitialized {
 				ContentUnavailableView {
@@ -109,7 +109,7 @@ struct MainTabView: View {
 			}
 		})
 
-    }
+	}
 }
 struct AnimationView: View {
 	var body: some View {

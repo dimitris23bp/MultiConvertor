@@ -1,9 +1,9 @@
-import SwiftUI
-import SwiftData
 import OSLog
+import SwiftData
+import SwiftUI
 
 struct FavouritesListView: View {
-    enum CurrencyType { case fiat, crypto }
+	enum CurrencyType { case fiat, crypto }
 	@Query(
 		filter: #Predicate<Cryptocurrency> { $0.favourite },
 		sort: \.sortOrder,
@@ -18,32 +18,45 @@ struct FavouritesListView: View {
 
 	@Query private var appSettings: [AppSettings]
 
-    var displayMode: DisplayMode
-    @Binding var editMode: EditMode
-    @Binding var selection: Set<String>
-    @Binding var amounts: [String: Double]
-    var focusedCurrencyId: FocusState<String?>.Binding
+	var displayMode: DisplayMode
+	@Binding var editMode: EditMode
+	@Binding var selection: Set<String>
+	@Binding var amounts: [String: Double]
+	var focusedCurrencyId: FocusState<String?>.Binding
 
-    var onDelete: (any Currency) -> Void
-    var onMoveMerged: (IndexSet, Int) -> Void
-    var onMoveSeparated: (IndexSet, Int, CurrencyType) -> Void
-    var updateInputs: (String, Double) -> Void
+	var onDelete: (any Currency) -> Void
+	var onMoveMerged: (IndexSet, Int) -> Void
+	var onMoveSeparated: (IndexSet, Int, CurrencyType) -> Void
+	var updateInputs: (String, Double) -> Void
 
 	private func logFavouritesChange() {
-		let cryptoInfo = favouriteCryptos.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
-		let fiatInfo = favouriteFiats.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
+		let cryptoInfo = favouriteCryptos.map { "\($0.id):\($0.name)" }.joined(
+			separator: ", "
+		)
+		let fiatInfo = favouriteFiats.map { "\($0.id):\($0.name)" }.joined(
+			separator: ", "
+		)
 
-		Log.ui.log("Favourite cryptos changed: \(favouriteCryptos.count) items - \(cryptoInfo)")
-		Log.ui.log("Favourite fiats changed: \(favouriteFiats.count) items - \(fiatInfo)")
+		Log.ui.log(
+			"Favourite cryptos changed: \(favouriteCryptos.count) items - \(cryptoInfo)"
+		)
+		Log.ui.log(
+			"Favourite fiats changed: \(favouriteFiats.count) items - \(fiatInfo)"
+		)
 
-		let combinedInfo = combinedFavourites.map { "\($0.id):\($0.name)" }.joined(separator: ", ")
-		Log.ui.log("Combined favourites: \(combinedFavourites.count) items - \(combinedInfo)")
+		let combinedInfo = combinedFavourites.map { "\($0.id):\($0.name)" }
+			.joined(separator: ", ")
+		Log.ui.log(
+			"Combined favourites: \(combinedFavourites.count) items - \(combinedInfo)"
+		)
 	}
 
-    private var combinedFavourites: [any Currency] {
-        let all = (favouriteCryptos as [any Currency]) + (favouriteFiats as [any Currency])
-        return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
-    }
+	private var combinedFavourites: [any Currency] {
+		let all =
+			(favouriteCryptos as [any Currency])
+			+ (favouriteFiats as [any Currency])
+		return all.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
+	}
 
 	var body: some View {
 		List {
@@ -124,7 +137,8 @@ struct FavouritesListView: View {
 			decimals: getAmountOfDecimals(for: currency),
 			focusedCurrencyId: focusedCurrencyId,
 			onTap: handleCurrencyTap,
-			onDelete: onDelete)
+			onDelete: onDelete
+		)
 
 	}
 

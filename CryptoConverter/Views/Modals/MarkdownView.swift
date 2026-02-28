@@ -12,7 +12,12 @@ struct MarkdownView: View {
 		ScrollView {
 			VStack(alignment: .leading, spacing: 12) {
 				// Split by newline and enumerate to ensure unique IDs for ForEach
-				ForEach(Array(content.components(separatedBy: .newlines).enumerated()), id: \.offset) { index, line in
+				ForEach(
+					Array(
+						content.components(separatedBy: .newlines).enumerated()
+					),
+					id: \.offset
+				) { index, line in
 					let trimmed = line.trimmingCharacters(in: .whitespaces)
 
 					if trimmed.hasPrefix("# ") {
@@ -34,7 +39,9 @@ struct MarkdownView: View {
 						Spacer().frame(height: 4)
 					} else {
 						// Body text: Attempt to parse inline markdown (bold, italics, links)
-						if let attributed = try? AttributedString(markdown: trimmed) {
+						if let attributed = try? AttributedString(
+							markdown: trimmed
+						) {
 							Text(attributed)
 								.font(.body)
 								.foregroundStyle(.primary)
@@ -53,11 +60,13 @@ struct MarkdownView: View {
 	}
 
 	private func loadFile() {
-		if let url = Bundle.main.url(forResource: fileName, withExtension: "md") {
+		if let url = Bundle.main.url(forResource: fileName, withExtension: "md")
+		{
 			do {
 				content = try String(contentsOf: url, encoding: .utf8)
 			} catch {
-				content = "Error loading \(displayName): \(error.localizedDescription)"
+				content =
+					"Error loading \(displayName): \(error.localizedDescription)"
 			}
 		} else {
 			content = "\(displayName) file not found in Bundle."

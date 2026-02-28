@@ -32,7 +32,10 @@ struct CurrencyItemView: View {
 						selection.insert(currency.id)
 					}
 				}) {
-					Image(systemName: selection.contains(currency.id) ? "checkmark.circle.fill" : "circle")
+					Image(
+						systemName: selection.contains(currency.id)
+							? "checkmark.circle.fill" : "circle"
+					)
 				}
 			}
 
@@ -70,9 +73,15 @@ struct CurrencyItemView: View {
 				.padding(.horizontal, 10)
 				.background(
 					RoundedRectangle(cornerRadius: 6)
-						.fill(focusedCurrencyId.wrappedValue == currency.id ? Color.secondary.opacity(0.2) : Color.clear)
+						.fill(
+							focusedCurrencyId.wrappedValue == currency.id
+								? Color.secondary.opacity(0.2) : Color.clear
+						)
 				)
-				.animation(.easeOut(duration: 0.5), value: focusedCurrencyId.wrappedValue == currency.id)
+				.animation(
+					.easeOut(duration: 0.5),
+					value: focusedCurrencyId.wrappedValue == currency.id
+				)
 				.transition(.opacity.combined(with: .scale))
 				.tint(Color.clear)
 				.minimumScaleFactor(0.75)
@@ -82,13 +91,18 @@ struct CurrencyItemView: View {
 		.listRowBackground(Color("MainColor"))
 		.id(currency.id)
 		.contentShape(Rectangle())
-		.simultaneousGesture(TapGesture().onEnded {
-			onTap(currency)
-		})
+		.simultaneousGesture(
+			TapGesture().onEnded {
+				onTap(currency)
+			}
+		)
 		.swipeActions(edge: .trailing) {
-			Button(role: .destructive, action: {
-				onDelete(currency)
-			}) {
+			Button(
+				role: .destructive,
+				action: {
+					onDelete(currency)
+				}
+			) {
 				Label("Delete", systemImage: "trash")
 			}
 		}

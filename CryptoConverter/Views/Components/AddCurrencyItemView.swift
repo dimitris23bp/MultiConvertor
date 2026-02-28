@@ -1,12 +1,12 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct AddCurrencyItemView<T>: View where T: Currency, T: PersistentModel {
 
 	var currency: T
-    var buttonPressed: (T) -> Void
-        
-    var body: some View {
+	var buttonPressed: (T) -> Void
+
+	var body: some View {
 		HStack {
 			Image(uiImage: currency.icon ?? UIImage())
 				.interpolation(.none)
@@ -34,21 +34,21 @@ struct AddCurrencyItemView<T>: View where T: Currency, T: PersistentModel {
 				buttonPressed(currency)
 			} label: {
 				Image(systemName: currency.favourite ? "star.fill" : "star")
-						.foregroundColor(currency.favourite ? .accentColor : .gray)
-						.symbolEffect(.bounce, value: currency.favourite)
+					.foregroundColor(currency.favourite ? .accentColor : .gray)
+					.symbolEffect(.bounce, value: currency.favourite)
 			}
 			.padding()
 		}
 		.listRowSeparator(.hidden)
 		.listRowBackground(Color("MainColor"))
-    }
+	}
 }
 
 #Preview {
-    let currency = Previews.previewBtc
+	let currency = Previews.previewBtc
 
-    AddCurrencyItemView(
+	AddCurrencyItemView(
 		currency: currency,
-        buttonPressed: { _ in }
-    )
+		buttonPressed: { _ in }
+	)
 }
