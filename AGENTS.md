@@ -8,7 +8,7 @@ This document contains important information about the CryptoConverter project t
 - **Tests**: `CryptoConverterUnitTests/` and `CryptoConverterIntegrationTests/` - Test suites
 - **Assets**: `CryptoConverter/Assets.xcassets/` - Image and color assets
 - **Models**: `CryptoConverter/Models/` - Data models and DTOs
-- **Services**: `CryptoConverter/Servives/` - Business logic and API services
+- **Services**: `CryptoConverter/Services/` - Business logic and API services
 - **Views**: `CryptoConverter/Views/` - UI components and screens
 
 ## Key Components

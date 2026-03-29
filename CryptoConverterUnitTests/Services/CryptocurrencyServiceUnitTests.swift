@@ -2,37 +2,43 @@ import XCTest
 import SwiftData
 @testable import CryptoConverter
 
+@MainActor
 final class CryptocurrencyServiceUnitTests: XCTestCase {
     var modelContainer: ModelContainer!
     var modelContext: ModelContext!
-    var repository: CryptoRepository!
+    var cryptoRepository: CryptoRepository!
+    var fiatRepository: FiatRepository!
+    var allRepository: AllRepository!
     var mockCloudKitService: CloudKitServiceMock!
     var service: CryptocurrencyService!
 
-    @MainActor
     override func setUp() async throws {
-        let schema = Schema([Cryptocurrency.self])
+        let schema = Schema([Cryptocurrency.self, FiatCurrency.self, AppSettings.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
         modelContext = modelContainer.mainContext
         
-        repository = CryptoRepository(modelContext: modelContext)
+        cryptoRepository = CryptoRepository(modelContext: modelContext)
+        fiatRepository = FiatRepository(modelContext: modelContext)
+        allRepository = AllRepository(modelContext: modelContext, cryptoRepo: cryptoRepository, fiatRepo: fiatRepository)
+        
         mockCloudKitService = CloudKitServiceMock()
-        service = CryptocurrencyService(repository: repository, cloudKitService: mockCloudKitService)
+        service = CryptocurrencyService(repository: allRepository, cloudKitService: mockCloudKitService)
     }
 
     override func tearDown() {
         modelContainer = nil
         modelContext = nil
-        repository = nil
+        cryptoRepository = nil
+        fiatRepository = nil
+        allRepository = nil
         mockCloudKitService = nil
         service = nil
     }
 
     func testEnsureInitialDataIfNeeded_WhenStoreIsEmpty_FetchesFromCloudKitAndSaves() async throws {
         // Arrange
-        let dummyData = "preview".data(using: .utf8)
-        let mockDTO = CryptocurrencyDTO(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, renderedLogoData: dummyData, favourite: false, sortOrder: nil)
+        let mockDTO = CryptocurrencyDTO(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, iconData: nil)
         mockCloudKitService.mockCryptocurrencies = [mockDTO]
 
         // Act
@@ -43,17 +49,16 @@ final class CryptocurrencyServiceUnitTests: XCTestCase {
         XCTAssertEqual(mockCloudKitService.fetchWithAmountCalledCount, 1)
         
         // Verify data was saved to repository (ModelContext)
-        let savedCryptos = await repository.fetchAllCryptos()
+        let savedCryptos = cryptoRepository.fetchAllCryptos()
         XCTAssertEqual(savedCryptos.count, 1)
         XCTAssertEqual(savedCryptos.first?.id, "BTC")
     }
 
     func testEnsureInitialDataIfNeeded_WhenStoreHasData_DoesNotFetch() async throws {
         // Arrange
-        // Seed the repository directly
-        let existingCrypto = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, logoString: "preview")
-        existingCrypto.renderedLogoData = Data() // Make sure it counts
-        try await repository.saveCryptos(cryptocurrencies: [existingCrypto])
+        // Seed the repository using AllRepository's save to match service logic
+        let dto = CryptocurrencyDTO(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, iconData: nil)
+        await allRepository.save(currencies: [dto], withType: CryptocurrencyDTO.self)
         
         mockCloudKitService.mockCryptocurrencies = []
 
