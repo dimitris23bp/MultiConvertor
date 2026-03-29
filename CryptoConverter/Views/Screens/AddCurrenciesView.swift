@@ -28,7 +28,7 @@ struct AddCurrenciesView: View {
 	}
 
 	@State private var searchText: String = ""
-	@State private var selectedTab: CurrencyTab = .crypto
+	@State private var selectedTab: CurrencyTab = .fiat
 
 	private var dynamicPredicateForCrypto: Predicate<Cryptocurrency> {
 		#Predicate<Cryptocurrency> { crypto in
@@ -86,8 +86,8 @@ struct AddCurrenciesView: View {
 			.toolbar {
 				ToolbarItem(placement: .principal) {
 					Picker("Currency Type", selection: $selectedTab) {
-						Text("Crypto").tag(CurrencyTab.crypto)
 						Text("Fiat").tag(CurrencyTab.fiat)
+						Text("Crypto").tag(CurrencyTab.crypto)
 					}
 					.pickerStyle(.segmented)
 				}
