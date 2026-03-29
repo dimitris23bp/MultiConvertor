@@ -5,7 +5,7 @@ import SwiftData
 
 class FavouritesListViewTests: XCTestCase {
     
-    func testLoggingFunctionCompiles() {
+	@MainActor func testLoggingFunctionCompiles() {
         // This test just verifies that our logging function compiles correctly
         // In a real test, we would mock the logger and verify the output
         
@@ -28,15 +28,14 @@ class FavouritesListViewTests: XCTestCase {
         // This should compile without errors, indicating our logging implementation is correct
         let view = FavouritesListView(
             displayMode: .merged,
-            editMode: Binding.constant(EditMode.inactive),
-            selection: Binding.constant(Set<String>()),
-            amounts: Binding.constant([String: Double]()),
-            focusedCurrencyId: FocusState<String?>().projectedValue,
+            editMode: .constant(.inactive),
+            selection: .constant(Set<String>()),
+            amounts: .constant([String: Double]()),
+            focusedCurrencyId: .constant(nil),
             onDelete: { _ in },
             onMoveMerged: { _, _ in },
             onMoveSeparated: { _, _, _ in },
-            updateInputs: { _, _ in },
-            lastUpdate: "Now"
+            updateInputs: { _, _ in }
         )
         
         // The view should be able to initialize with the container's context
@@ -44,7 +43,7 @@ class FavouritesListViewTests: XCTestCase {
         XCTAssertNotNil(view)
     }
     
-    func testLogFavouritesChangeFormat() {
+	@MainActor func testLogFavouritesChangeFormat() {
         // Test that our logging function produces the expected format
         let container = try! ModelContainer(for: Cryptocurrency.self, FiatCurrency.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
         
@@ -60,15 +59,14 @@ class FavouritesListViewTests: XCTestCase {
         // Create the view to test the logging function
         let view = FavouritesListView(
             displayMode: .merged,
-            editMode: Binding.constant(EditMode.inactive),
-            selection: Binding.constant(Set<String>()),
-            amounts: Binding.constant([String: Double]()),
-            focusedCurrencyId: FocusState<String?>().projectedValue,
+            editMode: .constant(.inactive),
+            selection: .constant(Set<String>()),
+            amounts: .constant([String: Double]()),
+            focusedCurrencyId: .constant(nil),
             onDelete: { _ in },
             onMoveMerged: { _, _ in },
             onMoveSeparated: { _, _, _ in },
-            updateInputs: { _, _ in },
-            lastUpdate: "Now"
+            updateInputs: { _, _ in }
         )
         
         // The logging function should not crash and should be callable
