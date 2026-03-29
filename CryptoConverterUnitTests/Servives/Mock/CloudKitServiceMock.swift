@@ -31,7 +31,7 @@ final class CloudKitServiceMock: CloudKitServiceProtocol, @unchecked Sendable {
     }
     
     var mockLastUpdateDate: Date?
-    func getLastUpdate() async -> Date? {
+    func getLastUpdate(of type: String) async -> Date? {
         return mockLastUpdateDate
     }
 }
