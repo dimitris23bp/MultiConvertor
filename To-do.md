@@ -34,3 +34,9 @@
 
 ### Backend
 
+
+# Purchase
+
+1. figure out if you need to add the subscription from App Store Connect or directly in the code.
+2. understand how to test purchases without spending real money. Set up the code for the purchase so it doesn’t actually process or grant access.
+3. decide what content goes behind the paywall and create those features. 
