@@ -135,10 +135,11 @@ struct FavouritesListView: View {
 			),
 			updateInputs: updateInputs,
 			decimals: getAmountOfDecimals(for: currency),
-			focusedCurrencyId: focusedCurrencyId,
+			isFocused: focusedCurrencyId.wrappedValue == currency.id,
 			onTap: handleCurrencyTap,
 			onDelete: onDelete
 		)
+		.focused(focusedCurrencyId, equals: currency.id)
 
 	}
 

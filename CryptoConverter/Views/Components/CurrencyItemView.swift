@@ -17,7 +17,7 @@ struct CurrencyItemView: View {
 		return formatter
 	}
 
-	var focusedCurrencyId: FocusState<String?>.Binding
+	var isFocused: Bool
 
 	var onTap: (any Currency) -> Void
 	var onDelete: (any Currency) -> Void
@@ -63,7 +63,6 @@ struct CurrencyItemView: View {
 						value: $amount,
 						formatter: numberFormatter
 					)
-					.focused(focusedCurrencyId, equals: currency.id)
 					.id(currency.id)
 					.frame(height: 40)
 					.fixedSize(horizontal: true, vertical: false)
@@ -74,13 +73,13 @@ struct CurrencyItemView: View {
 				.background(
 					RoundedRectangle(cornerRadius: 6)
 						.fill(
-							focusedCurrencyId.wrappedValue == currency.id
+							isFocused
 								? Color.secondary.opacity(0.2) : Color.clear
 						)
 				)
 				.animation(
 					.easeOut(duration: 0.5),
-					value: focusedCurrencyId.wrappedValue == currency.id
+					value: isFocused
 				)
 				.transition(.opacity.combined(with: .scale))
 				.tint(Color.clear)
