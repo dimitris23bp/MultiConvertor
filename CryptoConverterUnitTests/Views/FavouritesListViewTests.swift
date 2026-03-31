@@ -26,17 +26,7 @@ class FavouritesListViewTests: XCTestCase {
         container.mainContext.insert(fiat1)
         
         // This should compile without errors, indicating our logging implementation is correct
-        let view = FavouritesListView(
-            displayMode: .merged,
-            editMode: .constant(.inactive),
-            selection: .constant(Set<String>()),
-            amounts: .constant([String: Double]()),
-			focusedCurrencyId: FocusState<String?>().projectedValue,
-            onDelete: { _ in },
-            onMoveMerged: { _, _ in },
-            onMoveSeparated: { _, _, _ in },
-            updateInputs: { _, _ in }
-        )
+        let view = FavouritesListTestWrapper()
         
         // The view should be able to initialize with the container's context
         // This verifies that our @Query properties work correctly
@@ -57,17 +47,7 @@ class FavouritesListViewTests: XCTestCase {
         container.mainContext.insert(fiat)
         
         // Create the view to test the logging function
-        let view = FavouritesListView(
-            displayMode: .merged,
-            editMode: .constant(.inactive),
-            selection: .constant(Set<String>()),
-            amounts: .constant([String: Double]()),
-			focusedCurrencyId: FocusState<String?>().projectedValue,
-            onDelete: { _ in },
-            onMoveMerged: { _, _ in },
-            onMoveSeparated: { _, _, _ in },
-            updateInputs: { _, _ in }
-        )
+        let view = FavouritesListTestWrapper()
         
         // The logging function should not crash and should be callable
         // Note: We can't easily capture the actual log output in a unit test,
@@ -77,5 +57,24 @@ class FavouritesListViewTests: XCTestCase {
             // For now, we just verify the view can be created
             _ = view
         })
+    }
+}
+
+// This is needed to escape warnings with immutable FocusState
+private struct FavouritesListTestWrapper: View {
+    @FocusState private var focusedCurrencyId: String?
+    
+    var body: some View {
+        FavouritesListView(
+            displayMode: .merged,
+            editMode: .constant(.inactive),
+            selection: .constant(Set<String>()),
+            amounts: .constant([String: Double]()),
+            focusedCurrencyId: $focusedCurrencyId,
+            onDelete: { _ in },
+            onMoveMerged: { _, _ in },
+            onMoveSeparated: { _, _, _ in },
+            updateInputs: { _, _ in }
+        )
     }
 }
