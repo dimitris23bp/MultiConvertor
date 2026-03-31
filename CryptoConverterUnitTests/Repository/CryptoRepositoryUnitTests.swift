@@ -24,12 +24,10 @@ final class CryptoRepositoryUnitTests: XCTestCase {
 
     func testSaveCryptos_PersistsData() async throws {
         // Arrange
-        let dummyData = "preview".data(using: .utf8)
-		// TODO: Add btc from assets to iconData
-        let crypto = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, iconData: nil)
+        let dto = CryptocurrencyDTO(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, iconData: nil)
 
         // Act
-        try await repository.saveCryptos(cryptocurrencies: [crypto])
+        try await repository.saveCryptos(dtos: [dto])
 
         // Assert
         let descriptor = FetchDescriptor<Cryptocurrency>()
@@ -39,27 +37,60 @@ final class CryptoRepositoryUnitTests: XCTestCase {
         XCTAssertEqual(savedCryptos.first?.id, "BTC")
     }
 
-    func testAddInitialFavourites_UpdatesStatusAndSortOrder() async throws {
+    func testAddCryptosIfDontExist_AddsOnlyNew() async throws {
+        // Arrange
+        let btc = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 1.0, marketCap: 1.0, iconData: nil)
+        modelContext.insert(btc)
+        try modelContext.save()
+        
+        let existingIDs: Set<String> = ["BTC"]
+        let dtos = [
+            CryptocurrencyDTO(id: "BTC", name: "Bitcoin", value: 1.0, marketCap: 1.0, iconData: nil),
+            CryptocurrencyDTO(id: "ETH", name: "Ethereum", value: 2000.0, marketCap: 200000.0, iconData: nil)
+        ]
+
+        // Act
+        try repository.addCryptosIfDontExist(ids: existingIDs, dtos: dtos)
+
+        // Assert
+        let descriptor = FetchDescriptor<Cryptocurrency>()
+        let savedCryptos = try modelContext.fetch(descriptor)
+        
+        XCTAssertEqual(savedCryptos.count, 2)
+        XCTAssertTrue(savedCryptos.contains(where: { $0.id == "BTC" }))
+        XCTAssertTrue(savedCryptos.contains(where: { $0.id == "ETH" }))
+    }
+
+    func testUpdateAmounts_UpdatesExistingData() async throws {
+        // Arrange
+        let btc = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 40000.0, marketCap: 800000.0, iconData: nil)
+        modelContext.insert(btc)
+        try modelContext.save()
+        
+        let updateDTO = CryptocurrencyDTO(id: "BTC", name: "Bitcoin", value: 50000.0, marketCap: 1000000.0, iconData: nil)
+
+        // Act
+        repository.updateAmounts(incomingCryptos: [updateDTO])
+
+        // Assert
+        XCTAssertEqual(btc.value, 50000.0)
+        XCTAssertEqual(btc.marketCap, 1000000.0)
+    }
+
+    func testFetchAllCryptoIDs_ReturnsCorrectIDs() async throws {
         // Arrange
         let btc = Cryptocurrency(id: "BTC", name: "Bitcoin", value: 1.0, marketCap: 1.0, iconData: nil)
         let eth = Cryptocurrency(id: "ETH", name: "Ethereum", value: 1.0, marketCap: 1.0, iconData: nil)
-        let other = Cryptocurrency(id: "DOGE", name: "Dogecoin", value: 1.0, marketCap: 1.0, iconData: nil)
-
         modelContext.insert(btc)
         modelContext.insert(eth)
-        modelContext.insert(other)
-        
-        let cryptos = [btc, eth, other]
+        try modelContext.save()
 
         // Act
-        try await repository.addInitialFavourites(cryptocurrencies: cryptos)
+        let ids = repository.fetchAllCryptoIDs()
 
         // Assert
-        XCTAssertTrue(btc.favourite)
-        XCTAssertTrue(eth.favourite)
-        XCTAssertFalse(other.favourite)
-        
-        XCTAssertGreaterThan(btc.popularity ?? 0, 0)
-        XCTAssertGreaterThan(eth.popularity ?? 0, 0)
+        XCTAssertEqual(ids.count, 2)
+        XCTAssertTrue(ids.contains("BTC"))
+        XCTAssertTrue(ids.contains("ETH"))
     }
 }
