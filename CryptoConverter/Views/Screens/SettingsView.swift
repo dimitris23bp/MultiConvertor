@@ -112,12 +112,17 @@ struct SettingsView: View {
 			// Load real cryptocurrency last update
 			if let currencyService = currencyService {
 				Task {
-					cryptoLastUpdate = await currencyService.getLastUpdate(
+					async let cryptoUpdate = currencyService.getLastUpdate(
 						of: "Cryptocurrency"
 					)
-					fiatLastUpdate = await currencyService.getLastUpdate(
+					async let fiatUpdate = currencyService.getLastUpdate(
 						of: "FiatCurrency"
 					)
+
+					let (crypto, fiat) = await (cryptoUpdate, fiatUpdate)
+
+					cryptoLastUpdate = crypto
+					fiatLastUpdate = fiat
 				}
 			}
 		}
