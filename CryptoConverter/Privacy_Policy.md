@@ -1,8 +1,8 @@
 # Privacy Policy
 
-**Last Updated:** January 8, 2026
+**Last Updated:** April 9, 2026
 
-This Privacy Policy describes how **CurrencyConverter** ("the App," "we," "us," or "our") handles your information when you use our mobile application.
+This Privacy Policy describes how **MultiConvertor** ("the App," "we," "us," or "our") handles your information when you use our mobile application.
 
 We respect your privacy. Our business model is not based on collecting or selling your personal data.
 
@@ -33,7 +33,7 @@ The App relies on the following services to function:
 
 ## 4. Children’s Privacy
 
-Our App is not directed to children under the age of 13. We do not knowingly collect personal information from children. If you believe we have inadvertently collected such information, please contact us so we can resolve the issue.
+Our App is intended for a general audience and is rated 4+ on the App Store. Because we do not collect, store, or transmit any personally identifiable information from any user.
 
 ## 5. Changes to This Policy
 

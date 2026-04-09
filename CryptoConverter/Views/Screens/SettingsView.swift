@@ -85,6 +85,13 @@ struct SettingsView: View {
 					) {
 						Text("Privacy Policy")
 					}
+
+					NavigationLink(
+						destination: MarkdownView(fileName: "Technical_Information")
+					) {
+						Text("Technical Information")
+					}
+					
 				} header: {
 					Text("Additional Info")
 				}
