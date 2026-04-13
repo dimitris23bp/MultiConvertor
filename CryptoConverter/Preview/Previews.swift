@@ -94,4 +94,18 @@ struct Previews {
 			fatalError("Failed to create preview container: \(error)")
 		}
 	}()
+
+	@MainActor
+	static var previewCurrencyService: CurrencyService {
+		let context = preview.mainContext
+		let repoCrypto = CryptoRepository(modelContext: context)
+		let repoFiat = FiatRepository(modelContext: context)
+		let repoAll = AllRepository(modelContext: context, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
+
+		let cloudKitService = CloudKitService()
+
+		let cryptoService = CryptocurrencyService(repository: repoAll, cloudKitService: cloudKitService)
+		let fiatService = FiatCurrencyService(repository: repoAll, cloudkitService: cloudKitService)
+		return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
+	}
 }

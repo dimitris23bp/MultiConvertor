@@ -11,8 +11,10 @@ import SwiftUI
 @main
 struct CryptoConverterApp: App {
 
-	var sharedModelContainer: ModelContainer = {
+	let sharedModelContainer: ModelContainer
+	let currencyService: CurrencyService
 
+	init() {
 		let schema = Schema([
 			Cryptocurrency.self,
 			FiatCurrency.self,
@@ -43,15 +45,36 @@ struct CryptoConverterApp: App {
 				context.insert(Previews.previewUsd)
 			}
 
-			return container
+			self.sharedModelContainer = container
+
+			// Initialize Repository and Services
+			let context = container.mainContext
+			let repoCrypto = CryptoRepository(modelContext: context)
+			let repoFiat = FiatRepository(modelContext: context)
+			let repoAll = AllRepository(
+				modelContext: context, cryptoRepo: repoCrypto,
+				fiatRepo: repoFiat)
+
+			let cloudKitService = CloudKitService()
+
+			let cryptoService = CryptocurrencyService(
+				repository: repoAll, cloudKitService: cloudKitService)
+			let fiatService = FiatCurrencyService(
+				repository: repoAll, cloudkitService: cloudKitService)
+
+			self.currencyService = CurrencyService(
+				fiatService: fiatService, cryptoService: cryptoService,
+				currencyRepository: repoAll)
+
 		} catch {
 			fatalError("Could not create ModelContainer: \(error)")
 		}
-	}()
+	}
 
 	var body: some Scene {
 		WindowGroup {
 			MainTabView()
+				.environment(\.currencyService, currencyService)
 		}
 		.modelContainer(sharedModelContainer)
 	}

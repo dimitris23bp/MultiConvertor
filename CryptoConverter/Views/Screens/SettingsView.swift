@@ -4,11 +4,10 @@ import SwiftData
 
 struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
+	@Environment(\.currencyService) private var currencyService
 	@State private var settingsService: AppSettingsService?
 	@State private var cryptoLastUpdate: String = "Loading..."
 	@State private var fiatLastUpdate: String = "Loading..."
-
-	let currencyService: CurrencyService?
 
 	var body: some View {
 		NavigationStack {
@@ -137,5 +136,7 @@ struct SettingsView: View {
 }
 
 #Preview {
-	SettingsView(currencyService: nil)
+	SettingsView()
+		.environment(\.currencyService, Previews.previewCurrencyService)
+		.modelContainer(Previews.preview)
 }

@@ -1,3 +1,5 @@
+import SwiftUI
+
 protocol CurrencyServiceProtocol: Sendable {
 	func ensureInitialDataIfNeeded(minCount: Int) async throws
 	func updateAmounts() async
@@ -59,5 +61,19 @@ actor CurrencyService: CurrencyServiceProtocol {
 		} catch {
 			print("Cannot add successfully all favourites.")
 		}
+	}
+}
+
+// MARK: - Environment Setup
+
+struct CurrencyServiceKey: EnvironmentKey {
+	// If it is not provided on the top level, return nil
+	static let defaultValue: CurrencyService? = nil
+}
+
+extension EnvironmentValues {
+	var currencyService: CurrencyService? {
+		get { self[CurrencyServiceKey.self] }
+		set { self[CurrencyServiceKey.self] = newValue }
 	}
 }

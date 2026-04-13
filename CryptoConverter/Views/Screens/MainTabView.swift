@@ -5,7 +5,7 @@ import DotLottiePlayer
 
 struct MainTabView: View {
 	@Environment(\.scenePhase) private var scenePhase
-	@Environment(\.modelContext) private var modelContext
+	@Environment(\.currencyService) private var currencyService
 
 	static var fetchDescriptor: FetchDescriptor<Cryptocurrency> {
 		var descriptor = FetchDescriptor<Cryptocurrency>()
@@ -24,22 +24,6 @@ struct MainTabView: View {
 
 	@StateObject private var scheduler = TickerUpdateScheduler()
 	@State private var favouritesInitialized = false
-
-	@State private var stableCurrencyService: CurrencyService?
-
-	private var currencyService: CurrencyService {
-		if let stable = stableCurrencyService { return stable }
-		
-		let repoCrypto = CryptoRepository(modelContext: modelContext)
-		let repoFiat = FiatRepository(modelContext: modelContext)
-		let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
-
-		let cloudKitService = CloudKitService()
-
-		let cryptoService = CryptocurrencyService(repository: repoAll, cloudKitService: cloudKitService)
-		let fiatService = FiatCurrencyService(repository: repoAll, cloudkitService: cloudKitService)
-		return CurrencyService(fiatService: fiatService, cryptoService: cryptoService, currencyRepository: repoAll)
-	}
 
 	var body: some View {
 		Group {
@@ -62,7 +46,7 @@ struct MainTabView: View {
 							Label("Overview", systemImage: "house")
 						}
 
-					SettingsView(currencyService: stableCurrencyService ?? currencyService)
+					SettingsView()
 						.tabItem {
 							Label("Settings", systemImage: "gear")
 						}
@@ -70,13 +54,8 @@ struct MainTabView: View {
 			}
 		}
 		.task {
-			// Initialize stable service if not yet done
-			if stableCurrencyService == nil {
-				stableCurrencyService = currencyService
-			}
-			
-			guard let service = stableCurrencyService else { return }
-			
+			guard let service = currencyService else { return }
+
 			print("Task is called.")
 			if isLoading || isPreview {
 				scheduler.updateLastExecution()
@@ -107,16 +86,18 @@ struct MainTabView: View {
 		.onDisappear {
 			scheduler.stop()
 		}
-		.onChange(of: scenePhase, { _, newValue in
-			if newValue == .active {
-				if scheduler.checkIfNeeded() {
-					Task {
-						scheduler.updateLastExecution()
-						await currencyService.updateAmounts()
+		.onChange(
+			of: scenePhase,
+			{ _, newValue in
+				if newValue == .active {
+					if scheduler.checkIfNeeded() {
+						Task {
+							scheduler.updateLastExecution()
+							await currencyService?.updateAmounts()
+						}
 					}
 				}
-			}
-		})
+			})
 
 	}
 }
@@ -132,4 +113,5 @@ struct AnimationView: View {
 #Preview {
 	MainTabView()
 		.modelContainer(Previews.preview)
+		.environment(\.currencyService, Previews.previewCurrencyService)
 }
