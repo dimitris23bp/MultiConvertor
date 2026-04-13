@@ -12,6 +12,7 @@
 		B75F2F802F39076800775802 /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B75F2F7F2F39076800775802 /* AGENTS.md */; };
 		B76EB83A2E89CE9B00A5968E /* To-do.md in Resources */ = {isa = PBXBuildFile; fileRef = B76EB8382E89CE8E00A5968E /* To-do.md */; };
 		B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */ = {isa = PBXBuildFile; fileRef = B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */; };
+		B7F505FE2F8D831900137A36 /* plan.md in Resources */ = {isa = PBXBuildFile; fileRef = B7F505FC2F8D831900137A36 /* plan.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		B75F2F7F2F39076800775802 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		B76EB8382E89CE8E00A5968E /* To-do.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "To-do.md"; sourceTree = "<group>"; };
 		B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "logo-from-composer.icon"; sourceTree = "<group>"; };
+		B7F505FC2F8D831900137A36 /* plan.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = plan.md; sourceTree = "<group>"; };
 		B7FC087B2EA559E600984CAD /* Currency Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Currency Converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -88,6 +90,7 @@
 		B7EFC44F2E8758F9003B9373 = {
 			isa = PBXGroup;
 			children = (
+				B7F505FD2F8D831900137A36 /* conductor */,
 				B75F2F7F2F39076800775802 /* AGENTS.md */,
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
@@ -99,6 +102,14 @@
 				B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */,
 				B7336DE72F450AE400D5C678 /* popping.lottie */,
 			);
+			sourceTree = "<group>";
+		};
+		B7F505FD2F8D831900137A36 /* conductor */ = {
+			isa = PBXGroup;
+			children = (
+				B7F505FC2F8D831900137A36 /* plan.md */,
+			);
+			path = conductor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,6 +250,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7F505FE2F8D831900137A36 /* plan.md in Resources */,
 				B7336DE82F450AE400D5C678 /* popping.lottie in Resources */,
 				B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */,
 				B75F2F802F39076800775802 /* AGENTS.md in Resources */,

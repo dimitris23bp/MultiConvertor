@@ -45,9 +45,11 @@ final class CryptoRepository {
 	/// Updates existing crypto values and market caps from CloudKit's public Database.
 	func updateAmounts(incomingCryptos: [CryptocurrencyDTO]) {
 		let existingCryptos = fetchAllCryptos()
+		// Map existing cryptos to a dictionary by ID for O(1) lookup
+		let existingDict = Dictionary(uniqueKeysWithValues: existingCryptos.map { ($0.id, $0) })
+		
 		for incoming in incomingCryptos {
-			if let match = existingCryptos.first(where: { $0.id == incoming.id }
-			) {
+			if let match = existingDict[incoming.id] {
 				match.value = incoming.value
 				match.marketCap = incoming.marketCap
 			}

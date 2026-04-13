@@ -54,9 +54,11 @@ final class FiatRepository {
 	/// Updates existing crypto values and market caps from CloudKit's public Database.
 	func updateAmounts(incomings: [FiatCurrencyDTO]) {
 		let existingFiats = fetchAllFiat()
+		// Map existing fiats to a dictionary by ID for O(1) lookup
+		let existingDict = Dictionary(uniqueKeysWithValues: existingFiats.map { ($0.id, $0) })
+		
 		for incoming in incomings {
-			if let match = existingFiats.first(where: { $0.id == incoming.id })
-			{
+			if let match = existingDict[incoming.id] {
 				match.value = incoming.value
 			}
 		}

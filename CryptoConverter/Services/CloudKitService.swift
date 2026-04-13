@@ -62,7 +62,7 @@ actor CloudKitService: CloudKitServiceProtocol {
 
 	}
 
-	func fetchFiatCurrenciesFromCK(amount: Int) async -> [FiatCurrencyDTO] {
+	func fetchFiatCurrenciesFromCK(amount: Int) async throws -> [FiatCurrencyDTO] {
 		do {
 			// Fetch the raw CKRecords
 			let records = try await fetchPublicRecords(
@@ -155,11 +155,8 @@ actor CloudKitService: CloudKitServiceProtocol {
 		]
 
 		repeat {
-			let (results, nextCursor):
-				(
-					[(CKRecord.ID, Result<CKRecord, Error>)],
-					CKQueryOperation.Cursor?
-				)
+			let results: [(CKRecord.ID, Result<CKRecord, Error>)]
+			let nextCursor: CKQueryOperation.Cursor?
 
 			if let cursor = currentCursor {
 				// Fetch the next batch using the cursor
@@ -185,6 +182,13 @@ actor CloudKitService: CloudKitServiceProtocol {
 			}
 
 			allRecords.append(contentsOf: records)
+			
+			// If we got a cursor but no records, and it's the same cursor, we might be in an infinite loop
+			if nextCursor != nil && records.isEmpty && nextCursor == currentCursor {
+				print("Detected potential infinite loop with CloudKit cursor. Breaking.")
+				break
+			}
+			
 			currentCursor = nextCursor  // Update the cursor for the next iteration
 
 		} while currentCursor != nil

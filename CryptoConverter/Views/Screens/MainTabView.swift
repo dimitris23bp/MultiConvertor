@@ -25,7 +25,11 @@ struct MainTabView: View {
 	@StateObject private var scheduler = TickerUpdateScheduler()
 	@State private var favouritesInitialized = false
 
+	@State private var stableCurrencyService: CurrencyService?
+
 	private var currencyService: CurrencyService {
+		if let stable = stableCurrencyService { return stable }
+		
 		let repoCrypto = CryptoRepository(modelContext: modelContext)
 		let repoFiat = FiatRepository(modelContext: modelContext)
 		let repoAll = AllRepository(modelContext: modelContext, cryptoRepo: repoCrypto, fiatRepo: repoFiat)
@@ -58,41 +62,46 @@ struct MainTabView: View {
 							Label("Overview", systemImage: "house")
 						}
 
-					SettingsView(currencyService: currencyService)
+					SettingsView(currencyService: stableCurrencyService ?? currencyService)
 						.tabItem {
 							Label("Settings", systemImage: "gear")
 						}
 				}
 			}
 		}
-		.onAppear {
-			Task {
-				print("Task is called.")
-				if isLoading || isPreview {
-					scheduler.updateLastExecution()
-					try? await currencyService.ensureInitialDataIfNeeded()
-					await currencyService.addInitialFavourites()
-					favouritesInitialized = true // Favourites have been added
-					print("Initial data has happened")
-				} else if scheduler.checkIfNeeded() {
-					favouritesInitialized = true // No need add favourites again
-					scheduler.updateLastExecution()
-					await currencyService.updateAmounts()
-					print("Update has happened")
-				}
+		.task {
+			// Initialize stable service if not yet done
+			if stableCurrencyService == nil {
+				stableCurrencyService = currencyService
+			}
+			
+			guard let service = stableCurrencyService else { return }
+			
+			print("Task is called.")
+			if isLoading || isPreview {
+				scheduler.updateLastExecution()
+				try? await service.ensureInitialDataIfNeeded()
+				await service.addInitialFavourites()
+				favouritesInitialized = true // Favourites have been added
+				print("Initial data has happened")
+			} else if scheduler.checkIfNeeded() {
+				favouritesInitialized = true // No need add favourites again
+				scheduler.updateLastExecution()
+				await service.updateAmounts()
+				print("Update has happened")
+			}
 
-				// When the initial update is done (if needed), make sure the remaining data exist
-				// If not, add them
-				await currencyService.ensureRemainingData()
+			// When the initial update is done (if needed), make sure the remaining data exist
+			// If not, add them
+			await service.ensureRemainingData()
 
-				// No matter what happened above, the favourites are in place and the main page can finally load
-				favouritesInitialized = true
+			// No matter what happened above, the favourites are in place and the main page can finally load
+			favouritesInitialized = true
 
-				scheduler.start { [service = currencyService] in
-					print("Inside the scheduler start. Going to update amounts")
-					await service.updateAmounts()
-					print("The amounts have been updated")
-				}
+			scheduler.start { [service] in
+				print("Inside the scheduler start. Going to update amounts")
+				await service.updateAmounts()
+				print("The amounts have been updated")
 			}
 		}
 		.onDisappear {
