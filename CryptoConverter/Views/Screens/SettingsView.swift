@@ -5,7 +5,8 @@ import SwiftData
 struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
 	@Environment(\.currencyService) private var currencyService
-	@State private var settingsService: AppSettingsService?
+	@Environment(\.settingsService) private var settingsService
+
 	@State private var cryptoLastUpdate: String = "Loading..."
 	@State private var fiatLastUpdate: String = "Loading..."
 
@@ -110,27 +111,20 @@ struct SettingsView: View {
 			}
 			.navigationTitle("Settings")
 		}
-		.onAppear {
-			if settingsService == nil {
-				settingsService = AppSettingsService(modelContext: modelContext)
-			}
+		.task {
+			guard let currencyService = currencyService else { return }
 
-			// Load real cryptocurrency last update
-			if let currencyService = currencyService {
-				Task {
-					async let cryptoUpdate = currencyService.getLastUpdate(
-						of: "Cryptocurrency"
-					)
-					async let fiatUpdate = currencyService.getLastUpdate(
-						of: "FiatCurrency"
-					)
+			async let cryptoUpdate = currencyService.getLastUpdate(
+				of: "Cryptocurrency"
+			)
+			async let fiatUpdate = currencyService.getLastUpdate(
+				of: "FiatCurrency"
+			)
 
-					let (crypto, fiat) = await (cryptoUpdate, fiatUpdate)
+			let (crypto, fiat) = await (cryptoUpdate, fiatUpdate)
 
-					cryptoLastUpdate = crypto
-					fiatLastUpdate = fiat
-				}
-			}
+			cryptoLastUpdate = crypto
+			fiatLastUpdate = fiat
 		}
 	}
 }

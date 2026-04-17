@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import SwiftData
+import SwiftUI
 
 class AppSettingsService: ObservableObject {
 
@@ -26,3 +27,18 @@ class AppSettingsService: ObservableObject {
 		try? modelContext.save()
 	}
 }
+
+	// MARK: - Environment Setup
+
+	struct SettingsServiceKey: EnvironmentKey {
+		// If it is not provided on the top level, return nil
+		static let defaultValue: AppSettingsService? = nil
+	}
+
+	extension EnvironmentValues {
+		var settingsService: AppSettingsService? {
+			get { self[SettingsServiceKey.self] }
+			set { self[SettingsServiceKey.self] = newValue }
+		}
+	}
+
