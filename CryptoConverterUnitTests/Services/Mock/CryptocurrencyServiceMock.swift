@@ -14,6 +14,10 @@ final class CryptocurrencyServiceMock: CryptocurrencyServiceProtocol {
             throw NSError(domain: "MockError", code: 1, userInfo: nil)
         }
     }
+
+    func updateAmountOfCryptos() async {
+        // Mock implementation
+    }
     
     var mockLastUpdateString: String = "NaN"
     func getLastUpdate() async -> String {

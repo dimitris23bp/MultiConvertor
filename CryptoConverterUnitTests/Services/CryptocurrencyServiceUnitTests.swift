@@ -88,7 +88,7 @@ final class CryptocurrencyServiceUnitTests: XCTestCase {
     func testGetLastUpdate_ReturnsFormattedString() async {
         // Arrange
         let testDate = Date(timeIntervalSince1970: 1711920000) // Some fixed date
-        mockCloudKitService.mockLastUpdateDate = testDate
+        mockCloudKitService.mockLastUpdateDates["Cryptocurrency"] = testDate
 
         // Act
         let lastUpdate = await service.getLastUpdate()

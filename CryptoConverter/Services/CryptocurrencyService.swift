@@ -2,6 +2,7 @@ import CloudKit
 
 protocol CryptocurrencyServiceProtocol: Sendable {
 	func ensureInitialDataIfNeeded(minCount: Int) async throws
+	func updateAmountOfCryptos() async
 	func getLastUpdate() async -> String
 }
 
