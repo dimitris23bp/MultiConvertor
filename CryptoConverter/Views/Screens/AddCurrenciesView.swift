@@ -16,8 +16,11 @@ struct AddCurrenciesView: View {
 	private var fiatCurrencies: [FiatCurrency]
 
 	private var isLoading: Bool {
-		cryptocurrencies.count == initialCryptosSize
-			|| fiatCurrencies.count == initialFiatSize
+		if selectedTab == .crypto {
+			return cryptocurrencies.count <= initialCryptosSize
+		} else {
+			return fiatCurrencies.count <= initialFiatSize
+		}
 	}
 
 	private var allCurrencies: [any Currency] {
@@ -80,6 +83,23 @@ struct AddCurrenciesView: View {
 				}
 				.scrollContentBackground(.hidden)
 				.background(Color("MainColor"))
+				.overlay(alignment: .bottom) {
+					if isLoading {
+						HStack(spacing: 8) {
+							Text("Loading initial currencies...")
+								.font(.subheadline)
+								.foregroundStyle(.secondary)
+						}
+						.padding(.horizontal, 16)
+						.padding(.vertical, 16)
+						.background(.ultraThinMaterial)
+						.clipShape(Capsule())
+						.shadow(radius: 5)
+						.padding(.bottom, 20)
+						.transition(.move(edge: .bottom).combined(with: .opacity))
+					}
+				}
+				.animation(.default, value: isLoading)
 			}
 			.searchable(text: $searchText)
 			.animation(.default, value: searchText)
