@@ -57,50 +57,48 @@ struct AddCurrenciesView: View {
 
 	var body: some View {
 		NavigationStack {
-			VStack {
-				List {
-					if selectedTab == .crypto {
-						ForEach(
-							(try! cryptocurrencies.filter(
-								dynamicPredicateForCrypto
-							))
-						) { currency in
-							AddCurrencyItemView(
-								currency: currency,
-								buttonPressed: buttonPressed(with:)
-							)
-						}
-					} else {
-						ForEach(
-							(try! fiatCurrencies.filter(dynamicPredicateForFiat))
-						) { currency in
-							AddCurrencyItemView(
-								currency: currency,
-								buttonPressed: buttonPressed(with:)
-							)
-						}
+			List {
+				if selectedTab == .crypto {
+					ForEach(
+						(try! cryptocurrencies.filter(
+							dynamicPredicateForCrypto
+						))
+					) { currency in
+						AddCurrencyItemView(
+							currency: currency,
+							buttonPressed: buttonPressed(with:)
+						)
+					}
+				} else {
+					ForEach(
+						(try! fiatCurrencies.filter(dynamicPredicateForFiat))
+					) { currency in
+						AddCurrencyItemView(
+							currency: currency,
+							buttonPressed: buttonPressed(with:)
+						)
 					}
 				}
-				.scrollContentBackground(.hidden)
-				.background(Color("MainColor"))
-				.overlay(alignment: .bottom) {
-					if isLoading {
-						HStack(spacing: 8) {
-							Text("Loading initial currencies...")
-								.font(.subheadline)
-								.foregroundStyle(.secondary)
-						}
-						.padding(.horizontal, 16)
-						.padding(.vertical, 16)
-						.background(.ultraThinMaterial)
-						.clipShape(Capsule())
-						.shadow(radius: 5)
-						.padding(.bottom, 20)
-						.transition(.move(edge: .bottom).combined(with: .opacity))
-					}
-				}
-				.animation(.default, value: isLoading)
 			}
+			.scrollContentBackground(.hidden)
+			.background(Color("MainColor"))
+			.overlay(alignment: .bottom) {
+				if isLoading {
+					HStack(spacing: 8) {
+						Text("Loading initial currencies...")
+							.font(.subheadline)
+							.foregroundStyle(.secondary)
+					}
+					.padding(.horizontal, 16)
+					.padding(.vertical, 16)
+					.background(.ultraThinMaterial)
+					.clipShape(Capsule())
+					.shadow(radius: 5)
+					.padding(.bottom, 20)
+					.transition(.move(edge: .bottom).combined(with: .opacity))
+				}
+			}
+			.animation(.default, value: isLoading)
 			.searchable(text: $searchText)
 			.animation(.default, value: searchText)
 			.toolbar {
