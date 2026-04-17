@@ -108,6 +108,7 @@ struct AddCurrenciesView: View {
 						Text("Crypto").tag(CurrencyTab.crypto)
 					}
 					.pickerStyle(.segmented)
+					.fixedSize()
 				}
 
 				ToolbarItem(placement: .navigationBarTrailing) {
