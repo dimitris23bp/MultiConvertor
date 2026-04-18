@@ -19,10 +19,10 @@ struct SettingsView: View {
 						Picker(
 							"Display Mode",
 							selection: Binding(
-								get: { settingsService.settings.displayMode },
+								get: { settingsService.model.displayMode },
 								set: { newValue in
 									// TODO: It would be better to access only the settings, not the whole service in here
-									settingsService.settings.displayMode =
+									settingsService.model.displayMode =
 										newValue
 									settingsService.save()
 								}
@@ -37,10 +37,10 @@ struct SettingsView: View {
 							"Crypto Decimals",
 							selection: Binding(
 								get: {
-									settingsService.settings.cryptoDecimals
+									settingsService.model.cryptoDecimals
 								},
 								set: { newValue in
-									settingsService.settings.cryptoDecimals =
+									settingsService.model.cryptoDecimals =
 										newValue
 									settingsService.save()
 								}
@@ -57,9 +57,9 @@ struct SettingsView: View {
 						Picker(
 							"Fiat Decimals",
 							selection: Binding(
-								get: { settingsService.settings.fiatDecimals },
+								get: { settingsService.model.fiatDecimals },
 								set: { newValue in
-									settingsService.settings.fiatDecimals =
+									settingsService.model.fiatDecimals =
 										newValue
 									settingsService.save()
 								}
@@ -101,10 +101,10 @@ struct SettingsView: View {
 				} footer: {
 					VStack(alignment: .leading, spacing: 4) {
 						Text(
-							"Cryptocurrencies updated: \(metadataService?.metadata.cryptoLastUpdate ?? "Loading...")"
+							"Cryptocurrencies updated: \(metadataService?.model.cryptoLastUpdate ?? "Loading...")"
 						)
 						Text(
-							"Fiat currencies updated: \(metadataService?.metadata.fiatLastUpdate ?? "Loading...")"
+							"Fiat currencies updated: \(metadataService?.model.fiatLastUpdate ?? "Loading...")"
 						)
 					}
 					.font(.footnote)
@@ -120,14 +120,14 @@ struct SettingsView: View {
 			// If they are stale, remove the previous value and show that it's loading.
 			// If the value is not too old, it doesn't hurt to keep it
 			if isStaleForADay(
-				lastUpdated: metadataService?.metadata.cryptoLastUpdate
+				lastUpdated: metadataService?.model.cryptoLastUpdate
 			) {
-				metadataService?.metadata.cryptoLastUpdate = nil
+				metadataService?.model.cryptoLastUpdate = nil
 			}
 			if isStaleForADay(
-				lastUpdated: metadataService?.metadata.fiatLastUpdate
+				lastUpdated: metadataService?.model.fiatLastUpdate
 			) {
-				metadataService?.metadata.fiatLastUpdate = nil
+				metadataService?.model.fiatLastUpdate = nil
 			}
 
 			async let cryptoUpdate = currencyService.getLastUpdate(
@@ -140,8 +140,8 @@ struct SettingsView: View {
 			let (crypto, fiat) = await (cryptoUpdate, fiatUpdate)
 
 			withAnimation {
-				metadataService?.metadata.cryptoLastUpdate = crypto
-				metadataService?.metadata.fiatLastUpdate = fiat
+				metadataService?.model.cryptoLastUpdate = crypto
+				metadataService?.model.fiatLastUpdate = fiat
 				metadataService?.save()
 			}
 		}

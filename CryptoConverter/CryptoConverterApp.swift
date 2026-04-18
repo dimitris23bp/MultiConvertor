@@ -13,8 +13,8 @@ struct CryptoConverterApp: App {
 
 	let sharedModelContainer: ModelContainer
 	let currencyService: CurrencyService
-	let settingsService: AppSettingsService
-	let metadataService: AppMetadataService
+	let settingsService: SingletonModelService<AppSettings>
+	let metadataService: SingletonModelService<AppMetadata>
 
 	init() {
 		let schema = Schema([
@@ -69,8 +69,10 @@ struct CryptoConverterApp: App {
 				fiatService: fiatService, cryptoService: cryptoService,
 				currencyRepository: repoAll)
 
-			self.settingsService = AppSettingsService(modelContext: context)
-			self.metadataService = AppMetadataService(modelContext: context)
+			self.settingsService = SingletonModelService(
+				modelContext: context, defaultInstance: AppSettings())
+			self.metadataService = SingletonModelService(
+				modelContext: context, defaultInstance: AppMetadata())
 
 		} catch {
 			fatalError("Could not create ModelContainer: \(error)")
