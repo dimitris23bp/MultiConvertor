@@ -85,7 +85,7 @@ struct AddCurrenciesView: View {
 			.overlay(alignment: .bottom) {
 				if isLoading {
 					HStack(spacing: 8) {
-						Text("Loading initial currencies...")
+						Text("Loading remaining currencies")
 							.font(.subheadline)
 							.foregroundStyle(.secondary)
 					}
