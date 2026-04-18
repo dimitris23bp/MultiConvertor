@@ -7,9 +7,7 @@ struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
 	@Environment(\.currencyService) private var currencyService
 	@Environment(\.settingsService) private var settingsService
-
-	@State private var cryptoLastUpdate: String = "Loading..."
-	@State private var fiatLastUpdate: String = "Loading..."
+	@Environment(\.metadataService) private var metadataService
 
 	var body: some View {
 		NavigationStack {
@@ -102,8 +100,12 @@ struct SettingsView: View {
 					EmptyView()  // Empty section just to hold the footer
 				} footer: {
 					VStack(alignment: .leading, spacing: 4) {
-						Text("Cryptocurrencies updated: \(cryptoLastUpdate)")
-						Text("Fiat currencies updated: \(fiatLastUpdate)")
+						Text(
+							"Cryptocurrencies updated: \(metadataService?.metadata.cryptoLastUpdate ?? "Loading...")"
+						)
+						Text(
+							"Fiat currencies updated: \(metadataService?.metadata.fiatLastUpdate ?? "Loading...")"
+						)
 					}
 					.font(.footnote)
 					.foregroundColor(.secondary)
@@ -117,8 +119,16 @@ struct SettingsView: View {
 
 			// If they are stale, remove the previous value and show that it's loading.
 			// If the value is not too old, it doesn't hurt to keep it
-			if isStaleForADay(lastUpdated: cryptoLastUpdate) { cryptoLastUpdate = "Loading..." }
-			if isStaleForADay(lastUpdated: fiatLastUpdate) { fiatLastUpdate = "Loading..." }
+			if isStaleForADay(
+				lastUpdated: metadataService?.metadata.cryptoLastUpdate
+			) {
+				metadataService?.metadata.cryptoLastUpdate = nil
+			}
+			if isStaleForADay(
+				lastUpdated: metadataService?.metadata.fiatLastUpdate
+			) {
+				metadataService?.metadata.fiatLastUpdate = nil
+			}
 
 			async let cryptoUpdate = currencyService.getLastUpdate(
 				of: "Cryptocurrency"
@@ -130,13 +140,17 @@ struct SettingsView: View {
 			let (crypto, fiat) = await (cryptoUpdate, fiatUpdate)
 
 			withAnimation {
-				cryptoLastUpdate = crypto
-				fiatLastUpdate = fiat
+				metadataService?.metadata.cryptoLastUpdate = crypto
+				metadataService?.metadata.fiatLastUpdate = fiat
+				metadataService?.save()
 			}
 		}
 	}
 
-	private func isStaleForADay(lastUpdated: String) -> Bool {
+	private func isStaleForADay(lastUpdated: String?) -> Bool {
+		// If it's null, then it means it is `Loading...` and therefore it is stale
+		guard let lastUpdated = lastUpdated else { return true }
+
 		let formatter = DateFormatter()
 		formatter.dateStyle = .medium
 		formatter.timeStyle = .medium

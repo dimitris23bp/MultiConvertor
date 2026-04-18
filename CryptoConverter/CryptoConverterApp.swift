@@ -14,12 +14,14 @@ struct CryptoConverterApp: App {
 	let sharedModelContainer: ModelContainer
 	let currencyService: CurrencyService
 	let settingsService: AppSettingsService
+	let metadataService: AppMetadataService
 
 	init() {
 		let schema = Schema([
 			Cryptocurrency.self,
 			FiatCurrency.self,
 			AppSettings.self,
+			AppMetadata.self,
 		])
 
 		let isPreview =
@@ -68,6 +70,7 @@ struct CryptoConverterApp: App {
 				currencyRepository: repoAll)
 
 			self.settingsService = AppSettingsService(modelContext: context)
+			self.metadataService = AppMetadataService(modelContext: context)
 
 		} catch {
 			fatalError("Could not create ModelContainer: \(error)")
@@ -79,6 +82,7 @@ struct CryptoConverterApp: App {
 			MainTabView()
 				.environment(\.currencyService, currencyService)
 				.environment(\.settingsService, settingsService)
+				.environment(\.metadataService, metadataService)
 		}
 		.modelContainer(sharedModelContainer)
 	}
