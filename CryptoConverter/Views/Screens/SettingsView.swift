@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct SettingsView: View {
 	@Environment(\.modelContext) private var modelContext
@@ -114,6 +115,11 @@ struct SettingsView: View {
 		.task {
 			guard let currencyService = currencyService else { return }
 
+			// If they are stale, remove the previous value and show that it's loading.
+			// If the value is not too old, it doesn't hurt to keep it
+			if isStaleForADay(lastUpdated: cryptoLastUpdate) { cryptoLastUpdate = "Loading..." }
+			if isStaleForADay(lastUpdated: fiatLastUpdate) { fiatLastUpdate = "Loading..." }
+
 			async let cryptoUpdate = currencyService.getLastUpdate(
 				of: "Cryptocurrency"
 			)
@@ -123,9 +129,25 @@ struct SettingsView: View {
 
 			let (crypto, fiat) = await (cryptoUpdate, fiatUpdate)
 
-			cryptoLastUpdate = crypto
-			fiatLastUpdate = fiat
+			withAnimation {
+				cryptoLastUpdate = crypto
+				fiatLastUpdate = fiat
+			}
 		}
+	}
+
+	private func isStaleForADay(lastUpdated: String) -> Bool {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .medium
+		formatter.timeStyle = .medium
+		
+		let isStale = formatter.date(from: lastUpdated).map {
+			Date().timeIntervalSince($0) > 86400
+		} ?? true
+
+		Log.ui.debug("Is \(lastUpdated, privacy: .public) stale? \(isStale)")
+
+		return isStale
 	}
 }
 
