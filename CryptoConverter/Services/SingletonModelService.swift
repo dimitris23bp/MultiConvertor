@@ -30,6 +30,8 @@ class SingletonModelService<T: PersistentModel>: ObservableObject {
 	func save() {
 		try? modelContext.save()
 	}
+
+	deinit {}
 }
 
 // MARK: - Environment Setup

@@ -1,4 +1,4 @@
-extension [Currency] {
+extension Array where Element == any Currency {
 	/// Get the new highest order based on the currencies that are favourited.
 	func getHighestOrder() -> Int {
 		var highest = 0
