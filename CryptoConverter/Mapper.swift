@@ -59,13 +59,13 @@ final class Mapper: Sendable {
 			do {
 				return try Data(contentsOf: fileURL)
 			} catch {
-				Log.mapper.error(
+				Log.mapper.errorApp(
 					"Error converting CKAsset to Data: \(error.localizedDescription)"
 				)
 				return nil
 			}
 		} else {
-			Log.mapper.error("Cannot convert CKAsset to Data: no fileURL")
+			Log.mapper.errorApp("Cannot convert CKAsset to Data: no fileURL")
 			return nil
 		}
 	}

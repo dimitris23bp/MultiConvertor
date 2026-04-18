@@ -37,16 +37,16 @@ struct FavouritesListView: View {
 			separator: ", "
 		)
 
-		Log.ui.log(
+		Log.ui.infoApp(
 			"Favourite cryptos changed: \(favouriteCryptos.count) items - \(cryptoInfo)"
 		)
-		Log.ui.log(
+		Log.ui.infoApp(
 			"Favourite fiats changed: \(favouriteFiats.count) items - \(fiatInfo)"
 		)
 
 		let combinedInfo = combinedFavourites.map { "\($0.id):\($0.name)" }
 			.joined(separator: ", ")
-		Log.ui.log(
+		Log.ui.infoApp(
 			"Combined favourites: \(combinedFavourites.count) items - \(combinedInfo)"
 		)
 	}

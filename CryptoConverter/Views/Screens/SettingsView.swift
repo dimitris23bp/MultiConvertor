@@ -159,7 +159,7 @@ struct SettingsView: View {
 			Date().timeIntervalSince($0) > 86400
 		} ?? true
 
-		Log.ui.debug("Is \(lastUpdated, privacy: .public) stale? \(isStale)")
+		Log.ui.debugApp("Is \(lastUpdated) stale? \(isStale)")
 
 		return isStale
 	}
