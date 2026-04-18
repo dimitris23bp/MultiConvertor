@@ -88,7 +88,6 @@
 		B7EFC44F2E8758F9003B9373 = {
 			isa = PBXGroup;
 			children = (
-				B7F6ADAD2F93E8F600931A76 /* conductor */,
 				B75F2F7F2F39076800775802 /* AGENTS.md */,
 				B76EB8382E89CE8E00A5968E /* To-do.md */,
 				B7EFC45A2E8758F9003B9373 /* CryptoConverter */,
@@ -100,14 +99,6 @@
 				B78D6DD02F12CFE00026AB6E /* logo-from-composer.icon */,
 				B7336DE72F450AE400D5C678 /* popping.lottie */,
 			);
-			sourceTree = "<group>";
-		};
-		B7F6ADAD2F93E8F600931A76 /* conductor */ = {
-			isa = PBXGroup;
-			children = (
-				B7F6ADAC2F93E8F600931A76 /* metadata-plan.md */,
-			);
-			path = conductor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,7 +239,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7F6ADAE2F93E8F600931A76 /* metadata-plan.md in Resources */,
 				B7336DE82F450AE400D5C678 /* popping.lottie in Resources */,
 				B78D6DD12F12CFE00026AB6E /* logo-from-composer.icon in Resources */,
 				B75F2F802F39076800775802 /* AGENTS.md in Resources */,
