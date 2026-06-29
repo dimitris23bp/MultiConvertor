@@ -1,35 +1,16 @@
-# Singleton Model Service Refactoring Plan
+# Add Done Button to Decimal Pad
 
 ## Objective
-Refactor `AppSettingsService` and `AppMetadataService` to remove duplicated code by introducing a generic `SingletonModelService<T>`. This service will handle fetching, creating defaults, and saving for any SwiftData model that functions as a singleton (i.e., stores app-wide state).
+Provide a "Done" button on top of the decimal pad keyboard in `DoubleNumberTextField` so users can easily dismiss it without needing to swipe down.
 
-## Key Files & Context
-- `CryptoConverter/Services/SingletonModelService.swift`: New file to hold the generic service and EnvironmentKeys.
-- `CryptoConverter/Services/AppSettingsService.swift`: To be deleted.
-- `CryptoConverter/Services/AppMetadataService.swift`: To be deleted.
-- `CryptoConverter/CryptoConverterApp.swift`: Update instantiation of the services.
-- `CryptoConverter/Views/Screens/SettingsView.swift`: Update property accessors (`settings` and `metadata` to `model`).
+## Changes
+1. **`MultiConvertor/Views/Modals/DoubleNumberTextField.swift`**:
+   - In `makeUIView`, create a `UIToolbar` containing a flexible space and a "Done" button.
+   - Assign the toolbar to the `textField.inputAccessoryView`.
+   - In `Coordinator`, add an `@objc func doneButtonTapped()` that resigns the first responder by calling `UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)`.
+   - Set the `doneButton`'s target to `context.coordinator` and action to `#selector(Coordinator.doneButtonTapped)`.
 
-## Implementation Steps
-
-1. **Create Generic Service:**
-   - Create `CryptoConverter/Services/SingletonModelService.swift`.
-   - Implement `SingletonModelService<T: PersistentModel>: ObservableObject`.
-   - Add an initializer that takes a `ModelContext` and a `@autoclosure` factory for the default instance.
-   - Include Environment Keys setup for both settings and metadata within this file.
-
-2. **Delete Duplicated Services:**
-   - Remove `CryptoConverter/Services/AppSettingsService.swift`.
-   - Remove `CryptoConverter/Services/AppMetadataService.swift`.
-
-3. **Update App Entry Point (`CryptoConverterApp.swift`):**
-   - Change types of `settingsService` and `metadataService` to `SingletonModelService<AppSettings>` and `SingletonModelService<AppMetadata>`.
-   - Update their initialization to pass the `ModelContext` and default model instances (`AppSettings()` and `AppMetadata()`).
-
-4. **Update Views (`SettingsView.swift`):**
-   - Find references to `settingsService?.settings` and replace them with `settingsService?.model`.
-   - Find references to `metadataService?.metadata` and replace them with `metadataService?.model`.
-
-## Verification & Testing
-1. **Compilation Check:** Ensure the project compiles without errors.
-2. **Runtime Check:** Run the app and open the Settings view. Change a setting (like decimals or display mode) and verify it persists across app restarts. Verify the metadata timestamps are still displaying correctly.
+## Verification (Completed)
+- [x] Open the app, focus on a `DoubleNumberTextField` to bring up the decimal pad.
+- [x] Verify the "Done" button appears on the right side of a toolbar above the keyboard.
+- [x] Tap "Done" and verify the keyboard dismisses.
