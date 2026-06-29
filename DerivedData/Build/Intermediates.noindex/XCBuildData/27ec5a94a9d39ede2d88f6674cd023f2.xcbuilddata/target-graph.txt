@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'CryptoConverter' in project 'CryptoConverter' (no dependencies)

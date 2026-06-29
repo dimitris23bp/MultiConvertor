@@ -1,1 +1,5 @@
 xcuserdata/
+DerivedData/
+test_ext
+.DS_Store
+.idea/
