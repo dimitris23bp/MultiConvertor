@@ -11,7 +11,7 @@ At its core, MultiConvertor is a data-driven SwiftUI application. It fetches liv
 
 ### Key Features
 - **Comprehensive Conversions:** Support for converting between both fiat money and cryptocurrencies.
-- **CloudKit Integration:** Syncs user's favorite currencies across all their Apple devices via iCloud.
+- **CloudKit Integration:** Reads live market data (prices and icons) for cryptocurrencies and fiat currencies from a public CloudKit database. Additionally, syncs user's favorite currencies across all their Apple devices via iCloud.
 - **Real-Time Data:** Utilizes a custom ticker update scheduler to ensure live price data is always accurate.
 - **Modern UI:** Custom, sleek views for selecting, displaying, and managing currency lists.
 
@@ -29,7 +29,7 @@ The project follows a modular and clean architecture, separating concerns across
 
 1. **Data Ingestion:** The app reaches out to external APIs via its `Services` to fetch the latest cryptocurrency and fiat exchange rates.
 2. **Synchronization:** The `TickerUpdateScheduler` operates on a timer (or on demand) to keep the internal state refreshed.
-3. **User Preferences:** User selections, such as their favorite currencies, are persisted and synced automatically using Apple's CloudKit via the `Repository` layer.
+3. **User Preferences:** User selections, such as their favorite currencies, are persisted locally on-device using SwiftData via the `Repository` layer.
 4. **Presentation:** The data is funneled into SwiftUI `Views` which reactively update the UI using Swift's observable patterns whenever new data arrives.
 
 ## Testing
